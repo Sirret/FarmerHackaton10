@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import Card from '../components/shared/Card.astro';
+import DbStatus from '../components/admin/DbStatus.jsx';
 ---
 <Base title="Admin">
   <h1 class="text-2xl font-bold">Admin</h1>
+  <div class="mt-4">
+    <DbStatus client:only="preact" />
+  </div>
   <Card class="mt-4">
     <p class="text-sm text-muted">Register kafos and buyers, prices, alerts and the demo panel arrive in Phase 3.</p>
   </Card>

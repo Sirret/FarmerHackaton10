@@ -1,0 +1,37 @@
+[
+  {
+    "id": "town_brikama",
+    "name": "Brikama",
+    "region": "WCR",
+    "is_market": true,
+    "name_clip": "market_brikama"
+  },
+  {
+    "id": "town_serekunda",
+    "name": "Serekunda",
+    "region": "KMC",
+    "is_market": true,
+    "name_clip": "market_serekunda"
+  },
+  {
+    "id": "town_sukuta",
+    "name": "Sukuta",
+    "region": "WCR",
+    "is_market": true,
+    "name_clip": "market_sukuta"
+  },
+  {
+    "id": "town_banjul",
+    "name": "Banjul",
+    "region": "BJL",
+    "is_market": true,
+    "name_clip": "market_banjul"
+  },
+  {
+    "id": "town_gunjur",
+    "name": "Gunjur",
+    "region": "WCR",
+    "is_market": false,
+    "name_clip": "market_gunjur"
+  }
+]

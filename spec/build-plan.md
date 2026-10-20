@@ -82,7 +82,7 @@ FarmerHackaton10/
 │  │  ├─ ussd.js          # USSD state machine (driven by src/data/ussd/menu.json)
 │  │  └─ ivr.js           # IVR state machine (driven by src/data/ivr/flow.json)
 │  └─ data/
-│     ├─ seed/            kafos.json, farmers.json, leaders.json, buyers.json, plantings.json,
+│     ├─ seed/            users.json, farmers.json, kafos.json, buyers.json, plantings.json,
 │     │                   orders.json, prices.json, market_towns.json, transport_costs.json,
 │     │                   crop_calendar.json, alerts.json, config.json
 │     ├─ i18n.json

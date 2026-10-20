@@ -1,0 +1,53 @@
+[
+  {
+    "crop": "tomato",
+    "days_to_harvest": 75,
+    "harvest_days": 45,
+    "kg_per_bed": 12,
+    "pest_risk_months": [
+      9,
+      10,
+      11
+    ],
+    "pest_note_key": "pest.tomato.fruitworm",
+    "baseline_demand_kg": 100
+  },
+  {
+    "crop": "onion",
+    "days_to_harvest": 100,
+    "harvest_days": 14,
+    "kg_per_bed": 10,
+    "pest_risk_months": [
+      1,
+      2
+    ],
+    "pest_note_key": "pest.onion.thrips",
+    "baseline_demand_kg": 80
+  },
+  {
+    "crop": "pepper",
+    "days_to_harvest": 80,
+    "harvest_days": 60,
+    "kg_per_bed": 6,
+    "pest_risk_months": [
+      10,
+      11,
+      12
+    ],
+    "pest_note_key": "pest.pepper.mites",
+    "baseline_demand_kg": 40
+  },
+  {
+    "crop": "okra",
+    "days_to_harvest": 58,
+    "harvest_days": 30,
+    "kg_per_bed": 4,
+    "pest_risk_months": [
+      9,
+      10,
+      11
+    ],
+    "pest_note_key": "pest.okra.leaves",
+    "baseline_demand_kg": 25
+  }
+]

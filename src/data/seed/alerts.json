@@ -1,0 +1,16 @@
+[
+  {
+    "id": "alert_0001",
+    "template_type": "dry_spell",
+    "level": "yellow",
+    "crops": [],
+    "districts": [
+      "Kombo Central",
+      "Kombo South"
+    ],
+    "starts_on": "2026-09-28",
+    "ends_on": "2026-10-05",
+    "note": "From DWR bulletin 9 (demo)",
+    "created_by": "user_admin"
+  }
+]

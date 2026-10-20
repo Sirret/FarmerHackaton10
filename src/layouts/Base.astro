@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { href } from '../lib/url.js';
+import DemoDate from '../components/shared/DemoDate.jsx';
 
 interface Props {
   title: string;
@@ -43,10 +44,12 @@ const isActive = (path: string) => current === href(path).replace(/\/$/, '');
             </li>
           ))}
         </ul>
-        <!-- Wired to resetDemo() in Phase 1 -->
-        <button id="reset-demo" type="button" class="ml-auto rounded-md border border-brand-ink px-3 py-1.5 text-sm hover:bg-accent">
-          Reset demo
-        </button>
+        <div class="ml-auto flex items-center gap-2">
+          <DemoDate client:only="preact" />
+          <button id="reset-demo" type="button" class="rounded-md border border-brand-ink px-3 py-1.5 text-sm hover:bg-accent">
+            Reset demo
+          </button>
+        </div>
       </nav>
     </header>
 
@@ -57,5 +60,26 @@ const isActive = (path: string) => current === href(path).replace(/\/$/, '');
     <footer class="mx-auto max-w-6xl px-4 pb-6 text-xs text-muted">
       Prototype for UTG ITCA Hackathon 2026 · All names, prices and orders are demo data.
     </footer>
+
+    <script>
+      import { db, seedIfEmpty, resetDemo } from '../lib/db.js';
+
+      // First visit seeds the in-browser database, then applies the configured theme.
+      seedIfEmpty()
+        .then(() => db.config.get('main'))
+        .then((config) => {
+          if (config?.theme) document.documentElement.dataset.theme = config.theme;
+        })
+        .catch((err) => console.error('Seeding failed', err));
+
+      const btn = document.getElementById('reset-demo');
+      btn?.addEventListener('click', async () => {
+        if (!confirm('Reset all demo data to the starting state?')) return;
+        btn.textContent = 'Resetting…';
+        await resetDemo();
+        btn.textContent = 'Reset ✓';
+        setTimeout(() => (btn.textContent = 'Reset demo'), 1500);
+      });
+    </script>
   </body>
 </html>

@@ -35,6 +35,13 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - Build one phase at a time from `spec/build-plan.md`. Check every "Done when" item, then commit `phase N: <title>`.
 - After each phase, update `README.md` (how to run, what works) and the status below.
 
+## Data layer
+- `src/lib/db.js`: Dexie schema (copied from the dictionary), JSDoc typedefs per table, `seedIfEmpty()`, `resetDemo()`, `newId(prefix)`. `Base.astro` seeds on every page load and wires the Reset button.
+- `src/data/seed/*.json`: one file per table; `users.json` holds every role. The seed is **tuned**: in Kombo Central (Brikama + Kembujeh) the 12-week plant ratio is tomato 1.9, onion 1.0, pepper 0.4, okra 0.36 (≈1.03 once the 150 kg okra order is accepted). Banjul okra is the one stale price. `tests/seed.test.js` guards these numbers; rerun it after editing seed data.
+- `src/lib/clock.js`: `today()`, `now()`, `jump(days)` (async, read `config.demo_date`). Pure date helpers live in `src/lib/dates.js`.
+- Preact islands read data with `useLive(querier, deps, initial)` from `src/lib/useLive.js` (Dexie `liveQuery`, syncs across tabs). Mount DB islands with `client:only="preact"` (IndexedDB doesn't exist at build time).
+
 ## Status
-- Phase 0 (setup & shell): done. Role pages are stubs; `/styleguide` (unlinked) shows all tokens with a high-contrast toggle; Reset demo button is a placeholder.
-- Next: Phase 1 (Dexie data layer, seed JSON, demo clock, wire Reset).
+- Phase 0 (setup & shell): done.
+- Phase 1 (data layer, seed, demo clock): done. Header shows the live demo date; `/admin` has a temporary live table-count panel with ±1 week buttons.
+- Next: Phase 2 (`rules.js` colour engine + `render.js`, with Vitest tests).

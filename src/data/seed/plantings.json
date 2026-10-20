@@ -1,0 +1,371 @@
+[
+  {
+    "id": "plant_brk_tom0",
+    "kafo_id": "kafo_brikama",
+    "crop": "tomato",
+    "beds": 40,
+    "member_ids": [
+      "user_awa",
+      "user_jainaba",
+      "user_sainabou"
+    ],
+    "planted_on": "2026-06-20",
+    "expected_harvest": "2026-09-03",
+    "expected_kg": 480,
+    "stage": "harvested",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-20T10:00:00Z"
+  },
+  {
+    "id": "plant_brk_tom1",
+    "kafo_id": "kafo_brikama",
+    "crop": "tomato",
+    "beds": 60,
+    "member_ids": [
+      "user_awa",
+      "user_jainaba",
+      "user_sainabou"
+    ],
+    "planted_on": "2026-08-25",
+    "expected_harvest": "2026-11-08",
+    "expected_kg": 720,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-08-25T10:00:00Z",
+    "updated_at": "2026-08-25T10:00:00Z"
+  },
+  {
+    "id": "plant_brk_tom2",
+    "kafo_id": "kafo_brikama",
+    "crop": "tomato",
+    "beds": 50,
+    "member_ids": [
+      "user_jainaba",
+      "user_sainabou",
+      "user_nyima"
+    ],
+    "planted_on": "2026-09-20",
+    "expected_harvest": "2026-12-04",
+    "expected_kg": 600,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-09-20T10:00:00Z",
+    "updated_at": "2026-09-20T10:00:00Z"
+  },
+  {
+    "id": "plant_brk_oni1",
+    "kafo_id": "kafo_brikama",
+    "crop": "onion",
+    "beds": 50,
+    "member_ids": [
+      "user_binta",
+      "user_jainaba",
+      "user_nyima"
+    ],
+    "planted_on": "2026-08-01",
+    "expected_harvest": "2026-11-09",
+    "expected_kg": 500,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-08-01T10:00:00Z",
+    "updated_at": "2026-08-01T10:00:00Z"
+  },
+  {
+    "id": "plant_brk_pep1",
+    "kafo_id": "kafo_brikama",
+    "crop": "pepper",
+    "beds": 20,
+    "member_ids": [
+      "user_awa",
+      "user_sainabou",
+      "user_yassin"
+    ],
+    "planted_on": "2026-09-10",
+    "expected_harvest": "2026-11-29",
+    "expected_kg": 120,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-09-10T10:00:00Z",
+    "updated_at": "2026-09-10T10:00:00Z"
+  },
+  {
+    "id": "plant_brk_okr1",
+    "kafo_id": "kafo_brikama",
+    "crop": "okra",
+    "beds": 25,
+    "member_ids": [
+      "user_awa",
+      "user_binta",
+      "user_yassin"
+    ],
+    "planted_on": "2026-09-25",
+    "expected_harvest": "2026-11-22",
+    "expected_kg": 100,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-09-25T10:00:00Z",
+    "updated_at": "2026-09-25T10:00:00Z"
+  },
+  {
+    "id": "plant_kem_tom1",
+    "kafo_id": "kafo_kembujeh",
+    "crop": "tomato",
+    "beds": 80,
+    "member_ids": [
+      "user_musu",
+      "user_adama",
+      "user_rohey"
+    ],
+    "planted_on": "2026-09-05",
+    "expected_harvest": "2026-11-19",
+    "expected_kg": 960,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_isatou",
+    "logged_at": "2026-09-05T10:00:00Z",
+    "updated_at": "2026-09-05T10:00:00Z"
+  },
+  {
+    "id": "plant_kem_oni1",
+    "kafo_id": "kafo_kembujeh",
+    "crop": "onion",
+    "beds": 46,
+    "member_ids": [
+      "user_musu",
+      "user_ramatoulie"
+    ],
+    "planted_on": "2026-09-01",
+    "expected_harvest": "2026-12-10",
+    "expected_kg": 460,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_isatou",
+    "logged_at": "2026-09-01T10:00:00Z",
+    "updated_at": "2026-09-01T10:00:00Z"
+  },
+  {
+    "id": "plant_kem_pep1",
+    "kafo_id": "kafo_kembujeh",
+    "crop": "pepper",
+    "beds": 12,
+    "member_ids": [
+      "user_ramatoulie"
+    ],
+    "planted_on": "2026-10-12",
+    "expected_harvest": "2026-12-31",
+    "expected_kg": 72,
+    "stage": "planted",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_isatou",
+    "logged_at": "2026-10-12T10:00:00Z",
+    "updated_at": "2026-10-12T10:00:00Z"
+  },
+  {
+    "id": "plant_kem_okr1",
+    "kafo_id": "kafo_kembujeh",
+    "crop": "okra",
+    "beds": 15,
+    "member_ids": [
+      "user_adama",
+      "user_rohey"
+    ],
+    "planted_on": "2026-10-14",
+    "expected_harvest": "2026-12-11",
+    "expected_kg": 60,
+    "stage": "planted",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_isatou",
+    "logged_at": "2026-10-14T10:00:00Z",
+    "updated_at": "2026-10-14T10:00:00Z"
+  },
+  {
+    "id": "plant_sif_tom1",
+    "kafo_id": "kafo_sifoe",
+    "crop": "tomato",
+    "beds": 30,
+    "member_ids": [
+      "user_aminata",
+      "user_sira",
+      "user_fatoumata"
+    ],
+    "planted_on": "2026-09-01",
+    "expected_harvest": "2026-11-15",
+    "expected_kg": 360,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_mariama",
+    "logged_at": "2026-09-01T10:00:00Z",
+    "updated_at": "2026-09-01T10:00:00Z"
+  },
+  {
+    "id": "plant_sif_okr1",
+    "kafo_id": "kafo_sifoe",
+    "crop": "okra",
+    "beds": 20,
+    "member_ids": [
+      "user_aminata",
+      "user_ida"
+    ],
+    "planted_on": "2026-09-28",
+    "expected_harvest": "2026-11-25",
+    "expected_kg": 80,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_mariama",
+    "logged_at": "2026-09-28T10:00:00Z",
+    "updated_at": "2026-09-28T10:00:00Z"
+  },
+  {
+    "id": "plant_gun_oni1",
+    "kafo_id": "kafo_gunjur",
+    "crop": "onion",
+    "beds": 40,
+    "member_ids": [
+      "user_mbassey",
+      "user_kumba",
+      "user_metta"
+    ],
+    "planted_on": "2026-08-20",
+    "expected_harvest": "2026-11-28",
+    "expected_kg": 400,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_kaddy",
+    "logged_at": "2026-08-20T10:00:00Z",
+    "updated_at": "2026-08-20T10:00:00Z"
+  },
+  {
+    "id": "plant_gun_pep1",
+    "kafo_id": "kafo_gunjur",
+    "crop": "pepper",
+    "beds": 25,
+    "member_ids": [
+      "user_mbassey",
+      "user_oumie"
+    ],
+    "planted_on": "2026-09-15",
+    "expected_harvest": "2026-12-04",
+    "expected_kg": 150,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_kaddy",
+    "logged_at": "2026-09-15T10:00:00Z",
+    "updated_at": "2026-09-15T10:00:00Z"
+  },
+  {
+    "id": "plant_bus_tom1",
+    "kafo_id": "kafo_busumbala",
+    "crop": "tomato",
+    "beds": 35,
+    "member_ids": [
+      "user_neneh",
+      "user_fanta",
+      "user_amie"
+    ],
+    "planted_on": "2026-09-08",
+    "expected_harvest": "2026-11-22",
+    "expected_kg": 420,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_ndey",
+    "logged_at": "2026-09-08T10:00:00Z",
+    "updated_at": "2026-09-08T10:00:00Z"
+  },
+  {
+    "id": "plant_bus_okr1",
+    "kafo_id": "kafo_busumbala",
+    "crop": "okra",
+    "beds": 15,
+    "member_ids": [
+      "user_neneh",
+      "user_sukai"
+    ],
+    "planted_on": "2026-10-01",
+    "expected_harvest": "2026-11-28",
+    "expected_kg": 60,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_ndey",
+    "logged_at": "2026-10-01T10:00:00Z",
+    "updated_at": "2026-10-01T10:00:00Z"
+  },
+  {
+    "id": "plant_kaf_pep1",
+    "kafo_id": "kafo_kafuta",
+    "crop": "pepper",
+    "beds": 20,
+    "member_ids": [
+      "user_kaddijatou",
+      "user_satou"
+    ],
+    "planted_on": "2026-09-18",
+    "expected_harvest": "2026-12-07",
+    "expected_kg": 120,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_haddy",
+    "logged_at": "2026-09-18T10:00:00Z",
+    "updated_at": "2026-09-18T10:00:00Z"
+  },
+  {
+    "id": "plant_kaf_oni1",
+    "kafo_id": "kafo_kafuta",
+    "crop": "onion",
+    "beds": 30,
+    "member_ids": [
+      "user_kaddijatou",
+      "user_maimuna"
+    ],
+    "planted_on": "2026-08-28",
+    "expected_harvest": "2026-12-06",
+    "expected_kg": 300,
+    "stage": "growing",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": null,
+    "logged_by": "user_haddy",
+    "logged_at": "2026-08-28T10:00:00Z",
+    "updated_at": "2026-08-28T10:00:00Z"
+  }
+]

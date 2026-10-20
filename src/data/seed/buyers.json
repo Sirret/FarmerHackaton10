@@ -1,0 +1,35 @@
+[
+  {
+    "id": "buyer_coastal_hotel",
+    "business_name": "Coastal Hotel (demo)",
+    "type": "hotel",
+    "reg_number": "BR-55821",
+    "contact_name": "Lamin Touray",
+    "contact_phone": "7700101",
+    "location": "Kololi",
+    "verified": true,
+    "suspended": false
+  },
+  {
+    "id": "buyer_westfield_wholesale",
+    "business_name": "Westfield Wholesale (demo)",
+    "type": "wholesaler",
+    "reg_number": "BR-41377",
+    "contact_name": "Ebrima Sarr",
+    "contact_phone": "7700202",
+    "location": "Serekunda",
+    "verified": true,
+    "suspended": false
+  },
+  {
+    "id": "buyer_kombo_school_meals",
+    "business_name": "Kombo School Meals Supply (demo)",
+    "type": "school_supplier",
+    "reg_number": "BR-60914",
+    "contact_name": "Sarjo Cham",
+    "contact_phone": "7700303",
+    "location": "Brikama",
+    "verified": false,
+    "suspended": false
+  }
+]

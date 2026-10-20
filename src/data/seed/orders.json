@@ -1,0 +1,20 @@
+[
+  {
+    "id": "order_0001",
+    "buyer_id": "buyer_coastal_hotel",
+    "type": "forward",
+    "crop": "okra",
+    "kg": 150,
+    "window_start": "2026-12-29",
+    "window_end": "2027-01-04",
+    "price_per_kg": 55,
+    "grade": "A",
+    "fulfilment": "pickup",
+    "delivery_fee": 0,
+    "repeat_weekly": false,
+    "offer_id": null,
+    "status": "open",
+    "cancelled_reason": null,
+    "created_at": "2026-10-19T08:30:00Z"
+  }
+]

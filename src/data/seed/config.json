@@ -1,0 +1,20 @@
+{
+  "id": "main",
+  "demo_date": "2026-10-20",
+  "plant_green_below": 0.8,
+  "plant_red_above": 1.3,
+  "plant_window_weeks": 12,
+  "report_count": 3,
+  "report_window_days": 7,
+  "price_stale_days": 14,
+  "price_avg_weeks": 4,
+  "payment_due_hours": 48,
+  "fee_percent": 2.5,
+  "unit_kg": {
+    "bucket": 10,
+    "bag": 25,
+    "bags_2_4": 75,
+    "bags_5_plus": 125
+  },
+  "theme": "default"
+}

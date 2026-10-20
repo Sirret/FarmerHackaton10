@@ -1,0 +1,322 @@
+[
+  {
+    "user_id": "user_awa",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "okra",
+      "pepper",
+      "tomato"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": "names/farmer_awa.mp3",
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_binta",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "okra",
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": "names/farmer_binta.mp3",
+    "sms_alerts": true,
+    "voice_alerts": true
+  },
+  {
+    "user_id": "user_jainaba",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "tomato",
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_sainabou",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "tomato",
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_nyima",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "onion",
+      "tomato"
+    ],
+    "has_phone": false,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": false,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_yassin",
+    "kafo_id": "kafo_brikama",
+    "crops": [
+      "pepper",
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_musu",
+    "kafo_id": "kafo_kembujeh",
+    "crops": [
+      "tomato",
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": 1,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_adama",
+    "kafo_id": "kafo_kembujeh",
+    "crops": [
+      "tomato",
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": 2,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_ramatoulie",
+    "kafo_id": "kafo_kembujeh",
+    "crops": [
+      "onion",
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_rohey",
+    "kafo_id": "kafo_kembujeh",
+    "crops": [
+      "okra",
+      "tomato"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_aminata",
+    "kafo_id": "kafo_sifoe",
+    "crops": [
+      "tomato",
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_ida",
+    "kafo_id": "kafo_sifoe",
+    "crops": [
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_sira",
+    "kafo_id": "kafo_sifoe",
+    "crops": [
+      "tomato"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_fatoumata",
+    "kafo_id": "kafo_sifoe",
+    "crops": [
+      "tomato",
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_mbassey",
+    "kafo_id": "kafo_gunjur",
+    "crops": [
+      "onion",
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_kumba",
+    "kafo_id": "kafo_gunjur",
+    "crops": [
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_oumie",
+    "kafo_id": "kafo_gunjur",
+    "crops": [
+      "pepper",
+      "tomato"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_metta",
+    "kafo_id": "kafo_gunjur",
+    "crops": [
+      "onion",
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_neneh",
+    "kafo_id": "kafo_busumbala",
+    "crops": [
+      "tomato",
+      "okra"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_fanta",
+    "kafo_id": "kafo_busumbala",
+    "crops": [
+      "tomato"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_sukai",
+    "kafo_id": "kafo_busumbala",
+    "crops": [
+      "okra",
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_amie",
+    "kafo_id": "kafo_busumbala",
+    "crops": [
+      "tomato",
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_kaddijatou",
+    "kafo_id": "kafo_kafuta",
+    "crops": [
+      "pepper",
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_maimuna",
+    "kafo_id": "kafo_kafuta",
+    "crops": [
+      "onion"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  },
+  {
+    "user_id": "user_satou",
+    "kafo_id": "kafo_kafuta",
+    "crops": [
+      "pepper"
+    ],
+    "has_phone": true,
+    "shared_phone_slot": null,
+    "name_clip": null,
+    "sms_alerts": true,
+    "voice_alerts": false
+  }
+]

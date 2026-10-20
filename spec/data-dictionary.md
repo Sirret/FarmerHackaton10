@@ -103,7 +103,7 @@ Writer: admin (seed)
 | kg_per_bed | number | Default yield estimate (updated from actual kg) | `4` |
 | pest_risk_months | number[] | Months with high pest risk | `[3,4,5]` |
 | pest_note_key | string | i18n key for advice | `pest.okra.leaves` |
-| baseline_demand_kg | number | Weekly demand when there are no orders | `300` |
+| baseline_demand_kg | number | Weekly demand per district when there are no orders | `25` |
 Writer: admin (seed, edit)
 
 ### `plantings`
@@ -366,6 +366,7 @@ Writer: system (every write by leader/buyer/admin)
 | demo_date | date | Current demo "today" | `2026-10-20` |
 | plant_green_below | number | Supply ÷ demand | `0.8` |
 | plant_red_above | number | | `1.3` |
+| plant_window_weeks | number | Plant signal looks at harvests and orders due in the next N weeks | `12` |
 | report_count | number | Reports to trigger yellow | `3` |
 | report_window_days | number | | `7` |
 | price_stale_days | number | | `14` |
@@ -384,7 +385,7 @@ Writer: system (every write by leader/buyer/admin)
 | `ussd/menu.json` | USSD screens and key routing | `{ "MAIN": { "lines": ["key", ...], "keys": { "1": "PLANT" } } }` |
 | `ivr/flow.json` | Voice menu nodes | `{ "main": { "clips": [...], "keys": { "1": "plant" }, "subtitle_key": "..." } }` |
 | `ivr/clips.json` | Recording guide | `[{ "id": "crop_okra", "en_script": "okra", "langs_done": ["en"] }]` |
-| `seed/*.json` | Demo data, one file per table | arrays of rows matching this dictionary |
+| `seed/*.json` | Demo data, one file per table (`users.json` holds admin, leaders, farmers and buyer contacts; `config.json` is the single config row) | arrays of rows matching this dictionary |
 
 ## Dexie schema string (keep in sync with ★ fields)
 ```js
