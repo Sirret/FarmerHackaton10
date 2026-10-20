@@ -140,6 +140,14 @@ describe('USSD *1234#', () => {
     }
   });
 
+  it('every basic-phone string (phone.*, ussd.*) is plain ASCII in every language', async () => {
+    const strings = (await import('../src/data/i18n.json')).default;
+    for (const [key, langs] of Object.entries(strings)) {
+      if (!key.startsWith('phone.') && !key.startsWith('ussd.')) continue;
+      for (const text of Object.values(langs)) expect(text, key).toMatch(/^[\x20-\x7E]*$/);
+    }
+  });
+
   it('uses the farmer language, falling back to English until translations exist', () => {
     expect(session('user_binta', [], 'wo').text).toContain('Hi Binta');
   });

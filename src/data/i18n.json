@@ -148,7 +148,12 @@
   "phone.call.missed": { "en": "Missed" },
   "phone.sending": { "en": "Sending..." },
   "phone.reply": { "en": "Reply:" },
-  "phone.messages_soon": { "en": "Messages arrive in the next update." },
+  "phone.inbox": { "en": "Inbox" },
+  "phone.thread_name": { "en": "1234 Kafo Signal" },
+  "phone.no_messages": { "en": "No messages yet" },
+  "phone.banner.one": { "en": "1 new message - 1234" },
+  "phone.banner.many": { "en": "{n} new messages - 1234" },
+  "phone.read": { "en": "read" },
   "phone.unread": { "en": "{n} new" },
 
   "wallet.wave": { "en": "Wave" },

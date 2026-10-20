@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { createInterest, createProduceRequest, createReport, createLead, setFarmerAlerts } from '../../lib/actions.js';
+import { createInterest, createProduceRequest, createReport, createLead, setFarmerAlerts, markSmsRead } from '../../lib/actions.js';
 import { placeOutboundCall } from '../../lib/notify.js';
 import { t } from '../../lib/i18n.js';
 import { formatDate } from '../../lib/dates.js';
@@ -78,8 +78,12 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
   const [session, setSession] = useState(null); // { state, reply, scroll, busy }
   const [popup, setPopup] = useState(null); // string[]
   const [profile, setProfile] = useState(null); // shared phone: who is using it
+  const [msgScroll, setMsgScroll] = useState(0);
+  const [banner, setBanner] = useState(0); // number of new SMS to announce
   const popupTimer = useRef(null);
   const idleTimer = useRef(null);
+  const bannerTimer = useRef(null);
+  const seenSms = useRef(null); // SMS ids already on this phone
 
   // Holder changes (side panel) → back to Home with a fresh session. Layout effects run
   // straight away, even in a background tab (plain effects wait for an animation frame).
@@ -88,8 +92,30 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
 
   const ctx = useMemo(() => makeContext(snap, profile ?? userId, lang), [snap, userId, profile, lang]);
   const myCalls = ctx.user ? snap.calls.filter((c) => c.user_id === ctx.user.id).sort((a, b) => b.started_at.localeCompare(a.started_at)) : [];
-  const unread = ctx.user ? snap.sms.filter((s) => s.to_user_id === ctx.user.id && !s.read).length : 0;
+  const mySms = ctx.user ? snap.sms.filter((s) => s.to_user_id === ctx.user.id).sort((a, b) => a.sent_at.localeCompare(b.sent_at)) : [];
+  const unread = mySms.filter((s) => !s.read).length;
   const L = ctx.lang;
+
+  // New SMS → "1 new message · 1234" banner on whatever screen is open (spec §9.1).
+  // Reading the thread while it arrives marks it read instead.
+  useLayoutEffect(() => { seenSms.current = null; setBanner(0); }, [ctx.user?.id]);
+  useLayoutEffect(() => {
+    if (seenSms.current === null) { seenSms.current = new Set(mySms.map((s) => s.id)); return; }
+    const fresh = mySms.filter((s) => !seenSms.current.has(s.id));
+    if (!fresh.length) return;
+    fresh.forEach((s) => seenSms.current.add(s.id));
+    if (app === 'thread') { markSmsRead(ctx.user.id); setMsgScroll(1e6); return; }
+    setBanner((n) => n + fresh.length);
+    clearTimeout(bannerTimer.current);
+    bannerTimer.current = setTimeout(() => setBanner(0), 5000);
+  }, [mySms.length, ctx.user?.id]);
+
+  function openThread() {
+    setBanner(0);
+    setApp('thread');
+    setMsgScroll(1e6); // newest message at the bottom
+    if (ctx.user && unread) markSmsRead(ctx.user.id);
+  }
 
   function showPopup(lines, ms = 2500) {
     clearTimeout(popupTimer.current);
@@ -109,7 +135,7 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
     clearTimeout(idleTimer.current);
     idleTimer.current = setTimeout(() => endSession([t('ussd.ended', L)]), IDLE_TIMEOUT_MS);
   }
-  useEffect(() => () => { clearTimeout(idleTimer.current); clearTimeout(popupTimer.current); }, []);
+  useEffect(() => () => { clearTimeout(idleTimer.current); clearTimeout(popupTimer.current); clearTimeout(bannerTimer.current); }, []);
 
   async function dial() {
     const code = number;
@@ -144,11 +170,19 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
 
   function press(k) {
     if (popup) { if (k === 'end') { clearTimeout(popupTimer.current); setPopup(null); setApp('home'); } return; }
-    if (k === 'end') { if (app === 'ussd') endSession(); else { setApp('home'); setNumber(''); } return; }
+    if (banner && k === 'ok' && app !== 'ussd') { openThread(); return; }
+    if (k === 'end') { setBanner(0); if (app === 'ussd') endSession(); else { setApp('home'); setNumber(''); } return; }
     const digit = /^[0-9*#]$/.test(k);
     if (app === 'home') {
       if (k === '1' || ((k === 'ok' || k === 'call') && homeSel === 0)) setApp('dial');
       else if (k === '2' || ((k === 'ok' || k === 'call') && homeSel === 1)) setApp('messages');
+    } else if (app === 'messages') {
+      if ((k === '1' || k === 'ok' || k === 'call') && mySms.length) openThread();
+      else if (k === '0') setApp('home');
+    } else if (app === 'thread') {
+      if (k === 'up') setMsgScroll((n) => Math.max(0, n - 1));
+      else if (k === 'down') setMsgScroll((n) => n + 1);
+      else if (k === '0' || k === 'del') setApp('messages');
       else if (k === 'up' || k === 'down') setHomeSel((s) => 1 - s);
     } else if (app === 'dial') {
       if (digit) setNumber((n) => (n.length < 15 ? n + k : n));
@@ -204,7 +238,32 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
       </div>
     );
   } else if (app === 'messages') {
-    body = <Rows rows={wrap([`${t('phone.app.messages', L)}${unread ? ` - ${t('phone.unread', L, { n: unread })}` : ''}`, t('phone.messages_soon', L)])} />;
+    const last = mySms.at(-1);
+    body = (
+      <div>
+        <div class="text-[11px]">{t('phone.inbox', L)}</div>
+        {last ? (
+          <div class="bg-lcd-ink px-1 text-lcd">
+            <div>1 {t('phone.thread_name', L)}{unread ? ` (${unread})` : ''}</div>
+            <div class="truncate text-[11px]">{last.body}</div>
+          </div>
+        ) : <div>{t('phone.no_messages', L)}</div>}
+        <div class="mt-1 text-[11px]">0 {t('ussd.back', L)}</div>
+      </div>
+    );
+  } else if (app === 'thread') {
+    const rows = mySms.flatMap((m) => [`-- ${m.sent_at.slice(8, 10)}/${m.sent_at.slice(5, 7)} ${m.sent_at.slice(11, 16)} --`, ...wrap([m.body])]);
+    const maxScroll = Math.max(0, rows.length - ROWS);
+    const scroll = Math.min(msgScroll, maxScroll);
+    body = (
+      <div>
+        <Rows rows={rows.slice(scroll, scroll + ROWS)} />
+        <div class="flex justify-between border-t border-lcd-ink text-[11px]">
+          <span>1234 - 0 {t('ussd.back', L)}</span>
+          <span>{scroll > 0 ? '^' : ' '}{scroll < maxScroll ? 'v' : ' '}</span>
+        </div>
+      </div>
+    );
   } else if (app === 'ussd' && session) {
     const rows = wrap(renderScreen(session.state, ctx).lines);
     const maxScroll = Math.max(0, rows.length - ROWS);
@@ -225,7 +284,15 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
     <div class="mx-auto w-[260px] select-none rounded-[2.5rem] bg-phone-body px-5 pb-6 pt-8 shadow-xl">
       <div class="mb-4 h-[178px] overflow-hidden rounded-md border-4 border-phone-key bg-lcd p-2 font-mono text-[13px] leading-[18px] text-lcd-ink" aria-live="polite" data-screen>
         <StatusBar lang={L} />
-        <div class="pt-1">{body}</div>
+        <div class="relative pt-1">
+          {body}
+          {banner > 0 && !popup && (
+            <div role="alert" class="absolute inset-x-0 top-1 border-2 border-lcd-ink bg-lcd px-1 py-0.5">
+              <div class="font-bold">{t(banner === 1 ? 'phone.banner.one' : 'phone.banner.many', L, { n: banner })}</div>
+              <div class="text-[11px]">OK = {t('phone.read', L)}</div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div class="mb-3 grid grid-cols-3 items-center gap-2">

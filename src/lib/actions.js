@@ -308,6 +308,11 @@ export async function createProduceRequest({ farmerId, crop, amount_unit, ready_
   return row;
 }
 
+/** Farmer opened her messages: mark them all read. */
+export async function markSmsRead(userId) {
+  await db.sms.where('to_user_id').equals(userId).filter((s) => !s.read).modify({ read: true });
+}
+
 /** Farmer switches her own alerts: { sms_alerts } and/or { voice_alerts }. */
 export async function setFarmerAlerts(farmerId, patch) {
   const allowed = Object.fromEntries(Object.entries(patch).filter(([k]) => k === 'sms_alerts' || k === 'voice_alerts').map(([k, v]) => [k, Boolean(v)]));
@@ -362,6 +367,15 @@ export async function logPlanting(f, leaderId) {
     planting, kgPerBed: cal.kg_per_bed, totalBeds: kafo.total_beds,
     otherActiveBeds: active.reduce((s, p) => s + p.beds, 0),
   }));
+  // Growing for a buyer order: members learn the crop is already sold (spec §9.3 "Buyer took the order").
+  if (planting.order_id) {
+    const order = await db.orders.get(planting.order_id);
+    for (const memberId of planting.member_ids) {
+      await sendSms(memberId, 'sms.order_taken', (lang) => ({
+        crop: cropName(planting.crop, lang).toLowerCase(), kafo: kafo.name, day: formatDate(order.window_start), time: '9:00',
+      }));
+    }
+  }
   return { planting, flags };
 }
 
