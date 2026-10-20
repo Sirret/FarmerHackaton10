@@ -43,6 +43,7 @@ import config from '../data/seed/config.json';
 /** @typedef {{ id: string, entity: 'planting'|'collection'|'order'|'report', entity_id: string, reason: 'kg_over_capacity'|'update_burst'|'estimate_gap', status: 'open'|'approved'|'corrected' }} Flag */
 /** @typedef {{ id: string, order_id: string, raised_by: string, issue: 'short_delivery'|'quality'|'late_payment'|'other', description: string, status: 'open'|'resolved', resolution_note?: string|null }} Dispute */
 /** @typedef {{ id: string, user_id: string, action: string, entity_id: string, at: string }} Audit */
+/** @typedef {{ id: string, farmer_id: string, kafo_id: string, crop: Crop, status: 'new'|'seen', created_at: string }} Interest */
 /** @typedef {{ id: 'main', seed_version: number, demo_date: string, plant_green_below: number, plant_red_above: number, sell_green_above: number, sell_red_below: number, report_count: number, report_window_days: number, alert_lead_days: number, price_stale_days: number, price_avg_weeks: number, payment_due_hours: number, fee_percent: number, unit_kg: Record<'bucket'|'bag'|'bags_2_4'|'bags_5_plus', number>, theme: string }} Config */
 
 /**
@@ -59,7 +60,7 @@ import config from '../data/seed/config.json';
  *   sms: import('dexie').Table<Sms, string>, calls: import('dexie').Table<Call, string>,
  *   leads: import('dexie').Table<Lead, string>, flags: import('dexie').Table<Flag, string>,
  *   disputes: import('dexie').Table<Dispute, string>, audit: import('dexie').Table<Audit, string>,
- *   config: import('dexie').Table<Config, string>
+ *   config: import('dexie').Table<Config, string>, interests: import('dexie').Table<Interest, string>
  * }} KafoDB
  */
 
@@ -92,6 +93,11 @@ db.version(1).stores({
   disputes: 'id, order_id, status',
   audit: 'id, user_id, at',
   config: 'id'
+});
+
+// v2: farmers' "tell my leader I'm interested" notes (spec §5, menu 1).
+db.version(2).stores({
+  interests: 'id, farmer_id, kafo_id, status'
 });
 
 /** Seed rows per table. Tables not listed start empty. */

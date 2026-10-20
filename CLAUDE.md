@@ -45,7 +45,13 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - **All writes go through `src/lib/actions.js`** (registerKafo, setBuyerStatus, savePrices, saveTransport, createAlert, endAlert, callFarmersWithAlert, createReport, postOrder, jumpDemo, demo* helpers). Components never write tables directly, so a farmer USSD report, a leader report and a demo button run the same validation, SMS triggers and audit row. Add new writes there.
 - `src/lib/notify.js`: `sendSms(userId, templateKey, vars | (lang) => vars)` → `sms` table; `placeOutboundCall` → `calls`. Pure helpers `smsBody`, `alertSmsVars`, `farmersIn` are unit tested; `tests/notify.test.js` checks every `sms.*` template fits 160 plain-Latin chars.
 - Dexie gotchas: inside `db.transaction(...)` only touch the listed tables; `now()` reads `config`, so compute timestamps before the transaction (see `audit(..., at)`). Booleans are not valid IndexedDB keys, so never query `verified`/`read` through `where()`; use `.filter()`.
-- Forms: update state with `setForm((f) => ({ ...f, [k]: v }))`, never from the render closure.
+- Forms: update state with `setForm((f) => ({ ...f, [k]: v }))`, never from the render closure. Buttons use `useAction()` (`src/components/ui/useAction.js`) + `<Notice>`; when the item disappears after the action (accepted order, merged request), keep the notice in the parent list.
+- Leader writes call `assertLeader(userId, kafoId)` inside the action (own kafo's leader or admin only). Data-quality checks are pure in `src/lib/quality.js`; actions write `flags` rows.
+
+## Kafo leader app (`/kafo`)
+- `KafoApp.jsx` reads `getSession('leader')` and one live snapshot from `loadKafoView(kafoId)` (`src/lib/kafoView.js`: signals, open orders with `fairPriceSignal`, our orders, plantings, members, inbox, alerts). Screens get `{ view, leaderId, go, preset }`; `go('plant', { crop, member })` opens a tab with a preset.
+- Inbox = new `interests` + `produce_requests` (grouped by crop: tick, correct kg, merge) + unchecked reports + open orders not yet accepted.
+- `interests` table was added in Dexie schema v2 (dictionary updated). Farmer-side writers `createInterest` / `createProduceRequest` already exist in actions.js for Phase 6; the admin Demo tab has buttons that call them.
 - Demo login: `src/lib/session.js` (`getSession(role)`, `loginAs(role, id)`, localStorage). `AccountTiles` shows click-to-login squares (live from the DB, so new kafos/buyers appear at once) on the home page; `SessionBar` on each role page shows "Logged in as" + switch. Admin has no login. Phone numbers are fake 7-digit demo numbers; nothing is ever sent.
 
 ## Signal engine
@@ -61,4 +67,5 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - Phase 1 (data layer, seed, demo clock): done. Header shows the live demo date.
 - Phase 2 (colour engine + render): done.
 - Phase 3 (admin website): done. Tabs: Overview (counts, kafos under alert, live Signals with a "+10 beds" test button), Register (kafo + leader, buyer verify/suspend), Prices & transport, Alerts (template form, active list, call farmers, SMS log), Demo (scenario buttons + table counts). Home page has click-to-login account squares.
-- Next: Phase 4 (kafo leader app in the phone frame). Use `getSession('leader')` for the current leader and add its writes (log planting, accept order, confirm produce/reports, add member) to `actions.js`.
+- Phase 4 (kafo leader app): done. Home (signal tiles + 🔊 browser speech, to-do inbox, upcoming harvests), Plant (auto-filled log, stages, lost some/all, capacity flag), Sell (orders with fair-price verdict, accept full/part, weighed delivery per member, our offers), Members (add → welcome SMS + call; delivered kg, paid), Alerts (area alerts, confirm/dismiss reports), Profile.
+- Next: Phase 5 (buyer website). Collections already exist with `kg_accepted: null` waiting for the buyer; payments per member are created when the buyer pays.

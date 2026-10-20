@@ -47,6 +47,29 @@
   "reason.alert_pest_outbreak": { "en": "Pest outbreak alert" },
   "reason.alert_disease": { "en": "Disease alert" },
   "reason.unknown_crop": { "en": "Crop not in the calendar" },
+  "reason.price_fair": { "en": "Fair price" },
+  "reason.price_bit_low": { "en": "A bit below market" },
+  "reason.price_too_low": { "en": "Below market" },
+
+  "unit.bucket": { "en": "1 bucket" },
+  "unit.bag": { "en": "1 bag" },
+  "unit.bags_2_4": { "en": "2-4 bags" },
+  "unit.bags_5_plus": { "en": "5+ bags" },
+
+  "ready.today": { "en": "Ready today" },
+  "ready.this_week": { "en": "Ready this week" },
+
+  "stage.planted": { "en": "Planted" },
+  "stage.growing": { "en": "Growing" },
+  "stage.ready": { "en": "Ready" },
+  "stage.harvested": { "en": "Harvested" },
+
+  "lost.pests": { "en": "Pests" },
+  "lost.disease": { "en": "Disease" },
+  "lost.flood": { "en": "Flood" },
+  "lost.drought": { "en": "Drought" },
+  "lost.animals": { "en": "Animals" },
+  "lost.other": { "en": "Other" },
 
   "lang.en": { "en": "English" },
   "lang.mnk": { "en": "Mandinka" },

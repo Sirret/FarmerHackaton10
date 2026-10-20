@@ -137,6 +137,22 @@ export function sellSignal({ crop, fromTown, kafoId, today, data }) {
 }
 
 /**
+ * FAIR PRICE for a buyer order: offered price vs the 4-week average across markets.
+ * ≥ average → green (fair or better) · ≥ average × sell_red_below → yellow · below → red.
+ * No recent prices → 'none'.
+ */
+export function fairPriceSignal({ crop, price, today, data }) {
+  const c = data.config;
+  const avgFrom = addDays(today, -(c.price_avg_weeks * 7));
+  const recent = data.prices.filter((p) => p.crop === crop && p.date > avgFrom && p.date <= today);
+  if (!recent.length) return { signal: 'none', reason: 'no_recent_price', average: null };
+  const average = recent.reduce((s, p) => s + p.price_per_kg, 0) / recent.length;
+  const signal = price >= average ? 'green' : price >= average * c.sell_red_below ? 'yellow' : 'red';
+  const reason = signal === 'green' ? 'price_fair' : signal === 'yellow' ? 'price_bit_low' : 'price_too_low';
+  return { signal, reason, average: Math.round(average) };
+}
+
+/**
  * RISK: active admin alerts + problem reports in the district for this crop.
  * An admin alert sets its own level (yellow or red). Alerts are warnings, so they count
  * from alert_lead_days before they start until they end ("heavy rain in 2 days").

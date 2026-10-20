@@ -8,6 +8,7 @@ import { cropName, t } from './i18n.js';
 import { riskSignal } from './rules.js';
 import { loadSignalData } from './signals.js';
 import { sendSms, placeOutboundCall, farmersIn, alertSmsVars } from './notify.js';
+import { plantingFlags, deliveryFlags } from './quality.js';
 import alertTemplates from '../data/alert_templates.json';
 
 export const ADMIN_ID = 'user_admin';
@@ -253,4 +254,246 @@ export async function demoPostOrder() {
   return postOrder('buyer_westfield_wholesale', {
     crop: 'pepper', kg: 200, window_start: addDays(day, 70), window_end: addDays(day, 76), price_per_kg: 62,
   });
+}
+
+export async function demoProduceRequests() {
+  return [
+    await createProduceRequest({ farmerId: 'user_awa', crop: 'pepper', amount_unit: 'bag', ready_when: 'today' }),
+    await createProduceRequest({ farmerId: 'user_binta', crop: 'pepper', amount_unit: 'bags_2_4', ready_when: 'this_week' }),
+  ];
+}
+
+export async function demoInterest() {
+  return createInterest({ farmerId: 'user_binta', crop: 'okra' });
+}
+
+// ---------------------------------------------------------------- permissions
+
+/** Only the kafo's own leader (or the admin) may write kafo data. Returns the user. */
+async function assertLeader(userId, kafoId) {
+  const user = await db.users.get(userId);
+  if (user?.role === 'admin') return user;
+  if (user?.role !== 'leader' || user.kafo_id !== kafoId) throw new Error("Only this kafo's leader can do that");
+  return user;
+}
+
+async function raiseFlags(entity, entityId, reasons) {
+  for (const reason of reasons) await db.flags.add({ id: newId('flag'), entity, entity_id: entityId, reason, status: 'open' });
+  return reasons;
+}
+
+// ---------------------------------------------------------------- farmers (phone)
+
+/** Farmer: "Tell my leader I'm interested" in planting a crop. */
+export async function createInterest({ farmerId, crop }) {
+  const farmer = await db.farmers.get(farmerId);
+  if (!farmer) throw new Error('Not a registered farmer');
+  const row = { id: newId('int'), farmer_id: farmerId, kafo_id: farmer.kafo_id, crop, status: 'new', created_at: await now() };
+  await db.interests.add(row);
+  return row;
+}
+
+/** Farmer: "I have produce". Waits for the leader to confirm or merge it. */
+export async function createProduceRequest({ farmerId, crop, amount_unit, ready_when }) {
+  const farmer = await db.farmers.get(farmerId);
+  if (!farmer) throw new Error('Not a registered farmer');
+  const config = await db.config.get('main');
+  const row = {
+    id: newId('req'), farmer_id: farmerId, kafo_id: farmer.kafo_id, crop, amount_unit,
+    est_kg: config.unit_kg[amount_unit], ready_when, status: 'pending_leader', offer_id: null, created_at: await now(),
+  };
+  await db.produce_requests.add(row);
+  return row;
+}
+
+// ---------------------------------------------------------------- kafo leader
+
+export async function markInterestSeen(interestId, leaderId) {
+  const row = await db.interests.get(interestId);
+  await assertLeader(leaderId, row.kafo_id);
+  await db.interests.update(interestId, { status: 'seen' });
+}
+
+/**
+ * Leader logs a planting. Harvest date and kg come pre-filled from the crop calendar
+ * (the form passes the leader's edits). Raises a data-quality flag when kg or beds
+ * are far above the kafo's capacity. Returns { planting, flags }.
+ */
+export async function logPlanting(f, leaderId) {
+  await assertLeader(leaderId, f.kafo_id);
+  required(f, ['kafo_id', 'crop', 'beds', 'planted_on']);
+  const beds = Number(f.beds);
+  if (!(beds > 0)) throw new Error('Beds must be more than 0');
+  const [cal, kafo, active, ts] = await Promise.all([
+    db.crop_calendar.get(f.crop), db.kafos.get(f.kafo_id),
+    db.plantings.where('kafo_id').equals(f.kafo_id).filter((p) => p.stage !== 'harvested').toArray(), now(),
+  ]);
+  const planting = {
+    id: newId('plant'), kafo_id: f.kafo_id, crop: f.crop, beds, member_ids: f.member_ids ?? [],
+    planted_on: f.planted_on,
+    expected_harvest: f.expected_harvest || addDays(f.planted_on, cal.days_to_harvest),
+    expected_kg: f.expected_kg === '' || f.expected_kg == null ? beds * cal.kg_per_bed : Number(f.expected_kg),
+    stage: 'planted', lost_kg: 0, lost_reason: null, order_id: f.order_id || null,
+    logged_by: leaderId, logged_at: ts, updated_at: ts,
+  };
+  await db.plantings.add(planting);
+  await audit(leaderId, 'planting.create', planting.id);
+  const flags = await raiseFlags('planting', planting.id, plantingFlags({
+    planting, kgPerBed: cal.kg_per_bed, totalBeds: kafo.total_beds,
+    otherActiveBeds: active.reduce((s, p) => s + p.beds, 0),
+  }));
+  return { planting, flags };
+}
+
+export const STAGES = ['planted', 'growing', 'ready', 'harvested'];
+
+export async function setPlantingStage(plantingId, stage, leaderId) {
+  if (!STAGES.includes(stage)) throw new Error('Unknown stage');
+  const p = await db.plantings.get(plantingId);
+  await assertLeader(leaderId, p.kafo_id);
+  await db.plantings.update(plantingId, { stage, updated_at: await now() });
+  await audit(leaderId, `planting.stage.${stage}`, plantingId);
+}
+
+/** "Lost some / all": lost_kg is the total lost so far (capped at the expected kg). */
+export async function reportLoss(plantingId, { lost_kg, lost_reason }, leaderId) {
+  const p = await db.plantings.get(plantingId);
+  await assertLeader(leaderId, p.kafo_id);
+  if (!lost_reason) throw new Error('Choose a reason');
+  const kg = Math.min(p.expected_kg, Math.max(0, Math.round(Number(lost_kg))));
+  await db.plantings.update(plantingId, { lost_kg: kg, lost_reason, updated_at: await now() });
+  await audit(leaderId, 'planting.loss', plantingId);
+}
+
+/** Accept all or part of a buyer order. The rest stays open for other kafos. */
+export async function acceptOrder(orderId, kafoId, kg, leaderId) {
+  await assertLeader(leaderId, kafoId);
+  const ts = await now();
+  return db.transaction('rw', db.orders, db.order_acceptances, db.audit, async () => {
+    const order = await db.orders.get(orderId);
+    if (!order || !['open', 'partly_filled'].includes(order.status)) throw new Error('This order is no longer open');
+    const acc = await db.order_acceptances.where('order_id').equals(orderId).toArray();
+    const remaining = order.kg - acc.reduce((s, a) => s + a.kg_committed, 0);
+    const amount = Math.round(Number(kg));
+    if (!(amount > 0)) throw new Error('Kg must be more than 0');
+    if (amount > remaining) throw new Error(`Only ${remaining} kg is still open`);
+    const row = { id: newId('acc'), order_id: orderId, kafo_id: kafoId, kg_committed: amount, accepted_by: leaderId, accepted_at: ts };
+    await db.order_acceptances.add(row);
+    await db.orders.update(orderId, { status: amount === remaining ? 'filled' : 'partly_filled' });
+    await audit(leaderId, 'order.accept', orderId, ts);
+    return row;
+  });
+}
+
+/**
+ * Confirm one or more members' produce requests as a single kafo offer buyers can see.
+ * One request = confirm; several = merge. The leader may correct the total kg.
+ * Each member gets an SMS that her produce is now on offer.
+ */
+export async function confirmProduce(requestIds, kg, leaderId) {
+  if (!requestIds.length) throw new Error('Choose at least one request');
+  const requests = await db.produce_requests.bulkGet(requestIds);
+  const kafoId = requests[0]?.kafo_id;
+  await assertLeader(leaderId, kafoId);
+  if (requests.some((r) => !r || r.status !== 'pending_leader' || r.kafo_id !== kafoId)) throw new Error('A request was already handled');
+  if (new Set(requests.map((r) => r.crop)).size > 1) throw new Error('Only merge requests for the same crop');
+  const total = kg === '' || kg == null ? requests.reduce((s, r) => s + r.est_kg, 0) : Math.round(Number(kg));
+  if (!(total > 0)) throw new Error('Kg must be more than 0');
+
+  const offer = {
+    id: newId('offer'), kafo_id: kafoId, crop: requests[0].crop, kg: total, request_ids: requestIds,
+    ready_when: requests.some((r) => r.ready_when === 'today') ? 'today' : 'this_week',
+    status: 'available', confirmed_by: leaderId,
+  };
+  await db.transaction('rw', db.produce_offers, db.produce_requests, async () => {
+    await db.produce_offers.add(offer);
+    for (const r of requests) await db.produce_requests.update(r.id, { status: 'merged', offer_id: offer.id });
+  });
+  await audit(leaderId, requestIds.length > 1 ? 'produce.merge' : 'produce.confirm', offer.id);
+  for (const r of requests) {
+    await sendSms(r.farmer_id, 'sms.produce_confirmed', (lang) => ({ amount: t(`unit.${r.amount_unit}`, lang), crop: cropName(r.crop, lang).toLowerCase() }));
+  }
+  return offer;
+}
+
+export async function rejectProduceRequest(requestId, leaderId) {
+  const r = await db.produce_requests.get(requestId);
+  await assertLeader(leaderId, r.kafo_id);
+  await db.produce_requests.update(requestId, { status: 'rejected' });
+  await audit(leaderId, 'produce.reject', requestId);
+}
+
+export async function withdrawOffer(offerId, leaderId) {
+  const o = await db.produce_offers.get(offerId);
+  await assertLeader(leaderId, o.kafo_id);
+  if (o.status !== 'available') throw new Error('Only available offers can be withdrawn');
+  await db.produce_offers.update(offerId, { status: 'withdrawn' });
+  await audit(leaderId, 'offer.withdraw', offerId);
+}
+
+/** Leader confirms (verified → can turn risk red) or dismisses a member's problem report. */
+export async function reviewReport(reportId, decision, leaderId) {
+  const r = await db.reports.get(reportId);
+  await assertLeader(leaderId, r.kafo_id);
+  if (decision === 'verify') await db.reports.update(reportId, { verified: true });
+  else if (decision === 'dismiss') await db.reports.update(reportId, { status: 'dismissed' });
+  else throw new Error('Unknown decision');
+  await audit(leaderId, `report.${decision}`, reportId);
+}
+
+/**
+ * Leader weighs the kafo's produce for an order on the scale, kg per member.
+ * Creates the collection (the buyer confirms accepted kg in Phase 5) and one delivery per member.
+ */
+export async function recordDelivery(orderId, kafoId, perMember, leaderId) {
+  await assertLeader(leaderId, kafoId);
+  const rows = perMember.map((m) => ({ member_id: m.member_id, kg: Math.round(Number(m.kg)) })).filter((m) => m.kg > 0);
+  if (!rows.length) throw new Error('Enter the weighed kg for at least one member');
+  const [acc, linked, ts] = await Promise.all([
+    db.order_acceptances.where('order_id').equals(orderId).filter((a) => a.kafo_id === kafoId).toArray(),
+    db.plantings.where('kafo_id').equals(kafoId).filter((p) => p.order_id === orderId).toArray(),
+    now(),
+  ]);
+  if (!acc.length) throw new Error('This kafo has not accepted that order');
+  const weighed = rows.reduce((s, m) => s + m.kg, 0);
+  const collection = {
+    id: newId('col'), order_id: orderId, kafo_id: kafoId, kg_weighed: weighed,
+    kg_accepted: null, kg_rejected: null, reject_reason: null, collected_at: ts,
+  };
+  await db.transaction('rw', db.collections, db.deliveries, async () => {
+    await db.collections.add(collection);
+    await db.deliveries.bulkAdd(rows.map((m) => ({ id: newId('del'), collection_id: collection.id, order_id: orderId, member_id: m.member_id, kg: m.kg })));
+  });
+  await audit(leaderId, 'delivery.record', collection.id);
+  const expectedKg = linked.length
+    ? linked.reduce((s, p) => s + p.expected_kg - (p.lost_kg || 0), 0)
+    : acc.reduce((s, a) => s + a.kg_committed, 0);
+  const flags = await raiseFlags('collection', collection.id, deliveryFlags({ expectedKg, weighedKg: weighed }));
+  return { collection, flags };
+}
+
+/** Leader registers a member (Option A). She gets a welcome SMS and a welcome call. */
+export async function addMember(f, leaderId) {
+  await assertLeader(leaderId, f.kafo_id);
+  required(f, ['kafo_id', 'name', 'language']);
+  const hasPhone = Boolean(f.has_phone);
+  if (hasPhone && !PHONE_RE.test(f.phone ?? '')) throw new Error('Phone must be 7 digits');
+  if (hasPhone && (await db.users.where('phone').equals(f.phone).first())) throw new Error('That phone number is already registered');
+  if (!f.crops?.length) throw new Error('Choose at least one crop');
+
+  const id = await uniqueId('users', `user_${slug(f.name.split(' ')[0])}`, 'user');
+  const ts = await now();
+  const user = { id, name: f.name.trim(), phone: hasPhone ? f.phone : '', role: 'farmer', language: f.language, kafo_id: f.kafo_id, buyer_id: null, verified: true, pin: null, created_at: ts };
+  const farmer = { user_id: id, kafo_id: f.kafo_id, crops: f.crops, has_phone: hasPhone, shared_phone_slot: null, name_clip: null, sms_alerts: hasPhone, voice_alerts: false };
+  await db.transaction('rw', db.users, db.farmers, async () => {
+    await db.users.add(user);
+    await db.farmers.add(farmer);
+  });
+  await audit(leaderId, 'member.add', id);
+  if (hasPhone) {
+    const kafo = await db.kafos.get(f.kafo_id);
+    await sendSms(id, 'sms.welcome', { name: user.name.split(' ')[0], kafo: kafo.name });
+    await placeOutboundCall(id, 'welcome');
+  }
+  return { user, farmer };
 }

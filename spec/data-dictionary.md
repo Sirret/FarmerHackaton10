@@ -228,6 +228,18 @@ A farmer saying "I have produce" (needs leader confirmation).
 | created_at | timestamp | | |
 Writer: farmer (create) · leader (merge/reject)
 
+### `interests`
+A farmer telling her leader she wants to plant a crop (USSD / voice "1 Tell my leader I'm interested"). Added in schema v2.
+| Field | Type | Description | Example |
+|---|---|---|---|
+| id ★ | string | | `int_3b8e1c` |
+| farmer_id ★ | string | | `user_binta` |
+| kafo_id ★ | string | | `kafo_brikama` |
+| crop | enum | | `okra` |
+| status ★ | enum | `new \| seen` | `new` |
+| created_at | timestamp | | |
+Writer: farmer (create) · leader (mark seen)
+
 ### `produce_offers`
 Kafo offers visible to buyers (spot market).
 | Field | Type | Description | Example |
@@ -254,7 +266,7 @@ Buyer collecting from one kafo for one order.
 | kg_rejected | number | | `2` |
 | reject_reason | enum? | `size \| ripeness \| damage \| other` | `damage` |
 | collected_at | timestamp | | |
-Writer: leader (weighed) · buyer (accepted/rejected)
+Writer: leader (weighed) · buyer (accepted/rejected). `kg_accepted` / `kg_rejected` stay `null` until the buyer confirms.
 
 ### `deliveries`
 Per-member share of a collection (basis for payment).
@@ -418,5 +430,9 @@ db.version(1).stores({
   disputes: 'id, order_id, status',
   audit: 'id, user_id, at',
   config: 'id'
+});
+// v2
+db.version(2).stores({
+  interests: 'id, farmer_id, kafo_id, status'
 });
 ```

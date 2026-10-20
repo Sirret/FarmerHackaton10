@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 import { resetDemo } from '../../lib/db.js';
-import { demoPestReports, demoHeavyRain, demoPostOrder, callFarmersWithAlert, jumpDemo } from '../../lib/actions.js';
+import { demoPestReports, demoHeavyRain, demoPostOrder, callFarmersWithAlert, jumpDemo, demoProduceRequests, demoInterest } from '../../lib/actions.js';
 import { formatDate } from '../../lib/dates.js';
 import Button from '../ui/Button.jsx';
 import Card from '../ui/Card.jsx';
@@ -40,6 +40,22 @@ const STEPS = [
     run: async () => {
       const { called } = await callFarmersWithAlert();
       return `Calling ${called} farmer${called === 1 ? '' : 's'}.`;
+    },
+  },
+  {
+    label: 'Binta: interested in okra',
+    desc: 'Binta tells her leader she wants to plant okra (what *1234# → 1 → 4 → 1 will do). Shows in the Brikama leader inbox.',
+    run: async () => {
+      await demoInterest();
+      return 'Brikama leader inbox: “Binta is interested in okra”.';
+    },
+  },
+  {
+    label: 'Farmers: I have produce',
+    desc: 'Awa (1 bag) and Binta (2–4 bags) say they have pepper. The Brikama leader can merge them into one offer.',
+    run: async () => {
+      const made = await demoProduceRequests();
+      return `${made.length} produce requests sent to the Brikama leader.`;
     },
   },
   {
