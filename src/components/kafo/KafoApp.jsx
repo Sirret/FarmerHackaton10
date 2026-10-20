@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { db } from '../../lib/db.js';
 import { formatDate } from '../../lib/dates.js';
 import { loadKafoView } from '../../lib/kafoView.js';
@@ -18,6 +18,26 @@ const TABS = [
   { id: 'members', label: 'Members', icon: '👥' },
   { id: 'alerts', label: 'Alerts', icon: '⚠️' },
 ];
+
+/**
+ * Offline label (spec §6.2). Everything is saved on this phone first; with a server it would
+ * send when the network is back. Here it follows the browser's online/offline state.
+ */
+function SyncStatus() {
+  const [online, setOnline] = useState(() => navigator.onLine);
+  useEffect(() => {
+    const up = () => setOnline(true);
+    const down = () => setOnline(false);
+    window.addEventListener('online', up);
+    window.addEventListener('offline', down);
+    return () => { window.removeEventListener('online', up); window.removeEventListener('offline', down); };
+  }, []);
+  return (
+    <span class={'rounded-full px-2 py-0.5 text-[10px] font-semibold ' + (online ? 'bg-accent text-brand-ink' : 'bg-careful text-careful-ink')} role="status" aria-live="polite" data-sync>
+      {online ? 'Saved ✓' : 'Offline · waiting to send'}
+    </span>
+  );
+}
 
 // Kafo leader app (spec §6), rendered inside the smartphone frame on /kafo.
 export default function KafoApp() {
@@ -45,7 +65,7 @@ export default function KafoApp() {
       <header class="sticky top-0 z-10 flex items-center gap-2 bg-brand px-4 py-3 text-brand-ink">
         <div class="min-w-0 flex-1">
           <p class="truncate text-base font-semibold leading-tight">{view.kafo.name}</p>
-          <p class="text-xs opacity-80">Code {view.kafo.code} · {formatDate(view.today)}</p>
+          <p class="flex flex-wrap items-center gap-x-2 text-xs opacity-90">Code {view.kafo.code} · {formatDate(view.today)} <SyncStatus /></p>
         </div>
         <button type="button" onClick={() => go('profile')} aria-label="Kafo profile"
           class="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-sm font-bold">

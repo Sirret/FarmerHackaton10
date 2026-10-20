@@ -11,6 +11,45 @@ import Button from '../ui/Button.jsx';
 import Card from '../ui/Card.jsx';
 import { Field, Input, Select, ChipPicker, Notice } from '../ui/Field.jsx';
 import SignalPill from '../shared/SignalPill.jsx';
+import weather from '../../data/weather.json';
+
+const HEAVY_RAIN_MM = 30; // a day at or above this suggests a heavy-rain alert
+
+/** Real forecast (Open-Meteo, cached by `npm run weather`). "Use" fills in the alert form. */
+function WeatherCard({ onUse }) {
+  const max = Math.max(1, ...weather.places.flatMap((p) => p.days.map((d) => d.rain_mm)));
+  return (
+    <Card title="Weather forecast (real data)">
+      <p class="mb-3 text-xs text-muted">
+        {weather.source}, cached {formatDate(weather.fetched_at)}. Refresh with <code class="rounded bg-soft px-1">npm run weather</code>.
+        Days with {HEAVY_RAIN_MM} mm or more suggest a heavy-rain alert.
+      </p>
+      <div class="space-y-3">
+        {weather.places.map((p) => (
+          <div>
+            <p class="mb-1 text-sm font-medium">{p.name} <span class="font-normal text-muted">· {p.district}</span></p>
+            <ul class="grid grid-cols-7 gap-1 text-center text-[11px]">
+              {p.days.map((d) => {
+                const heavy = d.rain_mm >= HEAVY_RAIN_MM;
+                return (
+                  <li class={`rounded-lg p-1 ${heavy ? 'bg-stop-soft' : 'bg-soft'}`}>
+                    <p class="font-medium">{d.date.slice(8, 10)}/{d.date.slice(5, 7)}</p>
+                    <div class="mx-auto my-1 flex h-8 w-3 items-end rounded bg-surface">
+                      <div class="w-full rounded bg-accent" style={`height: ${Math.round((d.rain_mm / max) * 100)}%`}></div>
+                    </div>
+                    <p>{heavy ? '! ' : ''}{Math.round(d.rain_mm)} mm</p>
+                    <p class="text-muted">{Math.round(d.tmax_c)}°</p>
+                    {heavy && <button type="button" onClick={() => onUse(p.district, d.date)} class="mt-1 min-h-11 w-full rounded bg-stop text-[10px] font-semibold text-stop-ink">Use</button>}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
 
 export default function AlertsTab() {
   const data = useLive(async () => {
@@ -85,6 +124,10 @@ export default function AlertsTab() {
       </Card>
 
       <div class="space-y-4">
+        <WeatherCard onUse={(district, date) => {
+          setForm((f) => ({ ...f, template_type: 'heavy_rain', level: 'red', districts: [district], starts_on: date, ends_on: '', note: `Open-Meteo forecast: heavy rain ${formatDate(date)}` }));
+          setNotice({ text: `Form filled for heavy rain in ${district} on ${formatDate(date)}. Check it and press Send alert.` });
+        }} />
         <Card title={`Active alerts (${active.length})`}>
           {active.length === 0 ? <p class="text-sm text-muted">None.</p> : (
             <ul class="divide-y divide-line text-sm">

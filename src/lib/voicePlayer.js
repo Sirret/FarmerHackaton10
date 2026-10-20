@@ -1,9 +1,10 @@
 // Plays voice-note clips in order (spec §9.6). For each clip it tries
-//   public/audio/{lang}/{clip}.mp3 → public/audio/en/{clip}.mp3 → browser text-to-speech (English script).
-// Nothing lists which files exist: dropping an mp3 into public/audio/wo/ is picked up on the next load.
+//   public/audio/{lang}/{clip}.mp3|.ogg → public/audio/en/{clip}.mp3|.ogg → browser text-to-speech (English script).
+// Nothing lists which files exist: dropping a file into public/audio/wo/ is picked up on the next load.
 // Missing recordings are remembered (per browser) for the admin clip checklist.
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+const FORMATS = ['mp3', 'ogg']; // tried in this order for every clip
 const MISSING_KEY = 'ks.missing_clips';
 const found = new Map(); // url → true (plays) | false (missing), for this page load
 
@@ -96,18 +97,24 @@ export function createPlayer() {
         const c = clips[i];
         onClip?.(i);
         if (fast()) { await wait(100, signal); continue; }
-        const urls = c.shared
-          ? [{ url: `${BASE}/audio/${c.file}.mp3`, key: c.file }]
-          : [{ url: `${BASE}/audio/${lang}/${c.file}.mp3`, key: `${lang}/${c.id}` },
-            ...(lang !== 'en' ? [{ url: `${BASE}/audio/en/${c.file}.mp3`, key: `en/${c.id}` }] : [])];
+        // Each folder may hold .mp3 (plays everywhere) or .ogg (not on iPhone Safari).
+        const folders = c.shared
+          ? [{ path: `${BASE}/audio/${c.file}`, key: c.file }]
+          : [{ path: `${BASE}/audio/${lang}/${c.file}`, key: `${lang}/${c.id}` },
+            ...(lang !== 'en' ? [{ path: `${BASE}/audio/en/${c.file}`, key: `en/${c.id}` }] : [])];
         let played = false;
-        for (const { url, key } of urls) {
-          if (found.get(url) === false) { logMissing(key); continue; }
-          const ok = await playUrl(url, signal);
-          if (signal.aborted) return 'stopped';
-          if (ok === 'blocked') break; // file may exist; speak this one instead, don't log it missing
-          found.set(url, ok);
-          if (ok) { played = true; break; }
+        let blocked = false;
+        for (const { path, key } of folders) {
+          for (const ext of FORMATS) {
+            const url = `${path}.${ext}`;
+            if (found.get(url) === false) continue;
+            const ok = await playUrl(url, signal);
+            if (signal.aborted) return 'stopped';
+            if (ok === 'blocked') { blocked = true; break; } // file may exist; speak instead, don't log it missing
+            found.set(url, ok);
+            if (ok) { played = true; break; }
+          }
+          if (played || blocked) break;
           logMissing(key);
         }
         if (!played) await speak(c.textEn, signal);

@@ -28,7 +28,7 @@ export function OrderSummary({ o }) {
     <div>
       <div class="flex flex-wrap items-baseline gap-x-2">
         <span class="font-semibold">{o.kg} kg {cropName(o.crop).toLowerCase()}</span>
-        <span class="text-sm text-muted">{o.type === 'spot' ? 'spot buy' : 'forward'} · D{o.price_per_kg}/kg · {formatDate(o.window_start)} – {formatDate(o.window_end)}</span>
+        <span class="text-sm text-muted">{o.type === 'spot' ? 'spot buy' : 'forward'} · D{o.price_per_kg}/kg · {formatDate(o.window_start)} – {formatDate(o.window_end)}{o.fulfilment === 'delivery' && ` · delivered (+D${o.delivery_fee})`}{o.repeat_weekly && ' · repeats weekly'}</span>
         <span class="ml-auto rounded-full bg-soft px-2 py-0.5 text-xs font-semibold">{t(`order_stage.${o.stage}`)}</span>
       </div>
       <div class="mt-2 h-2 overflow-hidden rounded-full bg-soft" role="progressbar" aria-valuenow={o.committed} aria-valuemax={o.kg} aria-label="Kg committed by kafos">
@@ -45,7 +45,7 @@ function CollectionCard({ c, o, userId }) {
   const [method, setMethod] = useState('wave');
   const [run, notice, busy] = useAction();
   const acc = Number(accepted);
-  const toPay = Math.round((c.kg_accepted ?? 0) * o.price_per_kg);
+  const toPay = Math.round((c.kg_accepted ?? 0) * o.price_per_kg) + (o.fulfilment === 'delivery' ? o.delivery_fee : 0);
 
   return (
     <li class="rounded-lg bg-soft p-3 text-sm">
@@ -72,7 +72,7 @@ function CollectionCard({ c, o, userId }) {
           <div class="mt-2 flex flex-wrap items-center gap-2">
             <Select aria-label="Pay with" value={method} onChange={(e) => setMethod(e.currentTarget.value)} class="w-auto"
               options={['wave', 'qmoney', 'afrimoney'].map((m) => ({ value: m, label: t(`wallet.${m}`) }))} />
-            <Button variant="go" disabled={busy} onClick={() => run(() => payCollection(c.id, method, userId), (r) => `Paid D${r.total.toLocaleString('en-GB')} to ${r.payments.length} farmers. Each got a PAID SMS.`)}>
+            <Button variant="go" disabled={busy} onClick={() => run(() => payCollection(c.id, method, userId), (r) => `Paid D${r.total.toLocaleString('en-GB')} to ${r.payments.length} farmers. Each got a PAID SMS.${r.nextOrder ? ' Next week’s order is posted.' : ''}`)}>
               Pay D{toPay.toLocaleString('en-GB')} (mock)
             </Button>
           </div>

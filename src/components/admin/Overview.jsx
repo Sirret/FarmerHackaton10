@@ -14,7 +14,10 @@ export default function Overview() {
       db.sms.count(), db.leads.toArray(), db.flags.toArray(), db.reports.toArray(),
     ]);
     const active = alerts.filter((a) => a.ends_on >= day);
+    const [audit, users] = await Promise.all([db.audit.orderBy('at').reverse().limit(12).toArray(), db.users.toArray()]);
+    const name = new Map(users.map((u) => [u.id, u.name]));
     return {
+      activity: audit.map((a) => ({ ...a, who: name.get(a.user_id) ?? a.user_id })),
       stats: [
         ['Kafos', kafos.length],
         ['Farmers', farmers],
@@ -58,6 +61,20 @@ export default function Overview() {
       </Card>
 
       <SignalsPanel />
+
+      <Card title="Recent activity (audit log)">
+        {view.activity.length === 0 ? <p class="text-sm text-muted">Nothing yet. Every leader, buyer and admin action is logged here.</p> : (
+          <ul class="divide-y divide-line text-sm">
+            {view.activity.map((a) => (
+              <li class="flex flex-wrap gap-x-3 py-1.5">
+                <span class="w-12 text-muted">{a.at.slice(11, 16)}</span>
+                <span class="font-medium">{a.who}</span>
+                <span class="font-mono text-xs leading-5 text-muted">{a.action}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
     </div>
   );
 }

@@ -4,10 +4,10 @@
 import { db, newId } from './db.js';
 import { today, now, jump } from './clock.js';
 import { addDays, formatDate } from './dates.js';
-import { cropName, t } from './i18n.js';
+import { cropName, t, toPlainLatin } from './i18n.js';
 import { riskSignal } from './rules.js';
 import { loadSignalData } from './signals.js';
-import { sendSms, placeOutboundCall, farmersIn, alertSmsVars } from './notify.js';
+import { sendSms, placeOutboundCall, farmersIn, alertSmsVars, SMS_MAX } from './notify.js';
 import { plantingFlags, deliveryFlags } from './quality.js';
 import { memberPayouts } from './orders.js';
 import alertTemplates from '../data/alert_templates.json';
@@ -67,6 +67,8 @@ export async function registerKafo(f, adminId = ADMIN_ID) {
     await db.kafos.add(kafo);
     await audit(adminId, 'kafo.register', kafoId, ts);
   });
+  // Registered from the leads inbox: close that lead.
+  if (f.lead_id) await updateLead(f.lead_id, { status: 'registered', notes: `Registered as ${kafo.name} (${kafo.code})` }, adminId);
   return { kafo, leader };
 }
 
@@ -479,8 +481,46 @@ export async function reviewReport(reportId, decision, leaderId) {
   await assertLeader(leaderId, r.kafo_id);
   if (decision === 'verify') await db.reports.update(reportId, { verified: true });
   else if (decision === 'dismiss') await db.reports.update(reportId, { status: 'dismissed' });
+  else if (decision === 'escalate') await db.reports.update(reportId, { status: 'escalated' }); // to the plant protection officer
   else throw new Error('Unknown decision');
   await audit(leaderId, `report.${decision}`, reportId);
+}
+
+// ---------------------------------------------------------------- admin follow-up (spec §8.3, 8.10–8.12)
+
+const LEAD_STATUS = ['new', 'contacted', 'registered', 'not_suitable'];
+
+/** Admin works a lead: status New → Contacted → Registered / Not suitable, notes, market town. */
+export async function updateLead(leadId, patch, adminId = ADMIN_ID) {
+  const allowed = {};
+  if ('status' in patch) {
+    if (!LEAD_STATUS.includes(patch.status)) throw new Error('Unknown lead status');
+    allowed.status = patch.status;
+  }
+  if ('notes' in patch) allowed.notes = String(patch.notes);
+  if ('market_town_id' in patch) allowed.market_town_id = patch.market_town_id || null;
+  await db.leads.update(leadId, allowed);
+  await audit(adminId, `lead.${allowed.status ?? 'update'}`, leadId);
+}
+
+/** Admin resolves a data-quality flag: approve as is, or correct the planting's expected kg. */
+export async function resolveFlag(flagId, { status, correct_kg }, adminId = ADMIN_ID) {
+  if (!['approved', 'corrected'].includes(status)) throw new Error('Approve or correct the flag');
+  const flag = await db.flags.get(flagId);
+  if (status === 'corrected') {
+    const kg = Math.round(Number(correct_kg));
+    if (flag.entity !== 'planting' || !(kg > 0)) throw new Error('Enter the corrected kg');
+    await db.plantings.update(flag.entity_id, { expected_kg: kg, updated_at: await now() });
+  }
+  await db.flags.update(flagId, { status });
+  await audit(adminId, `flag.${status}`, flagId);
+}
+
+/** Admin closes a dispute with a note; any held payment can go ahead. */
+export async function resolveDispute(disputeId, note, adminId = ADMIN_ID) {
+  if (!note?.trim()) throw new Error('Write what was decided');
+  await db.disputes.update(disputeId, { status: 'resolved', resolution_note: note.trim() });
+  await audit(adminId, 'dispute.resolve', disputeId);
 }
 
 /**
@@ -512,6 +552,19 @@ export async function recordDelivery(orderId, kafoId, perMember, leaderId) {
     : acc.reduce((s, a) => s + a.kg_committed, 0);
   const flags = await raiseFlags('collection', collection.id, deliveryFlags({ expectedKg, weighedKg: weighed }));
   return { collection, flags };
+}
+
+/** Leader messages every member who has a phone (spec §6.11). SMS from 1234, plain Latin, ≤160 chars. */
+export async function broadcastToMembers(kafoId, text, leaderId) {
+  const leader = await assertLeader(leaderId, kafoId);
+  const body = text?.trim();
+  if (!body) throw new Error('Write a message first');
+  const [kafo, members] = await Promise.all([db.kafos.get(kafoId), db.farmers.where('kafo_id').equals(kafoId).filter((f) => f.has_phone).toArray()]);
+  const vars = { kafo: kafo.name, text: body, leader: leader.name.split(' ')[0] };
+  if (toPlainLatin(t('sms.broadcast', 'en', vars)).length > SMS_MAX) throw new Error('Message is too long for one SMS');
+  for (const m of members) await sendSms(m.user_id, 'sms.broadcast', vars);
+  await audit(leaderId, 'members.broadcast', kafoId);
+  return { sent: members.length };
 }
 
 /** Leader registers a member (Option A). She gets a welcome SMS and a welcome call. */
@@ -638,7 +691,10 @@ export async function payCollection(collectionId, method, userId) {
     throw new Error('Payment is on hold: an issue on this order is open with the admin');
   }
   const [deliveries, config, ts] = await Promise.all([db.deliveries.where('collection_id').equals(collectionId).toArray(), db.config.get('main'), now()]);
-  const payouts = memberPayouts({ deliveries, kgWeighed: col.kg_weighed, kgAccepted: col.kg_accepted, pricePerKg: order.price_per_kg, feePercent: config.fee_percent });
+  const payouts = memberPayouts({
+    deliveries, kgWeighed: col.kg_weighed, kgAccepted: col.kg_accepted, pricePerKg: order.price_per_kg, feePercent: config.fee_percent,
+    deliveryFee: order.fulfilment === 'delivery' ? order.delivery_fee : 0,
+  });
   const dueBy = new Date(Date.parse(col.collected_at) + config.payment_due_hours * 3_600_000).toISOString();
   const rows = payouts.map((p) => ({
     id: newId('pay'), order_id: order.id, collection_id: collectionId, member_id: p.member_id, amount: p.amount,
@@ -657,10 +713,20 @@ export async function payCollection(collectionId, method, userId) {
   await db.orders.update(order.id, { status: allPaid ? 'paid' : 'collected' });
   await audit(userId, 'payment.pay', collectionId);
 
+  // Repeat weekly: once this week's order is paid, next week's goes up for the kafos.
+  let nextOrder = null;
+  if (allPaid && order.repeat_weekly) {
+    nextOrder = await postOrder(order.buyer_id, {
+      type: order.type, crop: order.crop, kg: order.kg, price_per_kg: order.price_per_kg, grade: order.grade,
+      fulfilment: order.fulfilment, delivery_fee: order.delivery_fee, repeat_weekly: true,
+      window_start: addDays(order.window_start, 7), window_end: addDays(order.window_end, 7),
+    }, userId);
+  }
+
   for (const p of payouts) {
     await sendSms(p.member_id, 'sms.paid', (lang) => ({ kg: p.kg, crop: cropName(order.crop, lang).toLowerCase(), amount: p.amount, wallet: t(`wallet.${method}`, lang) }));
   }
-  return { payments: rows, total: rows.reduce((s, r) => s + r.amount, 0), fee: rows.reduce((s, r) => s + r.platform_fee, 0) };
+  return { payments: rows, total: rows.reduce((s, r) => s + r.amount, 0), fee: rows.reduce((s, r) => s + r.platform_fee, 0), nextOrder };
 }
 
 /** Buyer or leader reports a problem with an order. Payment waits until the admin resolves it. */

@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "vitest run"
+    "test": "vitest run",
+    "weather": "node scripts/fetch-weather.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.0",

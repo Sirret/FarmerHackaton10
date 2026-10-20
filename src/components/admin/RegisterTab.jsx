@@ -21,7 +21,9 @@ export default function RegisterTab() {
     ]);
     return { kafos, users: new Map(users.map((u) => [u.id, u])), towns, buyers, today: config.demo_date };
   });
-  const [form, setForm] = useState(EMPTY);
+  // Opened from the leads inbox: #register?phone=…&lead=…
+  const prefill = new URLSearchParams(window.location.hash.split('?')[1] ?? '');
+  const [form, setForm] = useState(() => ({ ...EMPTY, leader_phone: prefill.get('phone') ?? '', lead_id: prefill.get('lead') ?? '' }));
   const [notice, setNotice] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -41,6 +43,7 @@ export default function RegisterTab() {
       });
       setNotice({ text: `Registered ${kafo.name} (kafo code ${kafo.code}). ${leader.name} can now log in from the home page.` });
       setForm(EMPTY);
+      if (form.lead_id) history.replaceState(null, '', '#register');
     } catch (err) {
       setNotice({ error: true, text: err.message });
     } finally {
@@ -52,6 +55,7 @@ export default function RegisterTab() {
     <div class="grid gap-4 lg:grid-cols-2">
       <Card title="Register a kafo and its leader">
         <form onSubmit={submit} class="grid gap-3 sm:grid-cols-2">
+          {form.lead_id && <p class="rounded-lg bg-careful-soft px-3 py-2 text-sm sm:col-span-2">From the leads inbox: caller {form.leader_phone}. The lead is closed when you register.</p>}
           <Field label="Kafo name" class="sm:col-span-2"><Input value={form.name} onInput={set('name')} placeholder="Sanyang Women's Kafo" /></Field>
           <Field label="Village"><Input value={form.village} onInput={set('village')} placeholder="Sanyang" /></Field>
           <Field label="District">

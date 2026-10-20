@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { orderStage, memberPayouts, kafoReliability, weeklyOutlook } from '../src/lib/orders.js';
+import { orderStage, memberPayouts, kafoReliability, weeklyOutlook, buyerReliability } from '../src/lib/orders.js';
 
 describe('orderStage', () => {
   const order = { id: 'o1', status: 'filled' };
@@ -26,6 +26,29 @@ describe('memberPayouts', () => {
     const r = memberPayouts({ deliveries: [{ member_id: 'awa', kg: 80 }, { member_id: 'binta', kg: 72 }], kgWeighed: 152, kgAccepted: 150, pricePerKg: 55, feePercent: 2.5 });
     expect(r.map((p) => p.amount)).toEqual([4342, 3908]);
     expect(r.reduce((s, p) => s + p.amount, 0)).toBe(150 * 55);
+  });
+});
+
+describe('memberPayouts with a delivery fee', () => {
+  it('splits the delivery fee by kg; the platform fee is on produce only', () => {
+    const r = memberPayouts({ deliveries: [{ member_id: 'awa', kg: 30 }, { member_id: 'binta', kg: 90 }], kgWeighed: 120, kgAccepted: 120, pricePerKg: 50, feePercent: 2.5, deliveryFee: 200 });
+    expect(r).toEqual([
+      { member_id: 'awa', kg: 30, amount: 1500 + 50, platform_fee: 38 },
+      { member_id: 'binta', kg: 90, amount: 4500 + 150, platform_fee: 113 },
+    ]);
+  });
+});
+
+describe('buyerReliability', () => {
+  const orders = [{ id: 'o1', buyer_id: 'b1' }, { id: 'o2', buyer_id: 'b1' }, { id: 'o3', buyer_id: 'b2' }];
+  it('is the share of collections paid by the due time', () => {
+    const payments = [
+      { order_id: 'o1', collection_id: 'c1', status: 'paid', paid_at: '2026-10-20T10:00:00Z', due_by: '2026-10-22T10:00:00Z' },
+      { order_id: 'o1', collection_id: 'c1', status: 'paid', paid_at: '2026-10-20T10:00:00Z', due_by: '2026-10-22T10:00:00Z' },
+      { order_id: 'o2', collection_id: 'c2', status: 'paid', paid_at: '2026-10-25T10:00:00Z', due_by: '2026-10-22T10:00:00Z' },
+    ];
+    expect(buyerReliability('b1', { orders, payments })).toBe(50);
+    expect(buyerReliability('b2', { orders, payments })).toBeNull();
   });
 });
 

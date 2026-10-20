@@ -20,12 +20,26 @@ export function orderStage(order, { plantings }) {
  * amount = kg × price × accepted ÷ weighed (whole dalasi). The platform fee is charged
  * to the buyer on top and never taken from members.
  */
-export function memberPayouts({ deliveries, kgWeighed, kgAccepted, pricePerKg, feePercent }) {
+export function memberPayouts({ deliveries, kgWeighed, kgAccepted, pricePerKg, feePercent, deliveryFee = 0 }) {
   const share = kgWeighed > 0 ? kgAccepted / kgWeighed : 0;
+  const totalKg = deliveries.reduce((s, d) => s + d.kg, 0);
   return deliveries.map((d) => {
-    const amount = Math.round(d.kg * pricePerKg * share);
-    return { member_id: d.member_id, kg: d.kg, amount, platform_fee: Math.round((amount * feePercent) / 100) };
+    const produce = Math.round(d.kg * pricePerKg * share);
+    // Kafo delivers to the buyer: the delivery fee goes to the members who carried it, by kg.
+    const delivery = totalKg > 0 ? Math.round((deliveryFee * d.kg) / totalKg) : 0;
+    return { member_id: d.member_id, kg: d.kg, amount: produce + delivery, platform_fee: Math.round((produce * feePercent) / 100) };
   });
+}
+
+/** Share of a buyer's payments made by their due time (collection + 48 h). null = no payments yet. */
+export function buyerReliability(buyerId, { orders, payments }) {
+  const mine = new Set(orders.filter((o) => o.buyer_id === buyerId).map((o) => o.id));
+  // One collection is paid at once: judge each collection, not each member payment.
+  const byCollection = new Map();
+  for (const p of payments) if (mine.has(p.order_id) && p.status === 'paid') byCollection.set(p.collection_id ?? p.id, p);
+  const list = [...byCollection.values()];
+  if (!list.length) return null;
+  return Math.round((list.filter((p) => p.paid_at <= p.due_by).length / list.length) * 100);
 }
 
 /** Share of committed kg a kafo actually delivered and had accepted, on finished orders. null = no history yet. */

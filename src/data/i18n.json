@@ -234,5 +234,6 @@
   "sms.alert.dry_spell": { "en": "{verdict}: Dry spell {when}. Water {crop} early morning and cover beds. Dial *4321# to hear. -Kafo Signal" },
   "sms.alert.pest_outbreak": { "en": "{verdict}: Pest outbreak {when}. Check {crop} under leaves every day. Dial *4321# to hear. -Kafo Signal" },
   "sms.alert.disease": { "en": "{verdict}: Plant disease {when}. Remove sick {crop} plants. Dial *4321# to hear. -Kafo Signal" },
+  "sms.broadcast": { "en": "{kafo}: {text} -{leader}" },
   "sms.paid": { "en": "PAID: {kg}kg {crop} delivered. D{amount} sent to your {wallet}. -Kafo Signal" }
 }

@@ -1,12 +1,37 @@
 import { useState } from 'preact/hooks';
-import { addMember } from '../../lib/actions.js';
-import { cropName, LANGS, t } from '../../lib/i18n.js';
+import { addMember, broadcastToMembers } from '../../lib/actions.js';
+import { SMS_MAX } from '../../lib/notify.js';
+import { cropName, LANGS, t, toPlainLatin } from '../../lib/i18n.js';
 import Button from '../ui/Button.jsx';
 import { Field, Input, Select, ChipPicker, Notice } from '../ui/Field.jsx';
 import { useAction } from '../ui/useAction.js';
 import CropIcon from '../shared/CropIcon.jsx';
 
 const EMPTY = { name: '', phone: '', has_phone: true, language: 'mnk', crops: [] };
+
+/** Message every member with a phone, as one SMS from 1234 (spec §6.11). */
+function Broadcast({ view, leaderId }) {
+  const [text, setText] = useState('');
+  const [run, notice, busy] = useAction();
+  const withPhone = view.members.filter((m) => m.has_phone).length;
+  const full = toPlainLatin(t('sms.broadcast', 'en', { kafo: view.kafo.name, text, leader: view.leader?.name.split(' ')[0] ?? '' }));
+  const left = SMS_MAX - full.length;
+  async function send() {
+    if (await run(() => broadcastToMembers(view.kafo.id, text, leaderId), (r) => 'Sent to ' + r.sent + ' members by SMS.')) setText('');
+  }
+  return (
+    <section class="rounded-xl border border-line bg-surface p-3 shadow-sm">
+      <h2 class="mb-2 font-semibold">Message all members</h2>
+      <textarea aria-label="Message to all members" rows={3} class="w-full rounded-lg border border-line bg-surface p-2 text-sm" placeholder="Meeting at the garden on Saturday 9:00"
+        value={text} onInput={(e) => setText(e.currentTarget.value)} />
+      <div class="mt-1 flex items-center gap-2 text-xs text-muted">
+        <span class={left < 0 ? 'font-semibold text-ink' : ''}>{left < 0 ? (-left) + ' characters too long' : left + ' characters left'} · {withPhone} members with a phone</span>
+        <Button variant="go" class="ml-auto" disabled={busy || !text.trim() || left < 0} onClick={send}>Send SMS</Button>
+      </div>
+      <Notice notice={notice} />
+    </section>
+  );
+}
 
 export default function Members({ view, leaderId }) {
   const [f, setF] = useState(EMPTY);
@@ -47,6 +72,8 @@ export default function Members({ view, leaderId }) {
         </section>
       )}
       <Notice notice={notice} />
+
+      <Broadcast view={view} leaderId={leaderId} />
 
       <section>
         <h2 class="mb-2 text-sm font-semibold">Members ({view.members.length})</h2>

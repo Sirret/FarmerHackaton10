@@ -8,6 +8,7 @@ const LONGEST = {
   name: 'Ramatoulie Jallow', kafo: kafos.reduce((a, k) => (k.name.length > a.length ? k.name : a), ''),
   amount: '5+ bags', crop: 'tomato/onion/pepper/okra', CROP: 'TOMATO', problem: 'Leaf spots', town: 'Busumbala',
   verdict: 'WATCH OUT', when: 'from tomorrow', day: '22 Oct 2026', time: '10:00', kg: 999, amount_d: 99999, wallet: 'Afrimoney',
+  leader: 'Mariama', text: 'Meeting at the garden on Saturday 9:00. Bring your seeds and the scale book. Water early, rain is coming',
 };
 
 describe('SMS templates', () => {

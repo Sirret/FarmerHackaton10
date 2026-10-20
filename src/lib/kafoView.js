@@ -3,6 +3,7 @@
 import { db } from './db.js';
 import { loadSignalData } from './signals.js';
 import { plantSignal, sellSignal, riskSignal, fairPriceSignal } from './rules.js';
+import { buyerReliability } from './orders.js';
 
 const OPEN = ['open', 'partly_filled'];
 const LIVE = ['open', 'partly_filled', 'filled', 'growing', 'ready', 'collected'];
@@ -57,6 +58,7 @@ export async function loadKafoView(kafoId) {
         remaining: o.kg - acc.reduce((s, a) => s + a.kg_committed, 0),
         ours: acc.filter((a) => a.kafo_id === kafoId).reduce((s, a) => s + a.kg_committed, 0),
         fair: fairPriceSignal({ crop: o.crop, price: o.price_per_kg, today, data }),
+        buyer_reliability: buyerReliability(o.buyer_id, { orders: data.orders, payments }),
       };
     })
     .filter((o) => o.remaining > 0)

@@ -22,7 +22,11 @@ function OrderCard({ o, view, leaderId, run, busy }) {
         <div class="flex-1">
           <p class="font-semibold">{o.buyer?.business_name} {o.buyer?.verified && <span class="text-xs font-normal text-muted">✓ verified</span>}</p>
           <p>{o.kg} kg {cropName(o.crop).toLowerCase()} · <span class="font-semibold">D{o.price_per_kg}/kg</span> · grade {o.grade}</p>
-          <p class="text-xs text-muted">Deliver {formatDate(o.window_start)} – {formatDate(o.window_end)} · {o.fulfilment}</p>
+          <p class="text-xs text-muted">
+            Deliver {formatDate(o.window_start)} – {formatDate(o.window_end)} · {o.fulfilment === 'delivery' ? `kafo delivers (+D${o.delivery_fee} to members)` : 'buyer picks up'}
+            {o.repeat_weekly && ' · repeats weekly'}
+          </p>
+          <p class="text-xs text-muted">{o.buyer_reliability == null ? 'New buyer: no payments yet' : `Pays on time: ${o.buyer_reliability}%`}</p>
         </div>
       </div>
       <p class={`mt-2 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${s.soft}`}>
