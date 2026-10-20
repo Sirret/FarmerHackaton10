@@ -3,12 +3,13 @@
 // notifications, same audit row. Pages never write to db tables directly.
 import { db, newId } from './db.js';
 import { today, now, jump } from './clock.js';
-import { addDays } from './dates.js';
+import { addDays, formatDate } from './dates.js';
 import { cropName, t } from './i18n.js';
 import { riskSignal } from './rules.js';
 import { loadSignalData } from './signals.js';
 import { sendSms, placeOutboundCall, farmersIn, alertSmsVars } from './notify.js';
 import { plantingFlags, deliveryFlags } from './quality.js';
+import { memberPayouts } from './orders.js';
 import alertTemplates from '../data/alert_templates.json';
 
 export const ADMIN_ID = 'user_admin';
@@ -187,7 +188,8 @@ async function riskFor(crop, district) {
 // ---------------------------------------------------------------- orders
 
 /** A verified buyer posts a forward order (Phase 5 form uses this too). */
-export async function postOrder(buyerId, f) {
+export async function postOrder(buyerId, f, userId = null) {
+  if (userId) await assertBuyer(userId, buyerId);
   const buyer = await db.buyers.get(buyerId);
   if (!buyer) throw new Error('Unknown buyer');
   if (!buyer.verified) throw new Error('Buyer is awaiting verification');
@@ -204,7 +206,7 @@ export async function postOrder(buyerId, f) {
   };
   await db.orders.add(order);
   const user = await db.users.where('role').equals('buyer').filter((u) => u.buyer_id === buyerId).first();
-  await audit(user?.id ?? buyerId, 'order.create', order.id);
+  await audit(userId ?? user?.id ?? buyerId, 'order.create', order.id);
   return order;
 }
 
@@ -496,4 +498,140 @@ export async function addMember(f, leaderId) {
     await placeOutboundCall(id, 'welcome');
   }
   return { user, farmer };
+}
+
+// ---------------------------------------------------------------- buyer
+
+/** A buyer user acting for their own business. Writes also need a verified, active buyer. */
+async function assertBuyer(userId, buyerId, { write = true } = {}) {
+  const user = await db.users.get(userId);
+  if (user?.role === 'admin') return user;
+  if (user?.role !== 'buyer' || user.buyer_id !== buyerId) throw new Error('Only this buyer can do that');
+  if (write) {
+    const buyer = await db.buyers.get(buyerId);
+    if (!buyer?.verified) throw new Error('Your business is awaiting verification');
+    if (buyer.suspended) throw new Error('Your account is suspended');
+  }
+  return user;
+}
+
+/** Buyer cancels an order. Only while it is still open and no kafo has committed. */
+export async function cancelOrder(orderId, userId, reason = 'Cancelled by buyer') {
+  const order = await db.orders.get(orderId);
+  await assertBuyer(userId, order.buyer_id, { write: false });
+  const acc = await db.order_acceptances.where('order_id').equals(orderId).count();
+  if (order.status !== 'open' || acc > 0) throw new Error('Only open orders that no kafo has accepted can be cancelled');
+  await db.orders.update(orderId, { status: 'cancelled', cancelled_reason: reason });
+  await audit(userId, 'order.cancel', orderId);
+}
+
+/** Buyer wants a kafo's confirmed spot offer. Creates a spot order the leader must confirm. */
+export async function buyOffer(offerId, { price_per_kg }, userId) {
+  const user = await db.users.get(userId);
+  const offer = await db.produce_offers.get(offerId);
+  if (offer?.status !== 'available') throw new Error('This offer is no longer available');
+  const pending = await db.orders.where('type').equals('spot').filter((o) => o.offer_id === offerId && o.status === 'open').count();
+  if (pending) throw new Error('Another buyer is already waiting for this offer');
+  const day = await today();
+  return postOrder(user?.buyer_id, {
+    type: 'spot', offer_id: offerId, crop: offer.crop, kg: offer.kg, price_per_kg,
+    window_start: day, window_end: addDays(day, offer.ready_when === 'today' ? 2 : 7),
+  }, userId);
+}
+
+/** Leader confirms selling a spot offer to the buyer who asked. Members who put produce in get an SMS. */
+export async function confirmSpotSale(orderId, leaderId) {
+  const order = await db.orders.get(orderId);
+  const offer = order?.offer_id && (await db.produce_offers.get(order.offer_id));
+  if (!offer || order.status !== 'open') throw new Error('This request is no longer open');
+  await assertLeader(leaderId, offer.kafo_id);
+  const ts = await now();
+  await db.transaction('rw', db.orders, db.order_acceptances, db.produce_offers, async () => {
+    await db.order_acceptances.add({ id: newId('acc'), order_id: orderId, kafo_id: offer.kafo_id, kg_committed: order.kg, accepted_by: leaderId, accepted_at: ts });
+    await db.orders.update(orderId, { status: 'filled' });
+    await db.produce_offers.update(offer.id, { status: 'sold' });
+  });
+  await audit(leaderId, 'offer.sell', orderId);
+  const [kafo, requests] = await Promise.all([db.kafos.get(offer.kafo_id), db.produce_requests.bulkGet(offer.request_ids)]);
+  for (const r of requests.filter(Boolean)) {
+    await sendSms(r.farmer_id, 'sms.order_taken', (lang) => ({ crop: cropName(offer.crop, lang).toLowerCase(), kafo: kafo.name, day: formatDate(order.window_start), time: '9:00' }));
+  }
+}
+
+export async function declineSpotSale(orderId, leaderId) {
+  const order = await db.orders.get(orderId);
+  const offer = await db.produce_offers.get(order.offer_id);
+  await assertLeader(leaderId, offer.kafo_id);
+  if (order.status !== 'open') throw new Error('This request is no longer open');
+  await db.orders.update(orderId, { status: 'cancelled', cancelled_reason: 'Declined by kafo' });
+  await audit(leaderId, 'offer.decline', orderId);
+}
+
+/** Buyer confirms what was collected: accepted kg, and why any kg were rejected. */
+export async function confirmCollection(collectionId, { kg_accepted, reject_reason }, userId) {
+  const col = await db.collections.get(collectionId);
+  const order = await db.orders.get(col.order_id);
+  await assertBuyer(userId, order.buyer_id);
+  if (col.kg_accepted != null) throw new Error('Already confirmed');
+  const accepted = Math.round(Number(kg_accepted));
+  if (!(accepted >= 0 && accepted <= col.kg_weighed)) throw new Error(`Accepted kg must be between 0 and ${col.kg_weighed}`);
+  const rejected = col.kg_weighed - accepted;
+  if (rejected > 0 && !reject_reason) throw new Error('Say why kg were rejected');
+  await db.collections.update(collectionId, { kg_accepted: accepted, kg_rejected: rejected, reject_reason: rejected > 0 ? reject_reason : null });
+  if (order.status !== 'paid') await db.orders.update(order.id, { status: 'collected' });
+  await audit(userId, 'collection.confirm', collectionId);
+}
+
+/**
+ * Buyer pays (mock Wave / QMoney / Afrimoney). One payment per member, straight to her
+ * wallet, for her weighed kg × price scaled by the accepted share. The leader never holds
+ * group money. Every member gets a PAID SMS. Held while the order has an open dispute.
+ */
+export async function payCollection(collectionId, method, userId) {
+  const col = await db.collections.get(collectionId);
+  const order = await db.orders.get(col.order_id);
+  await assertBuyer(userId, order.buyer_id);
+  if (col.kg_accepted == null) throw new Error('Confirm the collected kg first');
+  if (!['wave', 'qmoney', 'afrimoney'].includes(method)) throw new Error('Choose a payment method');
+  if (await db.payments.filter((p) => p.collection_id === collectionId).count()) throw new Error('Already paid');
+  if (await db.disputes.where('order_id').equals(order.id).filter((d) => d.status === 'open').count()) {
+    throw new Error('Payment is on hold: an issue on this order is open with the admin');
+  }
+  const [deliveries, config, ts] = await Promise.all([db.deliveries.where('collection_id').equals(collectionId).toArray(), db.config.get('main'), now()]);
+  const payouts = memberPayouts({ deliveries, kgWeighed: col.kg_weighed, kgAccepted: col.kg_accepted, pricePerKg: order.price_per_kg, feePercent: config.fee_percent });
+  const dueBy = new Date(Date.parse(col.collected_at) + config.payment_due_hours * 3_600_000).toISOString();
+  const rows = payouts.map((p) => ({
+    id: newId('pay'), order_id: order.id, collection_id: collectionId, member_id: p.member_id, amount: p.amount,
+    method, status: 'paid', due_by: dueBy, paid_at: ts, platform_fee: p.platform_fee,
+  }));
+  await db.payments.bulkAdd(rows);
+
+  // Paid in full once every kafo that committed has a confirmed, paid collection.
+  const [acc, cols, pays] = await Promise.all([
+    db.order_acceptances.where('order_id').equals(order.id).toArray(),
+    db.collections.where('order_id').equals(order.id).toArray(),
+    db.payments.where('order_id').equals(order.id).toArray(),
+  ]);
+  const paidCols = new Set(pays.map((p) => p.collection_id));
+  const allPaid = acc.every((a) => cols.some((c) => c.kafo_id === a.kafo_id && paidCols.has(c.id)));
+  await db.orders.update(order.id, { status: allPaid ? 'paid' : 'collected' });
+  await audit(userId, 'payment.pay', collectionId);
+
+  for (const p of payouts) {
+    await sendSms(p.member_id, 'sms.paid', (lang) => ({ kg: p.kg, crop: cropName(order.crop, lang).toLowerCase(), amount: p.amount, wallet: t(`wallet.${method}`, lang) }));
+  }
+  return { payments: rows, total: rows.reduce((s, r) => s + r.amount, 0), fee: rows.reduce((s, r) => s + r.platform_fee, 0) };
+}
+
+/** Buyer or leader reports a problem with an order. Payment waits until the admin resolves it. */
+export async function reportIssue(orderId, { issue, description }, userId) {
+  const [order, user] = await Promise.all([db.orders.get(orderId), db.users.get(userId)]);
+  const leaderOk = user?.role === 'leader'
+    && (await db.order_acceptances.where('order_id').equals(orderId).filter((a) => a.kafo_id === user.kafo_id).count()) > 0;
+  if (!(user?.role === 'admin' || leaderOk || (user?.role === 'buyer' && user.buyer_id === order.buyer_id))) throw new Error('You are not part of this order');
+  if (!issue) throw new Error('Choose what went wrong');
+  const row = { id: newId('disp'), order_id: orderId, raised_by: userId, issue, description: description?.trim() ?? '', status: 'open', resolution_note: null };
+  await db.disputes.add(row);
+  await audit(userId, 'dispute.create', row.id);
+  return row;
 }

@@ -284,6 +284,7 @@ Writer: **leader only**
 |---|---|---|---|
 | id ★ | string | | `pay_77de` |
 | order_id ★ | string | | `order_0001` |
+| collection_id | string | → `collections.id` this payment settles (one collection is paid once) | `col_11ab` |
 | member_id ★ | string | | `user_awa` |
 | amount | number | Dalasi = member kg × price, scaled by accepted/weighed | `2090` |
 | method | enum | `wave \| qmoney \| afrimoney` (mock) | `wave` |

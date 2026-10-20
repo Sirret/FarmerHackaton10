@@ -64,6 +64,30 @@
   "stage.ready": { "en": "Ready" },
   "stage.harvested": { "en": "Harvested" },
 
+  "wallet.wave": { "en": "Wave" },
+  "wallet.qmoney": { "en": "QMoney" },
+  "wallet.afrimoney": { "en": "Afrimoney" },
+
+  "order_stage.open": { "en": "Open" },
+  "order_stage.partly_filled": { "en": "Partly filled" },
+  "order_stage.filled": { "en": "Filled" },
+  "order_stage.growing": { "en": "Growing" },
+  "order_stage.ready": { "en": "Ready" },
+  "order_stage.collected": { "en": "Collected" },
+  "order_stage.paid": { "en": "Paid" },
+  "order_stage.cancelled": { "en": "Cancelled" },
+  "order_stage.disputed": { "en": "Disputed" },
+
+  "issue.short_delivery": { "en": "Short delivery" },
+  "issue.quality": { "en": "Quality" },
+  "issue.late_payment": { "en": "Late payment" },
+  "issue.other": { "en": "Other" },
+
+  "reject.size": { "en": "Size" },
+  "reject.ripeness": { "en": "Ripeness" },
+  "reject.damage": { "en": "Damage" },
+  "reject.other": { "en": "Other" },
+
   "lost.pests": { "en": "Pests" },
   "lost.disease": { "en": "Disease" },
   "lost.flood": { "en": "Flood" },

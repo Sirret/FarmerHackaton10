@@ -36,7 +36,7 @@ import config from '../data/seed/config.json';
 /** @typedef {{ id: string, kafo_id: string, crop: Crop, kg: number, request_ids: string[], ready_when: 'today'|'this_week', status: 'available'|'sold'|'withdrawn', confirmed_by: string }} ProduceOffer */
 /** @typedef {{ id: string, order_id: string, kafo_id: string, kg_weighed: number, kg_accepted: number, kg_rejected: number, reject_reason?: 'size'|'ripeness'|'damage'|'other'|null, collected_at: string }} Collection */
 /** @typedef {{ id: string, collection_id: string, order_id: string, member_id: string, kg: number }} Delivery */
-/** @typedef {{ id: string, order_id: string, member_id: string, amount: number, method: 'wave'|'qmoney'|'afrimoney', status: 'pending'|'paid'|'on_hold', due_by: string, paid_at?: string|null, platform_fee: number }} Payment */
+/** @typedef {{ id: string, order_id: string, collection_id: string, member_id: string, amount: number, method: 'wave'|'qmoney'|'afrimoney', status: 'pending'|'paid'|'on_hold', due_by: string, paid_at?: string|null, platform_fee: number }} Payment */
 /** @typedef {{ id: string, to_user_id: string, from: string, template_key: string, body: string, lang: Lang, read: boolean, sent_at: string }} Sms */
 /** @typedef {{ id: string, user_id: string, direction: 'callback'|'outbound_alert'|'welcome', status: 'ringing'|'answered'|'missed'|'ended', alert_id?: string|null, started_at: string, ended_at?: string|null }} Call */
 /** @typedef {{ id: string, phone: string, voice_note?: Blob|null, market_town_id?: string|null, status: 'new'|'contacted'|'registered'|'not_suitable', notes: string, created_at: string }} Lead */

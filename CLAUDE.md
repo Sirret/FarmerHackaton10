@@ -51,7 +51,15 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 ## Kafo leader app (`/kafo`)
 - `KafoApp.jsx` reads `getSession('leader')` and one live snapshot from `loadKafoView(kafoId)` (`src/lib/kafoView.js`: signals, open orders with `fairPriceSignal`, our orders, plantings, members, inbox, alerts). Screens get `{ view, leaderId, go, preset }`; `go('plant', { crop, member })` opens a tab with a preset.
 - Inbox = new `interests` + `produce_requests` (grouped by crop: tick, correct kg, merge) + unchecked reports + open orders not yet accepted.
-- `interests` table was added in Dexie schema v2 (dictionary updated). Farmer-side writers `createInterest` / `createProduceRequest` already exist in actions.js for Phase 6; the admin Demo tab has buttons that call them.
+- Inbox also shows spot requests (a buyer wants one of our offers) → `confirmSpotSale` / `declineSpotSale`.
+- `interests` table was added in Dexie schema v2 (dictionary updated).
+
+## Buyer website (`/buyer`)
+- `BuyerApp.jsx` (tabs in the URL hash: outlook, post, market, orders) reads `getSession('buyer')` and `loadBuyerView(userId)` (`src/lib/buyerView.js`). **Privacy:** buyers get kafo-level data only (name, district, verified leader, reliability %); the loader strips member IDs, never returns farmer names or phones.
+- Pure helpers in `src/lib/orders.js` (tested): `orderStage` (Growing/Ready derived from linked plantings), `memberPayouts` (kg × price × accepted ÷ weighed; fee charged to the buyer on top), `kafoReliability`, `weeklyOutlook`.
+- Actions: `postOrder(buyerId, f, userId)`, `cancelOrder` (open + nothing accepted), `buyOffer` (spot order, leader confirms), `confirmCollection`, `payCollection` (one `payments` row per member with `collection_id`, PAID SMS each, order → `paid` when every committed kafo is paid; blocked while a dispute is open), `reportIssue` (buyer or leader on the order).
+- Unverified or suspended buyers can browse but `assertBuyer` blocks writes; the Post order tab shows "Awaiting verification".
+- `loginAs` reloads when already on the role page, so every island switches account. Farmer-side writers `createInterest` / `createProduceRequest` already exist in actions.js for Phase 6; the admin Demo tab has buttons that call them.
 - Demo login: `src/lib/session.js` (`getSession(role)`, `loginAs(role, id)`, localStorage). `AccountTiles` shows click-to-login squares (live from the DB, so new kafos/buyers appear at once) on the home page; `SessionBar` on each role page shows "Logged in as" + switch. Admin has no login. Phone numbers are fake 7-digit demo numbers; nothing is ever sent.
 
 ## Signal engine
@@ -68,4 +76,5 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - Phase 2 (colour engine + render): done.
 - Phase 3 (admin website): done. Tabs: Overview (counts, kafos under alert, live Signals with a "+10 beds" test button), Register (kafo + leader, buyer verify/suspend), Prices & transport, Alerts (template form, active list, call farmers, SMS log), Demo (scenario buttons + table counts). Home page has click-to-login account squares.
 - Phase 4 (kafo leader app): done. Home (signal tiles + 🔊 browser speech, to-do inbox, upcoming harvests), Plant (auto-filled log, stages, lost some/all, capacity flag), Sell (orders with fair-price verdict, accept full/part, weighed delivery per member, our offers), Members (add → welcome SMS + call; delivered kg, paid), Alerts (area alerts, confirm/dismiss reports), Profile.
-- Next: Phase 5 (buyer website). Collections already exist with `kg_accepted: null` waiting for the buyer; payments per member are created when the buyer pays.
+- Phase 5 (buyer website): done. Outlook (8-week harvest bars by crop, area filter, my orders with fill bars), Post order (market reference, fair-price check, fee preview, verification gate), Market (buy confirmed offers), My orders (stage steps, kafos with reliability, confirm collection, mock pay per member, cancel, report issue).
+- Next: Phase 6 (farmer basic phone + USSD *1234#). Farmer writes already exist: `createInterest`, `createProduceRequest`, `createReport`.

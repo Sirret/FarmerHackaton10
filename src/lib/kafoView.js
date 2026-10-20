@@ -82,13 +82,20 @@ export async function loadKafoView(kafoId) {
     .map((r) => ({ ...r, reporter: name(r.reporter_id) }))
     .sort((a, b) => b.created_at.localeCompare(a.created_at));
 
+  // Buyers asking to buy one of our spot offers: the leader confirms or declines.
+  const offerIds = new Set(offers.map((o) => o.id));
+  const spotRequests = data.orders
+    .filter((o) => o.type === 'spot' && o.status === 'open' && offerIds.has(o.offer_id))
+    .map((o) => ({ ...withBuyer(o), offer: offers.find((x) => x.id === o.offer_id) }));
+
   const inbox = {
+    spot: spotRequests,
     interests: interests.filter((i) => i.status === 'new').map((i) => ({ ...i, farmer: name(i.farmer_id) })),
     requests: requests.filter((r) => r.status === 'pending_leader').map((r) => ({ ...r, farmer: name(r.farmer_id) })),
     reports: reports.filter((r) => r.status === 'open' && !r.verified),
     orders: openOrders.filter((o) => o.ours === 0),
   };
-  inbox.count = inbox.interests.length + inbox.requests.length + inbox.reports.length + inbox.orders.length;
+  inbox.count = inbox.spot.length + inbox.interests.length + inbox.requests.length + inbox.reports.length + inbox.orders.length;
 
   const alerts = data.alerts
     .filter((a) => a.ends_on >= today && a.districts.includes(kafo.district))

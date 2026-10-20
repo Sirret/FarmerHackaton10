@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { confirmProduce, rejectProduceRequest, reviewReport, markInterestSeen } from '../../lib/actions.js';
+import { confirmProduce, rejectProduceRequest, reviewReport, markInterestSeen, confirmSpotSale, declineSpotSale } from '../../lib/actions.js';
 import { formatDate } from '../../lib/dates.js';
 import { cropName, t } from '../../lib/i18n.js';
 import Button from '../ui/Button.jsx';
@@ -48,7 +48,7 @@ function ProduceGroup({ crop, requests, leaderId, run, busy }) {
 export default function Inbox({ view, leaderId, go }) {
   // One notice for the whole inbox: handled items disappear from the list.
   const [run, notice, busy] = useAction();
-  const { interests, requests, reports, orders } = view.inbox;
+  const { spot, interests, requests, reports, orders } = view.inbox;
   const byCrop = {};
   for (const r of requests) (byCrop[r.crop] ??= []).push(r);
 
@@ -64,6 +64,16 @@ export default function Inbox({ view, leaderId, go }) {
   return (
     <div>
       <ul class="space-y-2">
+        {spot.map((o) => (
+          <li class="rounded-xl border-2 border-go bg-surface p-3 text-sm shadow-sm">
+            <p><span class="font-semibold">{o.buyer?.business_name}</span> wants to buy our {o.kg} kg {cropName(o.crop).toLowerCase()} at <span class="font-semibold">D{o.price_per_kg}/kg</span> (D{o.kg * o.price_per_kg} in total).</p>
+            <div class="mt-2 flex gap-2">
+              <Button variant="go" onClick={() => run(() => confirmSpotSale(o.id, leaderId), 'Sale confirmed. Members who gave produce get an SMS.')}>Confirm sale</Button>
+              <Button variant="ghost" onClick={() => run(() => declineSpotSale(o.id, leaderId), 'Declined. The offer stays open for other buyers.')}>Decline</Button>
+            </div>
+          </li>
+        ))}
+
         {interests.map((i) => (
           <li class={itemClass}>
             <p><span class="font-semibold">{i.farmer}</span> is interested in planting <span class="font-semibold">{cropName(i.crop).toLowerCase()}</span>.</p>

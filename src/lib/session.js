@@ -24,8 +24,11 @@ export function setSession(role, userId) {
   }
 }
 
-/** Log in as an account and open its page. */
+/** Log in as an account and open its page (reloads when already on it, so every part switches). */
 export function loginAs(role, userId) {
   setSession(role, userId);
-  window.location.href = href(ROLE_PAGE[role]);
+  const target = href(ROLE_PAGE[role]);
+  const strip = (p) => p.replace(/\/$/, '');
+  if (strip(window.location.pathname) === strip(target)) window.location.reload();
+  else window.location.href = target;
 }

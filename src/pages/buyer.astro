@@ -1,12 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Card from '../components/shared/Card.astro';
 import SessionBar from '../components/shared/SessionBar.jsx';
+import BuyerApp from '../components/buyer/BuyerApp.jsx';
 ---
 <Base title="Buyer">
-  <h1 class="mb-4 text-2xl font-bold">Buyer dashboard</h1>
   <SessionBar client:only="preact" role="buyer" />
-  <Card>
-    <p class="text-sm text-muted">Harvest outlook, forward orders, market offers, collection and payment arrive in Phase 5.</p>
-  </Card>
+  <BuyerApp client:only="preact" />
 </Base>
