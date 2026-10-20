@@ -1,5 +1,5 @@
 // Seed data integrity: references resolve, enums match spec/data-dictionary.md,
-// and the demo story numbers hold.
+// and the demo story data exists. Signal ratios are checked in demo-scenario.test.js.
 import { describe, it, expect } from 'vitest';
 import { addDays } from '../src/lib/dates.js';
 import users from '../src/data/seed/users.json';
@@ -88,24 +88,5 @@ describe('demo story', () => {
     }
     const stale = Object.entries(latest).filter(([, d]) => d < addDays(config.demo_date, -config.price_stale_days));
     expect(stale.map(([k]) => k)).toEqual(['town_banjul|okra']);
-  });
-
-  it('tunes Kombo Central to tomato red, onion yellow, pepper and okra green', () => {
-    const district = new Set(kafos.filter((k) => k.district === 'Kombo Central').map((k) => k.id));
-    const end = addDays(config.demo_date, config.plant_window_weeks * 7);
-    const ratio = (crop) => {
-      const cal = crop_calendar.find((c) => c.crop === crop);
-      const supply = plantings
-        .filter((p) => p.crop === crop && district.has(p.kafo_id) && p.stage !== 'harvested'
-          && p.expected_harvest >= config.demo_date && p.expected_harvest <= end)
-        .reduce((s, p) => s + p.expected_kg - p.lost_kg, 0);
-      const demand = cal.baseline_demand_kg * config.plant_window_weeks
-        + orders.filter((o) => o.crop === crop && o.type === 'forward' && o.status === 'open').reduce((s, o) => s + o.kg, 0);
-      return supply / demand;
-    };
-    expect(ratio('tomato')).toBeCloseTo(1.9, 1);
-    expect(ratio('onion')).toBeCloseTo(1.0, 1);
-    expect(ratio('pepper')).toBeLessThan(config.plant_green_below);
-    expect(ratio('okra')).toBeLessThan(config.plant_green_below);
   });
 });

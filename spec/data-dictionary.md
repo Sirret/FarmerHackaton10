@@ -363,10 +363,12 @@ Writer: system (every write by leader/buyer/admin)
 ### `config` (single row, id = `main`)
 | Field | Type | Description | Default |
 |---|---|---|---|
+| seed_version | number | Bump when seed files change; browsers with an older copy reseed | `2` |
 | demo_date | date | Current demo "today" | `2026-10-20` |
 | plant_green_below | number | Supply ÷ demand | `0.8` |
 | plant_red_above | number | | `1.3` |
-| plant_window_weeks | number | Plant signal looks at harvests and orders due in the next N weeks | `12` |
+| sell_green_above | number | Net price ÷ 4-week average at or above this → best market | `1.05` |
+| sell_red_below | number | Net price ÷ 4-week average below this → avoid | `0.9` |
 | report_count | number | Reports to trigger yellow | `3` |
 | report_window_days | number | | `7` |
 | price_stale_days | number | | `14` |

@@ -62,10 +62,10 @@ const isActive = (path: string) => current === href(path).replace(/\/$/, '');
     </footer>
 
     <script>
-      import { db, seedIfEmpty, resetDemo } from '../lib/db.js';
+      import { db, ready, resetDemo } from '../lib/db.js';
 
       // First visit seeds the in-browser database, then applies the configured theme.
-      seedIfEmpty()
+      ready()
         .then(() => db.config.get('main'))
         .then((config) => {
           if (config?.theme) document.documentElement.dataset.theme = config.theme;

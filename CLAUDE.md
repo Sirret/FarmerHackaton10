@@ -37,11 +37,20 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 
 ## Data layer
 - `src/lib/db.js`: Dexie schema (copied from the dictionary), JSDoc typedefs per table, `seedIfEmpty()`, `resetDemo()`, `newId(prefix)`. `Base.astro` seeds on every page load and wires the Reset button.
-- `src/data/seed/*.json`: one file per table; `users.json` holds every role. The seed is **tuned**: in Kombo Central (Brikama + Kembujeh) the 12-week plant ratio is tomato 1.9, onion 1.0, pepper 0.4, okra 0.36 (≈1.03 once the 150 kg okra order is accepted). Banjul okra is the one stale price. `tests/seed.test.js` guards these numbers; rerun it after editing seed data.
+- `src/data/seed/*.json`: one file per table; `users.json` holds every role. **Bump `config.seed_version` whenever seed files change**, or browsers that already visited keep the old data. The seed is **tuned** for the demo story: Kombo Central (Brikama + Kembujeh) starts at tomato 1.90 (red), onion 1.00 (yellow), pepper 0.40, okra 0.66 (green); accepting the 150 kg okra order → ≈1.0. Pepper sells best in Serekunda, OK in Brikama, avoid Sukuta. Banjul okra is the one stale price. `tests/demo-scenario.test.js` acts out the demo on the seed; rerun it after editing seed data.
 - `src/lib/clock.js`: `today()`, `now()`, `jump(days)` (async, read `config.demo_date`). Pure date helpers live in `src/lib/dates.js`.
-- Preact islands read data with `useLive(querier, deps, initial)` from `src/lib/useLive.js` (Dexie `liveQuery`, syncs across tabs). Mount DB islands with `client:only="preact"` (IndexedDB doesn't exist at build time).
+- Preact islands read data with `useLive(querier, deps, initial)` from `src/lib/useLive.js` (waits for `ready()` seeding, then Dexie `liveQuery`, syncs across tabs). Mount DB islands with `client:only="preact"` (IndexedDB doesn't exist at build time).
+
+## Signal engine
+- `src/lib/rules.js` is pure: `plantSignal`, `sellSignal`, `riskSignal` take `{ crop, district | fromTown, kafoId, today, data }` and return `{ signal, reason, numbers }`. `src/lib/signals.js` loads the data snapshot from Dexie (`loadSignalData`, `kafoSignals(kafoId)`).
+- **Plant horizon is per crop**: today → today + `days_to_harvest` + `harvest_days`, so a planting logged today always counts. Accepted order kg counts as supply until plantings with that `order_id` are logged (no double counting). Orders add demand in a district only for kg committed there plus kg nobody has committed yet.
+- **Sell**: latest price − transport (cost per bag ÷ `unit_kg.bag`) vs the 4-week average across all markets; thresholds `sell_green_above` / `sell_red_below`. Confirmed orders are listed first and always green.
+- **Risk**: alerts set their own level; ≥ `report_count` unverified reports → yellow only; red needs ≥1 verified report among ≥ `report_count`.
+- `src/lib/render.js`: `render(signal, 'tile' | 'ussd' | 'voice', lang, { kind, crop, reason })`. Words come from `src/data/i18n.json` (English only so far; other languages fall back to English until the team adds translations).
+- Note for Phase 3: after "Jump +8 weeks" every seeded price is stale (sell shows "no recent price"), so the jump button should also copy the latest prices forward.
 
 ## Status
 - Phase 0 (setup & shell): done.
-- Phase 1 (data layer, seed, demo clock): done. Header shows the live demo date; `/admin` has a temporary live table-count panel with ±1 week buttons.
-- Next: Phase 2 (`rules.js` colour engine + `render.js`, with Vitest tests).
+- Phase 1 (data layer, seed, demo clock): done. Header shows the live demo date.
+- Phase 2 (colour engine + render): done. `/admin` has temporary panels: live Signals per kafo (with a "+10 beds" test button) and table counts with ±1 week.
+- Next: Phase 3 (admin website must-haves).

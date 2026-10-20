@@ -43,7 +43,7 @@ import config from '../data/seed/config.json';
 /** @typedef {{ id: string, entity: 'planting'|'collection'|'order'|'report', entity_id: string, reason: 'kg_over_capacity'|'update_burst'|'estimate_gap', status: 'open'|'approved'|'corrected' }} Flag */
 /** @typedef {{ id: string, order_id: string, raised_by: string, issue: 'short_delivery'|'quality'|'late_payment'|'other', description: string, status: 'open'|'resolved', resolution_note?: string|null }} Dispute */
 /** @typedef {{ id: string, user_id: string, action: string, entity_id: string, at: string }} Audit */
-/** @typedef {{ id: 'main', demo_date: string, plant_green_below: number, plant_red_above: number, plant_window_weeks: number, report_count: number, report_window_days: number, price_stale_days: number, price_avg_weeks: number, payment_due_hours: number, fee_percent: number, unit_kg: Record<'bucket'|'bag'|'bags_2_4'|'bags_5_plus', number>, theme: string }} Config */
+/** @typedef {{ id: 'main', seed_version: number, demo_date: string, plant_green_below: number, plant_red_above: number, sell_green_above: number, sell_red_below: number, report_count: number, report_window_days: number, price_stale_days: number, price_avg_weeks: number, payment_due_hours: number, fee_percent: number, unit_kg: Record<'bucket'|'bag'|'bags_2_4'|'bags_5_plus', number>, theme: string }} Config */
 
 /**
  * @typedef {Dexie & {
@@ -112,11 +112,25 @@ async function writeSeed() {
   }
 }
 
-/** Seed on first visit. Safe with several tabs open: the check runs inside one transaction. */
+/**
+ * Seed on first visit, and reseed when the seed files changed (config.seed_version
+ * differs from the browser's copy). Safe with several tabs open: one transaction.
+ */
 export async function seedIfEmpty() {
   await db.transaction('rw', db.tables, async () => {
-    if ((await db.config.count()) === 0) await writeSeed();
+    const current = await db.config.get('main');
+    if (!current) return writeSeed();
+    if (current.seed_version !== config.seed_version) {
+      await Promise.all(db.tables.map((t) => t.clear()));
+      await writeSeed();
+    }
   });
+}
+
+let readyPromise;
+/** Resolves once the database is seeded and current. Seeds at most once per page. */
+export function ready() {
+  return (readyPromise ??= seedIfEmpty());
 }
 
 /** Wipe every table and reseed. Other open tabs update through liveQuery. */
