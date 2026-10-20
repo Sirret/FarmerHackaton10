@@ -81,17 +81,19 @@ const STEPS = [
 
 export default function DemoTab() {
   const [notices, setNotices] = useState({});
-  const [busy, setBusy] = useState(null);
+  // Only the running button is disabled, so a presenter can click the next step straight away.
+  const [busy, setBusy] = useState(() => new Set());
 
   async function run(i) {
-    setBusy(i);
+    setBusy((b) => new Set(b).add(i));
+    setNotices((n) => ({ ...n, [i]: { pending: true, text: 'Working…' } }));
     try {
       const text = await STEPS[i].run();
-      if (text) setNotices((n) => ({ ...n, [i]: { text } }));
+      setNotices((n) => ({ ...n, [i]: text ? { text } : null }));
     } catch (err) {
       setNotices((n) => ({ ...n, [i]: { error: true, text: err.message } }));
     } finally {
-      setBusy(null);
+      setBusy((b) => { const next = new Set(b); next.delete(i); return next; });
     }
   }
 
@@ -101,7 +103,7 @@ export default function DemoTab() {
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((s, i) => (
             <li class="flex flex-col rounded-lg border border-line p-3">
-              <Button variant={s.variant ?? 'brand'} disabled={busy !== null} onClick={() => run(i)}>{s.label}</Button>
+              <Button variant={s.variant ?? 'brand'} disabled={busy.has(i)} onClick={() => run(i)}>{s.label}</Button>
               <p class="mt-2 text-xs text-muted">{s.desc}</p>
               <Notice notice={notices[i]} />
             </li>

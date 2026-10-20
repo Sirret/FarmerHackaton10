@@ -92,4 +92,5 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - Phase 6 (farmer phone + USSD *1234#): done. All spec §9.2 screens; *4321# shows "will call you now" and logs a `callback` call (ringing/IVR is Phase 8).
 - Phase 7 (Messages + notifications): done.
 - Phase 8 (voice line *4321#): done. Spec §9.7 Wolof path runs end to end; dropping `public/audio/wo/greet_hello.mp3` is picked up with no code change (checked).
-- Next: Phase 9 (full demo run across 4 tabs, polish, accessibility, deploy check).
+- Phase 9 (end-to-end demo, polish, deploy): done. The full plan §9.1 story runs twice in a row after Reset on the live URL in a fresh browser. `/about` has the pitch and the 3-minute demo script. Demo buttons only disable themselves while running. A database-blocked banner shows if IndexedDB is unavailable. All pages fit 360 px; kafo-app tap targets are ≥ 44 px.
+- Next: Phase 10 stretch items (plan order: leads inbox, report queue + flags screen, reliability, repeat orders, disputes/fees/audit, broadcast, offline label, weather).

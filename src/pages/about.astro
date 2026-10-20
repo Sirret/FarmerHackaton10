@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import Card from '../components/shared/Card.astro';
+import SignalBadge from '../components/shared/SignalBadge.astro';
+import { href } from '../lib/url.js';
+
+const story = [
+  ['Buyer', 'The Coastal Hotel posts an order for 120 kg okra, 10 weeks before it needs it.', '/buyer'],
+  ['Farmer', 'Binta dials *1234# on a basic phone: "Okra: GOOD - buyer waiting". Tomato: DON\'T PLANT, too many kafos grow it.', '/farmer'],
+  ['Kafo leader', 'Fatou accepts the order and logs 30 beds of okra for it. Okra turns CAREFUL for the kafos nearby, so they don\'t all plant it.', '/kafo'],
+  ['Admin', 'Three farmers report insects: okra WATCH OUT. A heavy-rain bulletin: ACT NOW by SMS, and Binta\'s phone rings with a voice alert.', '/admin'],
+  ['Admin', 'Jump +8 weeks. Fatou marks the okra Ready; members say "I have produce" and she merges it into one offer.', '/admin#demo'],
+  ['Buyer', 'Fatou weighs each member\'s okra. The hotel accepts the kg and pays: every woman is paid directly and gets a PAID SMS.', '/buyer#orders'],
+];
+---
+<Base title="About">
+  <section class="mb-8 max-w-3xl">
+    <p class="text-sm font-semibold uppercase tracking-wide text-muted">UTG ITCA Hackathon 2026 · Challenge 02</p>
+    <h1 class="mt-1 text-3xl font-bold tracking-tight">Kafo Signal</h1>
+    <p class="mt-3 text-lg">
+      Women's garden groups (kafos) around Brikama all plant tomato at the same time, prices crash, and the harvest rots.
+      Buyers like hotels can't find steady okra or pepper. Kafo Signal gives every kafo three simple signals,
+      <strong>what to plant</strong>, <strong>where to sell</strong> and <strong>what risk is coming</strong>, and lets buyers order <strong>before planting</strong>.
+    </p>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <SignalBadge signal="green" label="Good to plant" />
+      <SignalBadge signal="yellow" label="Careful" />
+      <SignalBadge signal="red" label="Don't plant" />
+    </div>
+  </section>
+
+  <div class="mb-8 grid gap-4 md:grid-cols-3">
+    <Card>
+      <h2 class="font-semibold">Any phone works</h2>
+      <p class="mt-1 text-sm text-muted">Basic phones get words, not colours: the *1234# text menu, SMS from 1234, and a free voice call-back on *4321# in Mandinka, Wolof, Fula, Jola or English.</p>
+    </Card>
+    <Card>
+      <h2 class="font-semibold">The leader keeps the record</h2>
+      <p class="mt-1 text-sm text-muted">The kafo leader logs plantings and accepts orders in a simple app. Harvest dates and kg fill in from the crop calendar; scales at delivery make the numbers real.</p>
+    </Card>
+    <Card>
+      <h2 class="font-semibold">Paid directly, by the kg</h2>
+      <p class="mt-1 text-sm text-muted">Each member is paid to her own mobile wallet for the kg she delivered. The leader never holds group money; every member gets an SMS.</p>
+    </Card>
+  </div>
+
+  <section class="mb-8">
+    <h2 class="mb-3 text-xl font-semibold">How the signal works</h2>
+    <ul class="grid gap-3 text-sm md:grid-cols-3">
+      <li class="rounded-xl border border-line bg-surface p-4"><strong>Plant:</strong> expected harvest ÷ demand in the district (baseline + buyer orders). Below 0.8 green, up to 1.3 yellow, above red.</li>
+      <li class="rounded-xl border border-line bg-surface p-4"><strong>Sell:</strong> each market's price minus transport, compared with the 4-week average. A confirmed buyer order is always green.</li>
+      <li class="rounded-xl border border-line bg-surface p-4"><strong>Risk:</strong> admin alerts from weather bulletins, plus farmers' pest reports. Unchecked reports can only make it yellow; red needs the leader to confirm.</li>
+    </ul>
+  </section>
+
+  <section class="mb-8">
+    <h2 class="mb-3 text-xl font-semibold">The 3-minute demo</h2>
+    <p class="mb-3 text-sm text-muted">Open the four pages side by side and press <strong>Reset demo</strong> first. Changes in one tab show in the others straight away.</p>
+    <ol class="space-y-2">
+      {story.map(([who, what, path], i) => (
+        <li class="flex gap-3 rounded-xl border border-line bg-surface p-3 text-sm">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand font-bold text-brand-ink">{i + 1}</span>
+          <span><a href={href(path)} class="font-semibold underline">{who}</a>: {what}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="mb-4 max-w-3xl text-sm text-muted">
+    <h2 class="mb-2 text-base font-semibold text-ink">What is real and what is simulated</h2>
+    <p>Everything runs in the browser with demo data (names, phone numbers, prices and buyers are made up). USSD, SMS and voice calls are simulated on the farmer page; going live needs a server, a short code from PURA and an agreement with a mobile operator. Voice notes play in English until the team's recordings are added.</p>
+  </section>
+</Base>

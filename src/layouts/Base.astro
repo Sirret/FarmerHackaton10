@@ -53,12 +53,20 @@ const isActive = (path: string) => current === href(path).replace(/\/$/, '');
       </nav>
     </header>
 
+    <div id="db-error" hidden class="mx-auto mt-4 max-w-6xl px-4">
+      <p role="alert" class="rounded-lg border border-stop bg-stop-soft px-4 py-3 text-sm text-ink">
+        <strong>✕ This browser blocked the demo's local database.</strong>
+        Kafo Signal keeps its demo data in the browser (IndexedDB). Turn off private/incognito mode or allow site data, then reload.
+      </p>
+    </div>
+
     <main class={wide ? 'mx-auto max-w-6xl px-4 py-6' : 'px-4 py-6'}>
       <slot />
     </main>
 
     <footer class="mx-auto max-w-6xl px-4 pb-6 text-xs text-muted">
-      Prototype for UTG ITCA Hackathon 2026 · All names, prices and orders are demo data.
+      Prototype for UTG ITCA Hackathon 2026 · All names, phone numbers, prices and orders are demo data ·
+      <a href={href('/about')} class="underline">About</a>
     </footer>
 
     <script>
@@ -70,7 +78,10 @@ const isActive = (path: string) => current === href(path).replace(/\/$/, '');
         .then((config) => {
           if (config?.theme) document.documentElement.dataset.theme = config.theme;
         })
-        .catch((err) => console.error('Seeding failed', err));
+        .catch((err) => {
+          console.error('Seeding failed', err);
+          document.getElementById('db-error')?.removeAttribute('hidden');
+        });
 
       const btn = document.getElementById('reset-demo');
       btn?.addEventListener('click', async () => {

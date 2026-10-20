@@ -45,12 +45,14 @@ export function ChipPicker({ options, value, onChange }) {
   );
 }
 
-/** Success / error line under a form or button. */
+/** Success / error / in-progress line under a form or button. */
 export function Notice({ notice }) {
   if (!notice) return null;
+  const tone = notice.error ? 'bg-stop-soft' : notice.pending ? 'bg-soft' : 'bg-go-soft';
+  const icon = notice.error ? '✕ ' : notice.pending ? '… ' : '✓ ';
   return (
-    <p role="status" class={`mt-2 rounded-lg px-3 py-2 text-sm ${notice.error ? 'bg-stop-soft text-ink' : 'bg-go-soft text-ink'}`}>
-      {notice.error ? '✕ ' : '✓ '}{notice.text}
+    <p role="status" class={`mt-2 rounded-lg px-3 py-2 text-sm text-ink ${tone}`}>
+      {icon}{notice.text}
     </p>
   );
 }
