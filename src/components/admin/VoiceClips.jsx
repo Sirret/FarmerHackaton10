@@ -25,7 +25,7 @@ export default function VoiceClips() {
     >
       <p class="mb-3 text-sm text-muted">
         {clips.length} clips in the recording guide ({starter.length} starter clips for the Wolof demo). Save each as
-        <code class="mx-1 rounded bg-soft px-1">public/audio/&#123;lang&#125;/&#123;clip_id&#125;.mp3</code>
+        <code class="mx-1 rounded bg-soft px-1">{'public/audio/{lang}/{clip_id}.mp3'}</code>
         (names in <code class="rounded bg-soft px-1">public/audio/names/</code>); calls pick them up on the next page load. Until then calls play English or read the script aloud.
       </p>
       <div class="mb-3 grid gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
