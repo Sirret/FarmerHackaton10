@@ -1,0 +1,14 @@
+---
+import { signalStyle } from '../../lib/signalStyle.js';
+
+interface Props {
+  signal: 'green' | 'yellow' | 'red' | 'none';
+  label: string;
+}
+const { signal, label } = Astro.props;
+const s = signalStyle(signal);
+---
+<span class={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${s.bg} ${s.ink}`}>
+  <span aria-hidden="true">{s.icon}</span>
+  {label}
+</span>

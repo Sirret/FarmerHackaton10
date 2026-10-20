@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import { href } from '../lib/url.js';
+
+interface Props {
+  title: string;
+  wide?: boolean;
+}
+const { title, wide = true } = Astro.props;
+
+const roles = [
+  { path: '/farmer', label: 'Farmer' },
+  { path: '/kafo', label: 'Kafo leader' },
+  { path: '/buyer', label: 'Buyer' },
+  { path: '/admin', label: 'Admin' },
+];
+const current = Astro.url.pathname.replace(/\/$/, '');
+const isActive = (path: string) => current === href(path).replace(/\/$/, '');
+---
+<!doctype html>
+<html lang="en" data-theme="default">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>{title} · Kafo Signal</title>
+  </head>
+  <body class="min-h-screen bg-page font-sans text-ink antialiased">
+    <header class="bg-brand text-brand-ink">
+      <nav class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
+        <a href={href('/')} class="mr-2 font-bold tracking-tight">Kafo Signal</a>
+        <ul class="flex flex-wrap gap-1 text-sm">
+          {roles.map((r) => (
+            <li>
+              <a
+                href={href(r.path)}
+                class={`rounded-md px-3 py-1.5 ${isActive(r.path) ? 'bg-brand-ink text-brand font-semibold' : 'hover:bg-accent'}`}
+                aria-current={isActive(r.path) ? 'page' : undefined}
+              >{r.label}</a>
+            </li>
+          ))}
+        </ul>
+        <!-- Wired to resetDemo() in Phase 1 -->
+        <button id="reset-demo" type="button" class="ml-auto rounded-md border border-brand-ink px-3 py-1.5 text-sm hover:bg-accent">
+          Reset demo
+        </button>
+      </nav>
+    </header>
+
+    <main class={wide ? 'mx-auto max-w-6xl px-4 py-6' : 'px-4 py-6'}>
+      <slot />
+    </main>
+
+    <footer class="mx-auto max-w-6xl px-4 pb-6 text-xs text-muted">
+      Prototype for UTG ITCA Hackathon 2026 · All names, prices and orders are demo data.
+    </footer>
+  </body>
+</html>

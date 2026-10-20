@@ -1,0 +1,9 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: extra = '' } = Astro.props;
+---
+<div class={`rounded-xl border border-line bg-surface p-4 shadow-sm ${extra}`}>
+  <slot />
+</div>

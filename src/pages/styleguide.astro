@@ -1,0 +1,110 @@
+---
+// Hidden page (not linked): check every colour token at a glance.
+import Base from '../layouts/Base.astro';
+import Button from '../components/shared/Button.astro';
+import Card from '../components/shared/Card.astro';
+import SignalBadge from '../components/shared/SignalBadge.astro';
+import { signalStyle } from '../lib/signalStyle.js';
+
+// Full class names so Tailwind detects them.
+const swatches = [
+  ['go', 'bg-go'], ['go-ink', 'bg-go-ink'], ['go-soft', 'bg-go-soft'],
+  ['careful', 'bg-careful'], ['careful-ink', 'bg-careful-ink'], ['careful-soft', 'bg-careful-soft'],
+  ['stop', 'bg-stop'], ['stop-ink', 'bg-stop-ink'], ['stop-soft', 'bg-stop-soft'],
+  ['stale', 'bg-stale'], ['stale-ink', 'bg-stale-ink'], ['stale-soft', 'bg-stale-soft'],
+  ['brand', 'bg-brand'], ['brand-ink', 'bg-brand-ink'], ['accent', 'bg-accent'],
+  ['ink', 'bg-ink'], ['muted', 'bg-muted'], ['line', 'bg-line'],
+  ['surface', 'bg-surface'], ['page', 'bg-page'], ['soft', 'bg-soft'],
+  ['phone-body', 'bg-phone-body'], ['phone-key', 'bg-phone-key'], ['phone-key-ink', 'bg-phone-key-ink'],
+  ['lcd', 'bg-lcd'], ['lcd-ink', 'bg-lcd-ink'],
+  ['call-green', 'bg-call-green'], ['call-red', 'bg-call-red'],
+];
+
+const signals = [
+  { signal: 'green', label: 'Good to plant' },
+  { signal: 'yellow', label: 'Careful' },
+  { signal: 'red', label: "Don't plant" },
+  { signal: 'none', label: 'No recent price' },
+] as const;
+---
+<Base title="Styleguide">
+  <div class="mb-6 flex flex-wrap items-center gap-3">
+    <h1 class="text-2xl font-bold">Styleguide</h1>
+    <button id="theme-toggle" type="button" class="ml-auto rounded-lg border border-line bg-surface px-3 py-2 text-sm hover:bg-soft">
+      Theme: <span id="theme-name">default</span>
+    </button>
+  </div>
+
+  <h2 class="mb-3 font-semibold">Tokens</h2>
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+    {swatches.map(([name, cls]) => (
+      <div class="overflow-hidden rounded-lg border border-line bg-surface">
+        <div class={`h-14 ${cls}`}></div>
+        <p class="px-2 py-1 font-mono text-xs">{name}</p>
+      </div>
+    ))}
+  </div>
+
+  <h2 class="mb-3 font-semibold">Signal badges</h2>
+  <div class="mb-8 flex flex-wrap gap-2">
+    {signals.map((s) => <SignalBadge signal={s.signal} label={s.label} />)}
+  </div>
+
+  <h2 class="mb-3 font-semibold">Signal tiles</h2>
+  <div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {signals.map((s) => {
+      const st = signalStyle(s.signal);
+      return (
+        <div class={`rounded-xl border-2 p-3 ${st.border} ${st.soft}`}>
+          <p class="text-sm text-muted">Okra</p>
+          <p class={`text-lg font-bold ${st.text}`}>{st.icon} {s.label}</p>
+        </div>
+      );
+    })}
+  </div>
+
+  <h2 class="mb-3 font-semibold">Buttons</h2>
+  <div class="mb-8 flex flex-wrap gap-2">
+    <Button>Brand</Button>
+    <Button variant="go">Accept order</Button>
+    <Button variant="stop">Lost some</Button>
+    <Button variant="ghost">Cancel</Button>
+  </div>
+
+  <h2 class="mb-3 font-semibold">Cards</h2>
+  <div class="mb-8 grid gap-3 sm:grid-cols-2">
+    <Card>
+      <h3 class="font-semibold">Coastal Hotel (demo)</h3>
+      <p class="text-sm text-muted">150 kg okra · D55/kg · window 15–21 Dec</p>
+    </Card>
+    <Card class="bg-soft">
+      <h3 class="font-semibold">Soft card</h3>
+      <p class="text-sm text-muted">Subtle panel on the soft background.</p>
+    </Card>
+  </div>
+
+  <h2 class="mb-3 font-semibold">Basic-phone screen</h2>
+  <div class="inline-block rounded-2xl bg-phone-body p-4">
+    <pre class="w-56 rounded bg-lcd p-2 font-mono text-xs leading-tight text-lcd-ink">OKRA: GOOD TO PLANT
+Hotel needs 150kg
+in 10 wks.
+1 Tell my leader
+0 Back</pre>
+    <div class="mt-3 flex gap-2">
+      <span class="rounded bg-call-green px-3 py-1 text-xs text-go-ink">Call</span>
+      <span class="rounded bg-phone-key px-3 py-1 text-xs text-phone-key-ink">1</span>
+      <span class="rounded bg-call-red px-3 py-1 text-xs text-stop-ink">End</span>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  const name = document.getElementById('theme-name');
+  btn?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'high-contrast' ? 'default' : 'high-contrast';
+    root.dataset.theme = next;
+    if (name) name.textContent = next;
+  });
+</script>

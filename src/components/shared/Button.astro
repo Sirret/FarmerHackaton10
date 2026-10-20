@@ -1,0 +1,23 @@
+---
+interface Props {
+  variant?: 'brand' | 'go' | 'stop' | 'ghost';
+  href?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+  [key: string]: unknown;
+}
+const { variant = 'brand', href, type = 'button', class: extra = '', ...rest } = Astro.props;
+
+const variants = {
+  brand: 'bg-brand text-brand-ink hover:opacity-90',
+  go: 'bg-go text-go-ink hover:opacity-90',
+  stop: 'bg-stop text-stop-ink hover:opacity-90',
+  ghost: 'bg-surface text-ink border border-line hover:bg-soft',
+};
+const classes = `inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition ${variants[variant]} ${extra}`;
+---
+{href ? (
+  <a href={href} class={classes} {...rest}><slot /></a>
+) : (
+  <button type={type} class={classes} {...rest}><slot /></button>
+)}

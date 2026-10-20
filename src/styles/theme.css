@@ -1,0 +1,50 @@
+/* Kafo Signal colour theme.
+   This is the ONLY file with hex values. Components use token classes
+   (bg-go, text-ink, border-line, …). Recolour the app by editing here. */
+
+/* 1. Raw values */
+:root, [data-theme="default"] {
+  --ks-go: #1f9d55;        --ks-go-ink: #ffffff;      --ks-go-soft: #e6f4ec;
+  --ks-careful: #f2b705;   --ks-careful-ink: #2a2000; --ks-careful-soft: #fdf3d3;
+  --ks-stop: #d93a2b;      --ks-stop-ink: #ffffff;    --ks-stop-soft: #fbe5e2;
+  --ks-none: #9aa59d;      --ks-none-ink: #ffffff;    --ks-none-soft: #eef0ee;
+
+  --ks-brand: #123d2a;     --ks-brand-ink: #ffffff;   --ks-accent: #1f9d55;
+  --ks-ink: #1d2a22;       --ks-muted: #5a6a5f;       --ks-line: #d9e0d5;
+  --ks-surface: #ffffff;   --ks-page: #fbfaf6;        --ks-soft: #eef3ec;
+
+  /* basic-phone simulator */
+  --ks-phone-body: #2b2f2c; --ks-phone-key: #454b47;  --ks-phone-key-ink: #e5e5e5;
+  --ks-lcd: #cfe0c3;        --ks-lcd-ink: #132a1a;
+  --ks-call-green: #1f9d55; --ks-call-red: #d93a2b;
+}
+
+/* Alternative theme, switched with <html data-theme="high-contrast"> */
+[data-theme="high-contrast"] {
+  --ks-go: #006b2f;        --ks-go-ink: #ffffff;      --ks-go-soft: #d4ecdd;
+  --ks-careful: #b07800;   --ks-careful-ink: #ffffff; --ks-careful-soft: #fbe9bf;
+  --ks-stop: #a10f00;      --ks-stop-ink: #ffffff;    --ks-stop-soft: #f8d3cd;
+  --ks-none: #4d5750;      --ks-none-ink: #ffffff;    --ks-none-soft: #e2e5e2;
+
+  --ks-brand: #000000;     --ks-brand-ink: #ffffff;   --ks-accent: #006b2f;
+  --ks-ink: #000000;       --ks-muted: #2f3a33;       --ks-line: #6b766e;
+  --ks-surface: #ffffff;   --ks-page: #ffffff;        --ks-soft: #eef0ee;
+
+  --ks-phone-body: #000000; --ks-phone-key: #2a2a2a;  --ks-phone-key-ink: #ffffff;
+  --ks-lcd: #e8f2df;        --ks-lcd-ink: #000000;
+  --ks-call-green: #006b2f; --ks-call-red: #a10f00;
+}
+
+/* 2. Map raw values to Tailwind token names */
+@theme inline {
+  --color-go: var(--ks-go);           --color-go-ink: var(--ks-go-ink);           --color-go-soft: var(--ks-go-soft);
+  --color-careful: var(--ks-careful); --color-careful-ink: var(--ks-careful-ink); --color-careful-soft: var(--ks-careful-soft);
+  --color-stop: var(--ks-stop);       --color-stop-ink: var(--ks-stop-ink);       --color-stop-soft: var(--ks-stop-soft);
+  --color-stale: var(--ks-none);      --color-stale-ink: var(--ks-none-ink);      --color-stale-soft: var(--ks-none-soft);
+  --color-brand: var(--ks-brand);     --color-brand-ink: var(--ks-brand-ink);     --color-accent: var(--ks-accent);
+  --color-ink: var(--ks-ink);         --color-muted: var(--ks-muted);             --color-line: var(--ks-line);
+  --color-surface: var(--ks-surface); --color-page: var(--ks-page);               --color-soft: var(--ks-soft);
+  --color-phone-body: var(--ks-phone-body); --color-phone-key: var(--ks-phone-key); --color-phone-key-ink: var(--ks-phone-key-ink);
+  --color-lcd: var(--ks-lcd);         --color-lcd-ink: var(--ks-lcd-ink);
+  --color-call-green: var(--ks-call-green); --color-call-red: var(--ks-call-red);
+}
