@@ -6,6 +6,7 @@ import Button from '../ui/Button.jsx';
 import Card from '../ui/Card.jsx';
 import { Notice } from '../ui/Field.jsx';
 import DbStatus from './DbStatus.jsx';
+import VoiceClips from './VoiceClips.jsx';
 
 // Demo scenario panel (spec §8.14). Each button runs the same actions the real
 // screens use, so signals, SMS and other open tabs update exactly as they would live.
@@ -36,7 +37,7 @@ const STEPS = [
   },
   {
     label: 'Call farmers with alert',
-    desc: 'Rings every farmer with voice alerts on (Binta) about the most serious active alert.',
+    desc: 'Rings every farmer with voice alerts on (Binta) about the most serious active alert. Her phone on /farmer rings; answer to hear it.',
     run: async () => {
       const { called } = await callFarmersWithAlert();
       return `Calling ${called} farmer${called === 1 ? '' : 's'}.`;
@@ -107,6 +108,7 @@ export default function DemoTab() {
           ))}
         </ul>
       </Card>
+      <VoiceClips />
       <DbStatus />
     </div>
   );

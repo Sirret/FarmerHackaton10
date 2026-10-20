@@ -1,0 +1,704 @@
+[
+  {
+    "id": "greet_hello",
+    "en_script": "Hello",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "greet_from_kafo",
+    "en_script": "from",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "welcome_intro",
+    "en_script": "Welcome to Kafo Signal,",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "menu_main",
+    "en_script": "For what to plant, press 1. Where to sell, 2. Alerts, 3. I have produce, 4. Report a problem, 5. To repeat, press 9.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "menu_crop_detail",
+    "en_script": "For more about a crop, press its number. Back, 0.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "menu_tell_leader",
+    "en_script": "To tell your leader you want to plant it, press 1. Back, 0.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "menu_repeat_back",
+    "en_script": "To repeat, press 9. Back, 0. Main menu, star.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "leader_told",
+    "en_script": "Your leader is told.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "invalid_key",
+    "en_script": "Sorry, that key is not in the menu.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "goodbye",
+    "en_script": "Thank you for calling Kafo Signal. Goodbye.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "crop_tomato",
+    "en_script": "Tomato.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "crop_onion",
+    "en_script": "Onion.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "crop_pepper",
+    "en_script": "Pepper.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "crop_okra",
+    "en_script": "Okra.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_good_plant",
+    "en_script": "This is a good choice to plant.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_careful",
+    "en_script": "Be careful. Plant only a little.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_dont_plant",
+    "en_script": "It is better not to plant this now.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_no_data",
+    "en_script": "We have no advice yet.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_best_market",
+    "en_script": "Best market.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_ok_market",
+    "en_script": "OK market.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_avoid_market",
+    "en_script": "Better avoid this market.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_no_price",
+    "en_script": "There is no recent price.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_all_ok",
+    "en_script": "All is OK. There are no alerts.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_watch_out",
+    "en_script": "Watch out.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "verdict_act_now",
+    "en_script": "Act now.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "why_buyer",
+    "en_script": "A buyer is waiting.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "why_few_planting",
+    "en_script": "Few kafos are growing it.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "why_some_planting",
+    "en_script": "Enough is being grown.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "why_many_planting",
+    "en_script": "Many kafos are growing it.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "why_reports",
+    "en_script": "Farmers near you reported problems.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "buyer_needs",
+    "en_script": "A buyer needs",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_plant_this_week",
+    "en_script": "Plant this week.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "advice_plant_little",
+    "en_script": "Plant only a little.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_plant_other",
+    "en_script": "Plant something else.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "kilos",
+    "en_script": "kilos",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "in",
+    "en_script": "in",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "weeks",
+    "en_script": "weeks.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "about",
+    "en_script": "about",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "dalasi_per_kilo",
+    "en_script": "dalasi per kilo",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "after_transport",
+    "en_script": "after transport.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "best_market_is",
+    "en_script": "The best market is",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "your_buyer_pays",
+    "en_script": "Your buyer order pays",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "market_serekunda",
+    "en_script": "Serekunda.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "market_brikama",
+    "en_script": "Brikama.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "market_sukuta",
+    "en_script": "Sukuta.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "market_banjul",
+    "en_script": "Banjul.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "market_gunjur",
+    "en_script": "Gunjur.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "ask_crop",
+    "en_script": "Which crop? Tomato, press 1. Onion, 2. Pepper, 3. Okra, 4.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "ask_amount",
+    "en_script": "How much? One bucket, press 1. One bag, 2. Two to four bags, 3. Five bags or more, 4.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "ask_ready",
+    "en_script": "Ready when? Today, press 1. This week, press 2.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "produce_sent_to_leader",
+    "en_script": "Thank you. Your leader will offer it to buyers. You will get an SMS.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "ask_problem",
+    "en_script": "What is the problem? Insects, press 1. Leaf spots, 2. Wilting, 3. Animals, 4. Flooding, 5. To record a message, press 9.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "record_after_beep",
+    "en_script": "Speak after the beep. Press hash when you finish.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "record_unavailable",
+    "en_script": "Recording is not possible now. Your leader will call you.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "report_thanks",
+    "en_script": "Thank you. Your leader is told.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "alert_heavy_rain",
+    "en_script": "Heavy rain is coming.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "alert_dry_spell",
+    "en_script": "A dry spell is coming.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "alert_pest_outbreak",
+    "en_script": "Pests are spreading.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "alert_disease",
+    "en_script": "A plant disease is spreading.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "all_crops",
+    "en_script": "For all crops.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_harvest_early",
+    "en_script": "Harvest ripe crops early.",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "advice_dry_spell",
+    "en_script": "Water early in the morning.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_pest_outbreak",
+    "en_script": "Check under the leaves every day.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_disease",
+    "en_script": "Remove sick plants.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "advice_check_leaves",
+    "en_script": "Check under the leaves.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "not_registered",
+    "en_script": "This number is not registered with Kafo Signal.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "ask_leader",
+    "en_script": "Ask your kafo leader to add you.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press1_record_name_village",
+    "en_script": "To leave your name and village, press 1.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "thanks_admin_will_call",
+    "en_script": "Thank you. The Kafo Signal team will call you.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_1",
+    "en_script": "Press 1.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_2",
+    "en_script": "Press 2.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_3",
+    "en_script": "Press 3.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_4",
+    "en_script": "Press 4.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_5",
+    "en_script": "Press 5.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_6",
+    "en_script": "Press 6.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_7",
+    "en_script": "Press 7.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_8",
+    "en_script": "Press 8.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "press_9",
+    "en_script": "Press 9.",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_1",
+    "en_script": "one",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_2",
+    "en_script": "two",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_3",
+    "en_script": "three",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_4",
+    "en_script": "four",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_5",
+    "en_script": "five",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_6",
+    "en_script": "six",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_7",
+    "en_script": "seven",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_8",
+    "en_script": "eight",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_9",
+    "en_script": "nine",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_10",
+    "en_script": "ten",
+    "starter": true,
+    "langs_done": []
+  },
+  {
+    "id": "num_11",
+    "en_script": "eleven",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_12",
+    "en_script": "twelve",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_13",
+    "en_script": "thirteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_14",
+    "en_script": "fourteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_15",
+    "en_script": "fifteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_16",
+    "en_script": "sixteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_17",
+    "en_script": "seventeen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_18",
+    "en_script": "eighteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_19",
+    "en_script": "nineteen",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_20",
+    "en_script": "twenty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_30",
+    "en_script": "thirty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_40",
+    "en_script": "forty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_50",
+    "en_script": "fifty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_60",
+    "en_script": "sixty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_70",
+    "en_script": "seventy",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_80",
+    "en_script": "eighty",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_90",
+    "en_script": "ninety",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_100",
+    "en_script": "one hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_200",
+    "en_script": "two hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_300",
+    "en_script": "three hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_400",
+    "en_script": "four hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_500",
+    "en_script": "five hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_600",
+    "en_script": "six hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_700",
+    "en_script": "seven hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_800",
+    "en_script": "eight hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_900",
+    "en_script": "nine hundred",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_1000",
+    "en_script": "one thousand",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_thousand",
+    "en_script": "thousand",
+    "starter": false,
+    "langs_done": []
+  },
+  {
+    "id": "num_150",
+    "en_script": "one hundred and fifty",
+    "starter": true,
+    "langs_done": []
+  }
+]

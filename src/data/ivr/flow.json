@@ -1,0 +1,49 @@
+{
+  "_doc": "Voice line *4321# (spec 9.5). clips = clip IDs from ivr/clips.json; '$farmer_name' / '$kafo_name' = name recordings. build = named builder in src/lib/ivr.js (dynamic crop/verdict/number clips), played before clips_after. pick = numbered list (1..n) that sets a param. keys: to (next node), set (params), action (effect run through actions.js). next = go on by itself after playing; hangup = end the call; record = record a voice note after playing, then run action and go to 'to'. Everywhere: 9 = repeat, 0 = back, * = main menu (unless the node uses that key). Silence: menu replays once after 8 s, then goodbye.",
+
+  "greet": { "clips": ["greet_hello", "$farmer_name", "greet_from_kafo", "$kafo_name"], "next": "main" },
+  "welcome": { "clips": ["welcome_intro", "$farmer_name", "greet_from_kafo", "$kafo_name"], "next": "main" },
+  "alert_call": { "clips": ["greet_hello", "$farmer_name"], "build": "alerts", "next": "main" },
+
+  "main": { "clips": ["menu_main"], "keys": { "1": { "to": "plant" }, "2": { "to": "sell" }, "3": { "to": "alerts" }, "4": { "to": "produce" }, "5": { "to": "report" } } },
+
+  "plant": { "build": "plant_list", "clips_after": ["menu_crop_detail"], "pick": { "list": "crops", "param": "crop", "to": "plant_detail" } },
+  "plant_detail": { "build": "plant_detail", "clips_after": ["menu_tell_leader"], "keys": { "1": { "action": "interest", "to": "told_leader" } } },
+  "told_leader": { "clips": ["leader_told"], "next": "main" },
+
+  "sell": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "sell_result" } },
+  "sell_result": { "build": "sell_result", "clips_after": ["menu_repeat_back"], "keys": {} },
+
+  "alerts": { "build": "alerts", "clips_after": ["menu_repeat_back"], "keys": {} },
+
+  "produce": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "produce_amount" } },
+  "produce_amount": { "clips": ["ask_amount"], "keys": {
+    "1": { "set": { "amount": "bucket" }, "to": "produce_ready" },
+    "2": { "set": { "amount": "bag" }, "to": "produce_ready" },
+    "3": { "set": { "amount": "bags_2_4" }, "to": "produce_ready" },
+    "4": { "set": { "amount": "bags_5_plus" }, "to": "produce_ready" }
+  } },
+  "produce_ready": { "clips": ["ask_ready"], "keys": {
+    "1": { "set": { "ready": "today" }, "action": "produce", "to": "produce_done" },
+    "2": { "set": { "ready": "this_week" }, "action": "produce", "to": "produce_done" }
+  } },
+  "produce_done": { "clips": ["produce_sent_to_leader"], "next": "main" },
+
+  "report": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "report_problem" } },
+  "report_problem": { "clips": ["ask_problem"], "keys": {
+    "1": { "set": { "problem": "insects" }, "action": "report", "to": "report_done" },
+    "2": { "set": { "problem": "leaf_spots" }, "action": "report", "to": "report_done" },
+    "3": { "set": { "problem": "wilting" }, "action": "report", "to": "report_done" },
+    "4": { "set": { "problem": "animals" }, "action": "report", "to": "report_done" },
+    "5": { "set": { "problem": "flooding" }, "action": "report", "to": "report_done" },
+    "9": { "set": { "problem": "other" }, "to": "report_record" }
+  } },
+  "report_record": { "clips": ["record_after_beep"], "record": true, "action": "report", "to": "report_done" },
+  "report_done": { "clips": ["report_thanks"], "next": "main" },
+
+  "unregistered": { "clips": ["not_registered", "ask_leader", "press1_record_name_village"], "keys": { "1": { "to": "lead_record" } } },
+  "lead_record": { "clips": ["record_after_beep"], "record": true, "action": "lead", "to": "lead_done" },
+  "lead_done": { "clips": ["thanks_admin_will_call"], "next": "goodbye" },
+
+  "goodbye": { "clips": ["goodbye"], "hangup": true }
+}

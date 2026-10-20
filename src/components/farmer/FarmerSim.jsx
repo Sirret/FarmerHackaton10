@@ -17,6 +17,7 @@ export default function FarmerSim() {
   const [lang, setLang] = useState('');
   const [subtitles, setSubtitles] = useState(true);
   const [dialRequest, setDialRequest] = useState(null);
+  const [voiceNote, setVoiceNote] = useState(null); // { clips, index } while a voice note plays
 
   if (!snap) return <p class="text-sm text-muted">Loading…</p>;
 
@@ -31,8 +32,9 @@ export default function FarmerSim() {
     <div class="grid items-start gap-6 lg:grid-cols-[1fr_auto_1fr]">
       <div class="hidden lg:block"></div>
       <div>
-        <BasicPhone snap={snap} userId={userId} lang={lang || null} dialRequest={dialRequest} />
+        <BasicPhone snap={snap} userId={userId} lang={lang || null} dialRequest={dialRequest} onSubtitle={setVoiceNote} />
         <p class="mt-3 text-center text-xs text-muted">Keyboard works too: digits, * #, Enter = OK/Call, Esc = End.</p>
+        {subtitles && voiceNote && <Subtitles note={voiceNote} lang={lang || holder?.language || 'en'} />}
       </div>
 
       <Card title="Demo controls" class="w-full lg:max-w-xs">
@@ -64,9 +66,23 @@ export default function FarmerSim() {
             <input type="checkbox" class="h-5 w-5" checked={subtitles} onChange={(e) => setSubtitles(e.currentTarget.checked)} />
             Subtitles for voice calls
           </label>
-          <p class="-mt-3 text-xs text-muted">Shows the words of each voice note under the phone (voice line *4321#, next update).</p>
+          <p class="-mt-3 text-xs text-muted">Shows the words of each voice note under the phone during *4321# calls.</p>
         </div>
       </Card>
+    </div>
+  );
+}
+
+/** Words of the voice note playing (spec §9.1 subtitles), current clip highlighted. */
+function Subtitles({ note, lang }) {
+  const { clips, index } = note;
+  const translated = clips.some((c) => c.text !== c.textEn);
+  return (
+    <div class="mx-auto mt-3 w-75 rounded-xl border border-line bg-surface p-3 text-sm shadow-sm" aria-live="polite" data-subtitles>
+      <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">🔊 4321 Kafo Signal · {t(`lang.${lang}`)}</p>
+      <p>{clips.map((c, i) => <span class={i === index ? 'rounded bg-soft font-semibold' : i < index ? 'text-ink' : 'text-muted'}>{c.text} </span>)}</p>
+      {translated && <p class="mt-1 text-xs text-muted">EN: {clips.map((c) => c.textEn).join(' ')}</p>}
+      {!translated && lang !== 'en' && <p class="mt-1 text-xs text-muted">{t(`lang.${lang}`)} text not added yet, so subtitles show English. Clips recorded in public/audio/{lang}/ play in {t(`lang.${lang}`)}; the rest play in English.</p>}
     </div>
   );
 }

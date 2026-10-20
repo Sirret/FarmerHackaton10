@@ -4,6 +4,7 @@ import { placeOutboundCall } from '../../lib/notify.js';
 import { t } from '../../lib/i18n.js';
 import { formatDate } from '../../lib/dates.js';
 import { makeContext, startSession, renderScreen, reply, IDLE_TIMEOUT_MS } from '../../lib/ussd.js';
+import { useVoiceCall } from './useVoiceCall.js';
 
 const COLS = 22; // characters per screen row
 const ROWS = 6; // content rows under the status bar
@@ -28,17 +29,17 @@ export function wrap(lines, width = COLS) {
   return rows;
 }
 
-/** Run a USSD effect through the shared actions (same as every other channel). */
+/** Run a USSD or voice effect through the shared actions (same as every other channel). */
 async function runEffect(effect, ctx) {
   const me = ctx.user?.id;
   switch (effect.type) {
     case 'interest': return createInterest({ farmerId: me, crop: effect.crop });
     case 'produce': return createProduceRequest({ farmerId: me, crop: effect.crop, amount_unit: effect.amount, ready_when: effect.ready });
-    case 'report': return createReport({ reporterId: me, crop: effect.crop, problem: effect.problem });
+    case 'report': return createReport({ reporterId: me, crop: effect.crop, problem: effect.problem, voice_note: effect.voice_note ?? null });
     case 'toggle_sms': return setFarmerAlerts(me, { sms_alerts: !ctx.farmer.sms_alerts });
     case 'toggle_voice': return setFarmerAlerts(me, { voice_alerts: !ctx.farmer.voice_alerts });
     case 'callback': return placeOutboundCall(me, 'callback');
-    case 'lead': return createLead({ phone: ctx.phone });
+    case 'lead': return createLead({ phone: ctx.phone, voice_note: effect.voice_note ?? null });
     default: return null;
   }
 }
@@ -70,8 +71,9 @@ function Rows({ rows }) {
 /**
  * The farmer's basic phone. snap = live data (loadPhoneSnapshot), userId = who holds the
  * phone, lang = language override or null. dialRequest = { code, n } from a quick-dial button.
+ * onSubtitle({ clips, index } | null) reports the voice note playing, for the subtitles panel.
  */
-export default function BasicPhone({ snap, userId, lang, dialRequest }) {
+export default function BasicPhone({ snap, userId, lang, dialRequest, onSubtitle }) {
   const [app, setApp] = useState('home');
   const [homeSel, setHomeSel] = useState(0);
   const [number, setNumber] = useState('');
@@ -95,6 +97,27 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
   const mySms = ctx.user ? snap.sms.filter((s) => s.to_user_id === ctx.user.id).sort((a, b) => a.sent_at.localeCompare(b.sent_at)) : [];
   const unread = mySms.filter((s) => !s.read).length;
   const L = ctx.lang;
+
+  const voice = useVoiceCall({
+    snap, userId, lang, runEffect, onSubtitle,
+    onEnded: (length) => { setApp('home'); showPopup([t('phone.call_ended', L, { time: length })], 1800); },
+  });
+  // An incoming call takes over the screen (a USSD session closes, like on a real phone).
+  useLayoutEffect(() => {
+    if (!voice.incoming) return;
+    clearTimeout(idleTimer.current);
+    clearTimeout(popupTimer.current);
+    setSession(null);
+    setPopup(null);
+    setBanner(0);
+  }, [voice.incoming]);
+  // Call timer on screen.
+  const [, tick] = useState(0);
+  useEffect(() => {
+    if (!voice.call) return undefined;
+    const id = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, [voice.call?.startedAt]);
 
   // New SMS → "1 new message · 1234" banner on whatever screen is open (spec §9.1).
   // Reading the thread while it arrives marks it read instead.
@@ -149,6 +172,7 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
       setApp('popup');
       showPopup([t('ussd.call_me', L)]);
       if (ctx.registered) await placeOutboundCall(ctx.user.id, 'callback');
+      else voice.ringBack(); // unknown number: rings back with the 'not registered' voice menu
     } else if (code) {
       setApp('popup');
       showPopup([t('phone.not_reachable', L)]);
@@ -169,6 +193,8 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
   }
 
   function press(k) {
+    if (voice.incoming) { if (k === 'call' || k === 'ok') voice.answer(); else if (k === 'end') voice.decline(); return; }
+    if (voice.call) { if (k === 'end') voice.hangUp(); else if (/^[0-9*#]$/.test(k)) voice.dtmf(k); return; }
     if (popup) { if (k === 'end') { clearTimeout(popupTimer.current); setPopup(null); setApp('home'); } return; }
     if (banner && k === 'ok' && app !== 'ussd') { openThread(); return; }
     if (k === 'end') { setBanner(0); if (app === 'ussd') endSession(); else { setApp('home'); setNumber(''); } return; }
@@ -216,7 +242,28 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
 
   // ---------------------------------------------------------------- screen
   let body;
-  if (popup) {
+  if (voice.incoming) {
+    body = (
+      <div class="text-center">
+        <div class="text-lg font-bold">4321</div>
+        <div>{t('phone.incoming', L)}</div>
+        <div class="mb-2 animate-pulse">{t('phone.calling', L)}</div>
+        <div class="text-[11px]">{t('phone.answer_hint', L)}</div>
+        <div class="text-[11px]">{t('phone.decline_hint', L)}</div>
+      </div>
+    );
+  } else if (voice.call) {
+    const sec = Math.round((Date.now() - voice.call.startedAt) / 1000);
+    const clock = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+    body = (
+      <div>
+        <div class="flex justify-between"><span>{t('phone.in_call', L)}</span><span>{clock}</span></div>
+        <div class="my-1 border-y border-lcd-ink py-1 text-center">{voice.call.recording ? t('phone.recording', L) : 'Kafo Signal'}</div>
+        <Rows rows={wrap([t('phone.keys_hint', L)])} />
+        {voice.call.lastKey && <div class="text-[11px]">{t('phone.you_pressed', L, { key: voice.call.lastKey })}</div>}
+      </div>
+    );
+  } else if (popup) {
     body = <Rows rows={wrap(popup).slice(0, ROWS + 1)} />;
   } else if (app === 'home') {
     body = (
@@ -228,7 +275,7 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
       </div>
     );
   } else if (app === 'dial') {
-    const history = myCalls.slice(0, 3).map((c) => `${t(c.status === 'missed' ? 'phone.call.missed' : 'phone.call.in', L)} 4321 ${c.started_at.slice(11, 16)}`);
+    const history = myCalls.filter((c) => c.status !== 'ringing').slice(0, 3).map((c) => `${t(c.status === 'missed' ? 'phone.call.missed' : 'phone.call.in', L)} 4321 ${c.started_at.slice(11, 16)}`);
     body = (
       <div>
         <div class="text-[11px]">{t('phone.enter_number', L)}</div>
@@ -286,7 +333,7 @@ export default function BasicPhone({ snap, userId, lang, dialRequest }) {
         <StatusBar lang={L} />
         <div class="relative pt-1">
           {body}
-          {banner > 0 && !popup && (
+          {banner > 0 && !popup && !voice.incoming && !voice.call && (
             <div role="alert" class="absolute inset-x-0 top-1 border-2 border-lcd-ink bg-lcd px-1 py-0.5">
               <div class="font-bold">{t(banner === 1 ? 'phone.banner.one' : 'phone.banner.many', L, { n: banner })}</div>
               <div class="text-[11px]">OK = {t('phone.read', L)}</div>

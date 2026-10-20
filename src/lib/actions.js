@@ -308,6 +308,14 @@ export async function createProduceRequest({ farmerId, crop, amount_unit, ready_
   return row;
 }
 
+/** A simulated call moves on: answered, missed (declined / not picked up) or ended. */
+export async function setCallStatus(callId, status) {
+  if (!['ringing', 'answered', 'missed', 'ended'].includes(status)) throw new Error('Unknown call status');
+  const patch = { status };
+  if (status === 'missed' || status === 'ended') patch.ended_at = await now();
+  await db.calls.update(callId, patch);
+}
+
 /** Farmer opened her messages: mark them all read. */
 export async function markSmsRead(userId) {
   await db.sms.where('to_user_id').equals(userId).filter((s) => !s.read).modify({ read: true });
