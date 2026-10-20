@@ -1,0 +1,82 @@
+{
+  "_doc": "USSD *1234# screens (spec 9.2). title/label = i18n keys. body/list/labelFn = named builders in src/lib/ussd.js. items: key → to (next screen), set (params), action (effect run by the phone through actions.js). '0' = back and '00' = main menu unless an item uses that key. end = final message; close = session closes after it.",
+
+  "WHO": { "title": "ussd.who", "list": "profiles", "param": "profile", "action": "switch_user", "to": "MAIN", "noBack": true },
+
+  "MAIN": {
+    "body": "main_title",
+    "noBack": true,
+    "items": [
+      { "key": "1", "label": "ussd.main.plant", "to": "PLANT" },
+      { "key": "2", "label": "ussd.main.sell", "to": "SELL" },
+      { "key": "3", "label": "ussd.main.alerts", "to": "ALERTS" },
+      { "key": "4", "label": "ussd.main.produce", "to": "PRODUCE_CROP" },
+      { "key": "5", "label": "ussd.main.report", "to": "REPORT_CROP" },
+      { "key": "6", "label": "ussd.main.call", "action": "callback", "to": "CALL_ME" },
+      { "key": "7", "label": "ussd.main.profile", "to": "PROFILE" },
+      { "key": "0", "label": "ussd.main.help", "to": "HELP" }
+    ]
+  },
+
+  "PLANT": { "body": "plant_title", "list": "crops", "labelFn": "plant_item", "param": "crop", "to": "PLANT_DETAIL" },
+  "PLANT_DETAIL": {
+    "body": "plant_detail",
+    "items": [{ "key": "1", "label": "ussd.plant.tell_leader", "action": "interest", "to": "INTEREST_DONE" }]
+  },
+  "INTEREST_DONE": { "body": "interest_done", "end": true },
+
+  "SELL": { "title": "ussd.ask_crop", "list": "crops", "param": "crop", "to": "SELL_RESULT" },
+  "SELL_RESULT": { "body": "sell_result" },
+
+  "ALERTS": {
+    "body": "alerts",
+    "items": [
+      { "key": "1", "labelFn": "sms_toggle", "action": "toggle_sms", "to": "ALERTS" },
+      { "key": "2", "labelFn": "voice_toggle", "action": "toggle_voice", "to": "ALERTS" }
+    ]
+  },
+
+  "PRODUCE_CROP": { "title": "ussd.ask_crop", "list": "crops", "param": "crop", "to": "PRODUCE_AMOUNT" },
+  "PRODUCE_AMOUNT": {
+    "title": "ussd.produce.how_much",
+    "items": [
+      { "key": "1", "label": "unit.bucket", "set": { "amount": "bucket" }, "to": "PRODUCE_READY" },
+      { "key": "2", "label": "unit.bag", "set": { "amount": "bag" }, "to": "PRODUCE_READY" },
+      { "key": "3", "label": "unit.bags_2_4", "set": { "amount": "bags_2_4" }, "to": "PRODUCE_READY" },
+      { "key": "4", "label": "unit.bags_5_plus", "set": { "amount": "bags_5_plus" }, "to": "PRODUCE_READY" }
+    ]
+  },
+  "PRODUCE_READY": {
+    "title": "ussd.produce.ready_when",
+    "items": [
+      { "key": "1", "label": "ussd.ready.today", "set": { "ready": "today" }, "action": "produce", "to": "PRODUCE_DONE" },
+      { "key": "2", "label": "ussd.ready.this_week", "set": { "ready": "this_week" }, "action": "produce", "to": "PRODUCE_DONE" }
+    ]
+  },
+  "PRODUCE_DONE": { "body": "produce_done", "end": true },
+
+  "REPORT_CROP": { "title": "ussd.ask_crop", "list": "crops", "param": "crop", "to": "REPORT_PROBLEM" },
+  "REPORT_PROBLEM": {
+    "title": "ussd.report.what",
+    "items": [
+      { "key": "1", "label": "problem.insects", "set": { "problem": "insects" }, "action": "report", "to": "REPORT_DONE" },
+      { "key": "2", "label": "problem.leaf_spots", "set": { "problem": "leaf_spots" }, "action": "report", "to": "REPORT_DONE" },
+      { "key": "3", "label": "problem.wilting", "set": { "problem": "wilting" }, "action": "report", "to": "REPORT_DONE" },
+      { "key": "4", "label": "problem.animals", "set": { "problem": "animals" }, "action": "report", "to": "REPORT_DONE" },
+      { "key": "5", "label": "problem.flooding", "set": { "problem": "flooding" }, "action": "report", "to": "REPORT_DONE" },
+      { "key": "9", "label": "ussd.report.other_voice", "set": { "problem": "other" }, "action": "report", "to": "REPORT_DONE" }
+    ]
+  },
+  "REPORT_DONE": { "body": "report_done", "end": true },
+
+  "CALL_ME": { "body": "call_me", "end": true, "close": true },
+  "PROFILE": { "body": "profile" },
+  "HELP": { "body": "help" },
+
+  "UNREGISTERED": {
+    "body": "unregistered",
+    "noBack": true,
+    "items": [{ "key": "1", "label": "ussd.unreg.leave", "action": "lead", "to": "LEAD_DONE" }]
+  },
+  "LEAD_DONE": { "body": "lead_done", "end": true, "close": true }
+}

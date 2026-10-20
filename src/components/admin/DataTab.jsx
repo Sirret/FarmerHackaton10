@@ -4,6 +4,7 @@ import { savePrices, saveTransport } from '../../lib/actions.js';
 import { daysBetween, formatDate } from '../../lib/dates.js';
 import { cropName } from '../../lib/i18n.js';
 import { useLive } from '../../lib/useLive.js';
+import { sortCrops } from '../../lib/crops.js';
 import Button from '../ui/Button.jsx';
 import Card from '../ui/Card.jsx';
 import { inputClass, Notice } from '../ui/Field.jsx';
@@ -13,7 +14,7 @@ const key = (m, c) => `${m}|${c}`;
 export default function DataTab() {
   const data = useLive(async () => {
     const [prices, towns, crops, transport, kafos, config] = await Promise.all([
-      db.prices.toArray(), db.market_towns.toArray(), db.crop_calendar.toArray(), db.transport_costs.toArray(), db.kafos.toArray(), db.config.get('main'),
+      db.prices.toArray(), db.market_towns.toArray(), db.crop_calendar.toArray().then(sortCrops), db.transport_costs.toArray(), db.kafos.toArray(), db.config.get('main'),
     ]);
     const latest = new Map();
     for (const p of prices) {

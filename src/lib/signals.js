@@ -2,6 +2,7 @@
 // so signals update the moment any tab changes plantings, orders, reports, etc.
 import { db } from './db.js';
 import { plantSignal, sellSignal, riskSignal } from './rules.js';
+import { sortCrops } from './crops.js';
 
 export async function loadSignalData() {
   const [kafos, plantings, orders, order_acceptances, crop_calendar, prices, transport_costs, market_towns, alerts, reports, config] =
@@ -10,6 +11,7 @@ export async function loadSignalData() {
       db.crop_calendar.toArray(), db.prices.toArray(), db.transport_costs.toArray(), db.market_towns.toArray(),
       db.alerts.toArray(), db.reports.toArray(), db.config.get('main'),
     ]);
+  sortCrops(crop_calendar);
   return { kafos, plantings, orders, order_acceptances, crop_calendar, prices, transport_costs, market_towns, alerts, reports, config };
 }
 

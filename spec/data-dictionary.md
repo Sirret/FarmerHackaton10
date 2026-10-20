@@ -45,7 +45,7 @@ Extra details for users with `role = farmer`.
 | name_clip | string? | Path to recorded name audio | `names/farmer_awa.mp3` |
 | sms_alerts | boolean | Receives SMS alerts | `true` |
 | voice_alerts | boolean | Receives alert calls | `false` |
-Writer: leader · admin
+Writer: leader · admin · farmer (only her own `sms_alerts` / `voice_alerts`, from the USSD Alerts menu)
 
 ### `kafos`
 | Field | Type | Description | Example |
@@ -98,6 +98,7 @@ Writer: admin (seed)
 | Field | Type | Description | Example |
 |---|---|---|---|
 | crop ★ | enum | | `okra` |
+| sort_order | number | Fixed position in every menu (1 Tomato, 2 Onion, 3 Pepper, 4 Okra); USSD keys depend on it | `4` |
 | days_to_harvest | number | Planting → first harvest | `58` |
 | harvest_days | number | How long harvest lasts | `30` |
 | kg_per_bed | number | Default yield estimate (updated from actual kg) | `4` |
@@ -376,7 +377,7 @@ Writer: system (every write by leader/buyer/admin)
 ### `config` (single row, id = `main`)
 | Field | Type | Description | Default |
 |---|---|---|---|
-| seed_version | number | Bump when seed files change; browsers with an older copy reseed | `3` |
+| seed_version | number | Bump when seed files change; browsers with an older copy reseed | `4` |
 | demo_date | date | Current demo "today" | `2026-10-20` |
 | plant_green_below | number | Supply ÷ demand | `0.8` |
 | plant_red_above | number | | `1.3` |

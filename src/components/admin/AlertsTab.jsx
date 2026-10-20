@@ -4,6 +4,7 @@ import { createAlert, endAlert, callFarmersWithAlert } from '../../lib/actions.j
 import { addDays, formatDate } from '../../lib/dates.js';
 import { cropName, t } from '../../lib/i18n.js';
 import { useLive } from '../../lib/useLive.js';
+import { sortCrops } from '../../lib/crops.js';
 import districts from '../../data/districts.json';
 import templates from '../../data/alert_templates.json';
 import Button from '../ui/Button.jsx';
@@ -14,7 +15,7 @@ import SignalPill from '../shared/SignalPill.jsx';
 export default function AlertsTab() {
   const data = useLive(async () => {
     const [alerts, sms, users, crops, config] = await Promise.all([
-      db.alerts.toArray(), db.sms.orderBy('sent_at').reverse().limit(12).toArray(), db.users.toArray(), db.crop_calendar.toArray(), db.config.get('main'),
+      db.alerts.toArray(), db.sms.orderBy('sent_at').reverse().limit(12).toArray(), db.users.toArray(), db.crop_calendar.toArray().then(sortCrops), db.config.get('main'),
     ]);
     return { alerts, sms, users: new Map(users.map((u) => [u.id, u])), crops: crops.map((c) => c.crop), today: config.demo_date };
   });

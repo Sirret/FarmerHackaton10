@@ -308,6 +308,24 @@ export async function createProduceRequest({ farmerId, crop, amount_unit, ready_
   return row;
 }
 
+/** Farmer switches her own alerts: { sms_alerts } and/or { voice_alerts }. */
+export async function setFarmerAlerts(farmerId, patch) {
+  const allowed = Object.fromEntries(Object.entries(patch).filter(([k]) => k === 'sms_alerts' || k === 'voice_alerts').map(([k, v]) => [k, Boolean(v)]));
+  const farmer = await db.farmers.get(farmerId);
+  if (!farmer) throw new Error('Not a registered farmer');
+  if (!farmer.has_phone) throw new Error('No phone registered');
+  await db.farmers.update(farmerId, allowed);
+}
+
+/** An unknown number asks to join (USSD / voice). The admin follows up (spec §5). */
+export async function createLead({ phone, voice_note = null, market_town_id = null }) {
+  const open = await db.leads.where('status').equals('new').filter((l) => l.phone === phone).first();
+  if (open) return open; // one open lead per number
+  const row = { id: newId('lead'), phone, voice_note, market_town_id, status: 'new', notes: '', created_at: await now() };
+  await db.leads.add(row);
+  return row;
+}
+
 // ---------------------------------------------------------------- kafo leader
 
 export async function markInterestSeen(interestId, leaderId) {

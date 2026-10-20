@@ -1,12 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import Card from '../components/shared/Card.astro';
-import SessionBar from '../components/shared/SessionBar.jsx';
+import FarmerSim from '../components/farmer/FarmerSim.jsx';
 ---
 <Base title="Farmer">
-  <h1 class="mb-4 text-2xl font-bold">Farmer phone</h1>
-  <SessionBar client:only="preact" role="farmer" />
-  <Card class="max-w-md">
-    <p class="text-sm text-muted">The basic-phone simulator (Phone and Messages apps, USSD *1234#, voice *4321#) arrives in Phases 6 to 8.</p>
-  </Card>
+  <h1 class="mb-1 text-2xl font-bold">Farmer phone</h1>
+  <p class="mb-6 text-sm text-muted">A basic phone: no colours, no apps to install. Dial *1234# for the text menu.</p>
+  <FarmerSim client:only="preact" />
 </Base>
