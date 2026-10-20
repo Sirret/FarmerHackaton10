@@ -41,16 +41,24 @@ Astro (static output) · Tailwind CSS v4 (`@tailwindcss/vite`, no config file) �
 - `src/lib/clock.js`: `today()`, `now()`, `jump(days)` (async, read `config.demo_date`). Pure date helpers live in `src/lib/dates.js`.
 - Preact islands read data with `useLive(querier, deps, initial)` from `src/lib/useLive.js` (waits for `ready()` seeding, then Dexie `liveQuery`, syncs across tabs). Mount DB islands with `client:only="preact"` (IndexedDB doesn't exist at build time).
 
+## Writes, notifications, logins
+- **All writes go through `src/lib/actions.js`** (registerKafo, setBuyerStatus, savePrices, saveTransport, createAlert, endAlert, callFarmersWithAlert, createReport, postOrder, jumpDemo, demo* helpers). Components never write tables directly, so a farmer USSD report, a leader report and a demo button run the same validation, SMS triggers and audit row. Add new writes there.
+- `src/lib/notify.js`: `sendSms(userId, templateKey, vars | (lang) => vars)` → `sms` table; `placeOutboundCall` → `calls`. Pure helpers `smsBody`, `alertSmsVars`, `farmersIn` are unit tested; `tests/notify.test.js` checks every `sms.*` template fits 160 plain-Latin chars.
+- Dexie gotchas: inside `db.transaction(...)` only touch the listed tables; `now()` reads `config`, so compute timestamps before the transaction (see `audit(..., at)`). Booleans are not valid IndexedDB keys, so never query `verified`/`read` through `where()`; use `.filter()`.
+- Forms: update state with `setForm((f) => ({ ...f, [k]: v }))`, never from the render closure.
+- Demo login: `src/lib/session.js` (`getSession(role)`, `loginAs(role, id)`, localStorage). `AccountTiles` shows click-to-login squares (live from the DB, so new kafos/buyers appear at once) on the home page; `SessionBar` on each role page shows "Logged in as" + switch. Admin has no login. Phone numbers are fake 7-digit demo numbers; nothing is ever sent.
+
 ## Signal engine
 - `src/lib/rules.js` is pure: `plantSignal`, `sellSignal`, `riskSignal` take `{ crop, district | fromTown, kafoId, today, data }` and return `{ signal, reason, numbers }`. `src/lib/signals.js` loads the data snapshot from Dexie (`loadSignalData`, `kafoSignals(kafoId)`).
 - **Plant horizon is per crop**: today → today + `days_to_harvest` + `harvest_days`, so a planting logged today always counts. Accepted order kg counts as supply until plantings with that `order_id` are logged (no double counting). Orders add demand in a district only for kg committed there plus kg nobody has committed yet.
 - **Sell**: latest price − transport (cost per bag ÷ `unit_kg.bag`) vs the 4-week average across all markets; thresholds `sell_green_above` / `sell_red_below`. Confirmed orders are listed first and always green.
-- **Risk**: alerts set their own level; ≥ `report_count` unverified reports → yellow only; red needs ≥1 verified report among ≥ `report_count`.
+- **Risk**: alerts set their own level and count from `alert_lead_days` before they start ("heavy rain in 2 days" shows ACT NOW now); ≥ `report_count` unverified reports → yellow only; red needs ≥1 verified report among ≥ `report_count`.
 - `src/lib/render.js`: `render(signal, 'tile' | 'ussd' | 'voice', lang, { kind, crop, reason })`. Words come from `src/data/i18n.json` (English only so far; other languages fall back to English until the team adds translations).
-- Note for Phase 3: after "Jump +8 weeks" every seeded price is stale (sell shows "no recent price"), so the jump button should also copy the latest prices forward.
+- `jumpDemo(days)` carries current prices forward to the new date (stale ones stay stale), so "where to sell" keeps working after a jump.
 
 ## Status
 - Phase 0 (setup & shell): done.
 - Phase 1 (data layer, seed, demo clock): done. Header shows the live demo date.
-- Phase 2 (colour engine + render): done. `/admin` has temporary panels: live Signals per kafo (with a "+10 beds" test button) and table counts with ±1 week.
-- Next: Phase 3 (admin website must-haves).
+- Phase 2 (colour engine + render): done.
+- Phase 3 (admin website): done. Tabs: Overview (counts, kafos under alert, live Signals with a "+10 beds" test button), Register (kafo + leader, buyer verify/suspend), Prices & transport, Alerts (template form, active list, call farmers, SMS log), Demo (scenario buttons + table counts). Home page has click-to-login account squares.
+- Next: Phase 4 (kafo leader app in the phone frame). Use `getSession('leader')` for the current leader and add its writes (log planting, accept order, confirm produce/reports, add member) to `actions.js`.

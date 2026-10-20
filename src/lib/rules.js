@@ -138,7 +138,8 @@ export function sellSignal({ crop, fromTown, kafoId, today, data }) {
 
 /**
  * RISK: active admin alerts + problem reports in the district for this crop.
- * An admin alert sets its own level (yellow or red).
+ * An admin alert sets its own level (yellow or red). Alerts are warnings, so they count
+ * from alert_lead_days before they start until they end ("heavy rain in 2 days").
  * Reports in the last report_window_days (not dismissed):
  *   - unverified reports can only raise the signal to yellow (needs report_count of them);
  *   - red needs a leader-verified report: ≥1 verified and ≥ report_count in total → red;
@@ -146,7 +147,8 @@ export function sellSignal({ crop, fromTown, kafoId, today, data }) {
  */
 export function riskSignal({ crop, district, today, data }) {
   const c = data.config;
-  const alerts = data.alerts.filter((a) => a.starts_on <= today && a.ends_on >= today
+  const issuedFrom = addDays(today, c.alert_lead_days ?? 7);
+  const alerts = data.alerts.filter((a) => a.starts_on <= issuedFrom && a.ends_on >= today
     && a.districts.includes(district) && (a.crops.length === 0 || a.crops.includes(crop)));
 
   const windowStart = addDays(today, -(c.report_window_days - 1));

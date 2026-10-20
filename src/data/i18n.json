@@ -46,5 +46,44 @@
   "reason.alert_dry_spell": { "en": "Dry spell alert" },
   "reason.alert_pest_outbreak": { "en": "Pest outbreak alert" },
   "reason.alert_disease": { "en": "Disease alert" },
-  "reason.unknown_crop": { "en": "Crop not in the calendar" }
+  "reason.unknown_crop": { "en": "Crop not in the calendar" },
+
+  "lang.en": { "en": "English" },
+  "lang.mnk": { "en": "Mandinka" },
+  "lang.wo": { "en": "Wolof" },
+  "lang.ff": { "en": "Fula" },
+  "lang.dyo": { "en": "Jola" },
+
+  "alert.heavy_rain": { "en": "Heavy rain" },
+  "alert.dry_spell": { "en": "Dry spell" },
+  "alert.pest_outbreak": { "en": "Pest outbreak" },
+  "alert.disease": { "en": "Plant disease" },
+
+  "problem.insects": { "en": "Insects" },
+  "problem.leaf_spots": { "en": "Leaf spots" },
+  "problem.wilting": { "en": "Wilting" },
+  "problem.animals": { "en": "Animals" },
+  "problem.flooding": { "en": "Flooding" },
+  "problem.other": { "en": "Other" },
+
+  "buyer_type.hotel": { "en": "Hotel" },
+  "buyer_type.wholesaler": { "en": "Wholesaler" },
+  "buyer_type.supermarket": { "en": "Supermarket" },
+  "buyer_type.school_supplier": { "en": "School supplier" },
+  "buyer_type.processor": { "en": "Processor" },
+
+  "sms.when.today": { "en": "from today" },
+  "sms.when.tomorrow": { "en": "from tomorrow" },
+  "sms.when.days": { "en": "in {n} days" },
+  "sms.all_crops": { "en": "crops" },
+
+  "sms.welcome": { "en": "Kafo Signal: {name}, you are in {kafo}. Dial *1234# for menu. Dial *4321# to hear it." },
+  "sms.produce_confirmed": { "en": "GOOD: Your {amount} {crop} is now offered to buyers. We will SMS you when one buys. -Kafo Signal" },
+  "sms.order_taken": { "en": "GOOD: Buyer confirmed {crop} for your kafo. Bring to {kafo}, {day} {time}. -Kafo Signal" },
+  "sms.pest.watch_out": { "en": "{CROP}: WATCH OUT. {problem} reported near {town}. Check under leaves. Dial *4321# to hear. -Kafo Signal" },
+  "sms.alert.heavy_rain": { "en": "{verdict}: Heavy rain {when}. Harvest ripe {crop} early. Dial *4321# to hear. -Kafo Signal" },
+  "sms.alert.dry_spell": { "en": "{verdict}: Dry spell {when}. Water {crop} early morning and cover beds. Dial *4321# to hear. -Kafo Signal" },
+  "sms.alert.pest_outbreak": { "en": "{verdict}: Pest outbreak {when}. Check {crop} under leaves every day. Dial *4321# to hear. -Kafo Signal" },
+  "sms.alert.disease": { "en": "{verdict}: Plant disease {when}. Remove sick {crop} plants. Dial *4321# to hear. -Kafo Signal" },
+  "sms.paid": { "en": "PAID: {kg}kg {crop} delivered. D{amount} sent to your {wallet}. -Kafo Signal" }
 }

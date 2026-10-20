@@ -1,32 +1,41 @@
 ---
 import Base from '../layouts/Base.astro';
 import Card from '../components/shared/Card.astro';
+import AccountTiles from '../components/shared/AccountTiles.jsx';
 import { href } from '../lib/url.js';
 
-const roles = [
-  { path: '/farmer', title: 'Farmer', desc: 'Basic-phone simulator: dial *1234# for the text menu or *4321# for a voice call.' },
-  { path: '/kafo', title: 'Kafo leader', desc: 'Smartphone app: log plantings, accept buyer orders, confirm produce and reports.' },
-  { path: '/buyer', title: 'Buyer', desc: 'Post forward orders before planting, see the harvest outlook, collect and pay.' },
-  { path: '/admin', title: 'Admin', desc: 'Register kafos, verify buyers, enter prices, send alerts and drive the demo.' },
-];
+const sections = [
+  { role: 'farmer', title: 'Farmers', desc: 'Basic-phone simulator: *1234# text menu, *4321# voice call.', limit: 6 },
+  { role: 'leader', title: 'Kafo leaders', desc: 'Smartphone app: plantings, buyer orders, produce and reports.', limit: 0 },
+  { role: 'buyer', title: 'Buyers', desc: 'Post orders before planting, collect and pay.', limit: 0 },
+] as const;
 ---
 <Base title="Home">
   <section class="mb-8 max-w-2xl">
     <h1 class="text-3xl font-bold tracking-tight">Kafo Signal</h1>
     <p class="mt-2 text-muted">
       Green, yellow or red signals for what to plant, where to sell and what risk is coming,
-      for women's vegetable garden groups (kafos) around Brikama.
+      for women's vegetable garden groups (kafos) around Brikama. Click an account to log in.
     </p>
   </section>
 
-  <div class="grid gap-4 sm:grid-cols-2">
-    {roles.map((r) => (
-      <a href={href(r.path)} class="group block">
-        <Card class="h-full transition group-hover:border-accent">
-          <h2 class="text-lg font-semibold">{r.title}</h2>
-          <p class="mt-1 text-sm text-muted">{r.desc}</p>
-        </Card>
-      </a>
-    ))}
-  </div>
+  {sections.map((s) => (
+    <section class="mb-8">
+      <div class="mb-3 flex flex-wrap items-baseline gap-x-3">
+        <h2 class="text-lg font-semibold">{s.title}</h2>
+        <p class="text-sm text-muted">{s.desc}</p>
+      </div>
+      <AccountTiles client:only="preact" role={s.role} limit={s.limit} />
+    </section>
+  ))}
+
+  <section class="mb-4">
+    <h2 class="mb-3 text-lg font-semibold">Admin</h2>
+    <a href={href('/admin')} class="block max-w-sm">
+      <Card class="transition hover:border-accent">
+        <p class="font-semibold">Kafo Signal Admin</p>
+        <p class="mt-1 text-sm text-muted">Register kafos, verify buyers, prices, alerts and the demo panel. No login needed.</p>
+      </Card>
+    </a>
+  </section>
 </Base>

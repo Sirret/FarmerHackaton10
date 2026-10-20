@@ -1,0 +1,6 @@
+{
+  "heavy_rain": { "level": "red", "days": 3 },
+  "dry_spell": { "level": "yellow", "days": 14 },
+  "pest_outbreak": { "level": "red", "days": 14 },
+  "disease": { "level": "yellow", "days": 14 }
+}

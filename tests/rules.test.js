@@ -163,6 +163,13 @@ describe('riskSignal', () => {
     expect(risk({ alerts: [{ ...alert, crops: ['tomato'] }] }).signal).toBe('green');
     expect(risk({ alerts: [{ ...alert, ends_on: '2026-10-19' }] }).signal).toBe('green');
   });
+
+  it('counts an alert issued ahead of time, up to alert_lead_days before it starts', () => {
+    const alert = { id: 'a1', template_type: 'heavy_rain', level: 'red', crops: [], districts: ['D1'], starts_on: '2026-10-22', ends_on: '2026-10-25' };
+    const withLead = (data) => riskSignal({ crop: 'okra', district: 'D1', today: TODAY, data: { ...data, config: { ...config, alert_lead_days: 7 } } });
+    expect(withLead(base({ alerts: [alert] })).signal).toBe('red');
+    expect(withLead(base({ alerts: [{ ...alert, starts_on: '2026-11-10', ends_on: '2026-11-12' }] })).signal).toBe('green');
+  });
 });
 
 describe('worst', () => {

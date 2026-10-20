@@ -1,12 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import PhoneFrame from '../components/shared/PhoneFrame.astro';
+import SessionBar from '../components/shared/SessionBar.jsx';
 ---
 <Base title="Kafo leader">
+  <SessionBar client:only="preact" role="leader" />
   <PhoneFrame>
     <div class="bg-brand px-4 py-3 text-brand-ink">
       <p class="text-xs opacity-80">Kafo leader</p>
-      <h1 class="text-lg font-semibold">Brikama Women's Kafo</h1>
+      <h1 class="text-lg font-semibold">Kafo Signal</h1>
     </div>
     <div class="p-4 text-sm text-muted">
       The leader app (Home, Plant, Sell, Members, Alerts) arrives in Phase 4.
