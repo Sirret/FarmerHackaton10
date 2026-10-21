@@ -1,53 +1,25 @@
 import { useState } from 'preact/hooks';
 import clips from '../../data/ivr/clips.json';
-import { LANGS, t } from '../../lib/i18n.js';
-import { missingClips, clearMissingClips } from '../../lib/voicePlayer.js';
 import Button from '../ui/Button.jsx';
 import Card from '../ui/Card.jsx';
 
-// Recording checklist (spec §9.6): what to record, and which clips calls in this browser
-// had to replace with text-to-speech. Recordings go in public/audio/{lang}/{clip_id}.mp3.
+// Recording guide (spec §9.6), generated from docs/clips.csv (`npm run clips:build`).
+// Unrecorded clips are normal: calls show the words and read the English aloud.
 export default function VoiceClips() {
-  const [missing, setMissing] = useState(missingClips);
   const [showAll, setShowAll] = useState(false);
-  const starter = clips.filter((c) => c.starter);
-  const byLang = Object.fromEntries(LANGS.map((l) => [l, missing.filter((m) => m.startsWith(`${l}/`)).map((m) => m.slice(l.length + 1))]));
-  const names = missing.filter((m) => m.startsWith('names/'));
-  const list = showAll ? clips : starter;
+  const first = clips.filter((c) => c.priority === 1);
+  const list = showAll ? clips : first;
 
   return (
-    <Card
-      title="Voice clips"
-      actions={<>
-        <Button variant="ghost" onClick={() => setMissing(missingClips())}>Refresh</Button>
-        <Button variant="ghost" onClick={() => { clearMissingClips(); setMissing([]); }}>Clear list</Button>
-      </>}
-    >
+    <Card title="Voice clips: recording guide">
       <p class="mb-3 text-sm text-muted">
-        {clips.length} clips in the recording guide ({starter.length} starter clips for the Wolof demo). Save each as
-        <code class="mx-1 break-all rounded bg-soft px-1">{'public/audio/{lang}/{clip_id}.mp3'}</code> or <code class="break-all rounded bg-soft px-1">.ogg</code> (mp3 also plays on iPhones)
-        (names in <code class="break-all rounded bg-soft px-1">public/audio/names/</code>); calls pick them up on the next page load. Until then calls play English or read the script aloud.
+        {clips.length} clips in docs/clips.csv ({first.length} to record first). Save each as
+        <code class="mx-1 break-all rounded bg-soft px-1">{'public/audio/{lang}/{clip_id}.mp3'}</code>
+        (ogg, m4a, wav and webm also work; run <code class="rounded bg-soft px-1">npm run audio</code> to convert them to small mp3s).
+        Names go in <code class="break-all rounded bg-soft px-1">public/audio/names/</code>. Anything not recorded yet is shown as text and read in English during calls.
       </p>
-      <div class="mb-3 grid gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
-        {LANGS.map((l) => (
-          <div class="rounded-lg bg-soft px-3 py-2">
-            <p class="font-medium">{t(`lang.${l}`)}</p>
-            <p class="text-xs text-muted">{byLang[l].length ? `${byLang[l].length} missing in calls` : 'none missing in calls yet'}</p>
-          </div>
-        ))}
-        <div class="rounded-lg bg-soft px-3 py-2">
-          <p class="font-medium">Names</p>
-          <p class="text-xs text-muted">{names.length ? `${names.length} missing` : 'none missing in calls yet'}</p>
-        </div>
-      </div>
-      {missing.length > 0 && (
-        <details class="mb-3 text-sm">
-          <summary class="min-h-11 cursor-pointer py-2 font-medium">Missing in calls so far ({missing.length})</summary>
-          <p class="font-mono text-xs leading-relaxed">{missing.join(' · ')}</p>
-        </details>
-      )}
       <details class="text-sm">
-        <summary class="min-h-11 cursor-pointer py-2 font-medium">Recording guide: what to say</summary>
+        <summary class="min-h-11 cursor-pointer py-2 font-medium">What to say</summary>
         <ul class="max-h-72 divide-y divide-line overflow-y-auto">
           {list.map((c) => (
             <li class="flex gap-3 py-1.5">
@@ -56,7 +28,7 @@ export default function VoiceClips() {
             </li>
           ))}
         </ul>
-        <Button variant="ghost" class="mt-2" onClick={() => setShowAll(!showAll)}>{showAll ? 'Starter clips only' : `Show all ${clips.length}`}</Button>
+        <Button variant="ghost" class="mt-2" onClick={() => setShowAll(!showAll)}>{showAll ? 'Record-first clips only' : `Show all ${clips.length}`}</Button>
       </details>
     </Card>
   );

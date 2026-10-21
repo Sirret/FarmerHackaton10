@@ -17,6 +17,7 @@ function MiniTile({ title, signal, kind, detail }) {
 }
 
 export default function Home({ view, leaderId, go }) {
+  const lang = view.leader?.language ?? 'en';
   const upcoming = view.plantings.filter((p) => p.stage !== 'harvested').slice(0, 5);
   return (
     <div class="space-y-4">
@@ -26,15 +27,17 @@ export default function Home({ view, leaderId, go }) {
           {view.crops.map(({ crop, plant, sell, risk }) => {
             const best = sell.options[0];
             const sellDetail = best?.order_id ? 'Buyer order' : best?.net != null ? `${view.towns[best.market_town_id]} D${best.net}/kg` : null;
-            const say = `${cropName(crop)}. ${render(plant.signal, 'tile', 'en', { kind: 'plant' }).label}. `
-              + `${render(best?.signal ?? 'none', 'tile', 'en', { kind: 'sell' }).label}${sellDetail ? `, ${sellDetail.replace('D', '').replace('/kg', ' dalasi per kilo')}` : ''}. `
-              + `${render(risk.signal, 'tile', 'en', { kind: 'risk' }).label}.`;
+            const items = [
+              ...render(plant.signal, 'voice', lang, { kind: 'plant', crop, reason: plant.reason }),
+              ...render(best?.signal ?? 'none', 'voice', lang, { kind: 'sell' }),
+              ...render(risk.signal, 'voice', lang, { kind: 'risk', reason: risk.reason }),
+            ];
             return (
               <li class="rounded-xl border border-line bg-surface p-2 shadow-sm">
-                <div class="mb-1.5 flex items-center gap-2">
+                <div class="mb-1.5 flex flex-wrap items-center gap-2">
                   <CropIcon crop={crop} />
                   <span class="flex-1 font-semibold">{cropName(crop)}</span>
-                  <AudioButton text={say} label={`Listen: ${cropName(crop)}`} />
+                  <AudioButton items={items} lang={lang} label={`Listen: ${cropName(crop)}`} />
                 </div>
                 <div class="grid grid-cols-3 gap-1.5">
                   <MiniTile title="Plant" signal={plant.signal} kind="plant" detail={t(`reason.${plant.reason}`)} />
