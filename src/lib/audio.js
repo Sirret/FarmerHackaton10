@@ -355,7 +355,8 @@ export async function playChain(items, { lang = 'en', onSubtitle } = {}) {
     const isFast = fast();
     const found = isFast ? pieces.map(() => null) : await Promise.all(pieces.map(resolvePiece));
     if (signal.aborted) return finish('stopped');
-    const steps = groupFallbacks(pieces, found);
+    // Fast (tests): ~0.1 s per clip, like the old player, so subtitles stay visible long enough.
+    const steps = isFast ? pieces.map((piece, i) => ({ type: 'speech', start: i, pieces: [piece] })) : groupFallbacks(pieces, found);
 
     for (const step of steps) {
       if (signal.aborted) return finish('stopped');

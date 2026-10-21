@@ -27,3 +27,6 @@ pnpm-debug.log*
 docs/*
 !docs/clips.csv
 audio-originals/.tmp/
+
+# pitch deck build tools
+pitch/node_modules/
