@@ -68,7 +68,7 @@ describe('USSD *1234#', () => {
   it('2 Where to sell: markets ranked, transport counted', () => {
     const { text } = session('user_awa', ['2', '3']);
     expect(text).toContain('PEPPER today');
-    expect(text).toMatch(/1 Serekunda: BEST D70\/kg/);
+    expect(text).toMatch(/1 Banjul: BEST D448\/kg/);
     expect(text).toContain('(transport counted)');
   });
 

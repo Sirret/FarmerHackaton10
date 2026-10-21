@@ -3,7 +3,7 @@
     "id": "price_0001",
     "market_town_id": "town_serekunda",
     "crop": "tomato",
-    "price_per_kg": 38,
+    "price_per_kg": 136,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -11,7 +11,7 @@
     "id": "price_0002",
     "market_town_id": "town_serekunda",
     "crop": "tomato",
-    "price_per_kg": 36,
+    "price_per_kg": 129,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -19,7 +19,7 @@
     "id": "price_0003",
     "market_town_id": "town_serekunda",
     "crop": "tomato",
-    "price_per_kg": 34,
+    "price_per_kg": 121,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -27,7 +27,7 @@
     "id": "price_0004",
     "market_town_id": "town_serekunda",
     "crop": "tomato",
-    "price_per_kg": 31,
+    "price_per_kg": 111,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -35,7 +35,7 @@
     "id": "price_0005",
     "market_town_id": "town_serekunda",
     "crop": "tomato",
-    "price_per_kg": 28,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -43,7 +43,7 @@
     "id": "price_0006",
     "market_town_id": "town_brikama",
     "crop": "tomato",
-    "price_per_kg": 32,
+    "price_per_kg": 100,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -51,7 +51,7 @@
     "id": "price_0007",
     "market_town_id": "town_brikama",
     "crop": "tomato",
-    "price_per_kg": 30,
+    "price_per_kg": 94,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -59,7 +59,7 @@
     "id": "price_0008",
     "market_town_id": "town_brikama",
     "crop": "tomato",
-    "price_per_kg": 28,
+    "price_per_kg": 88,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -67,7 +67,7 @@
     "id": "price_0009",
     "market_town_id": "town_brikama",
     "crop": "tomato",
-    "price_per_kg": 26,
+    "price_per_kg": 81,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -75,7 +75,7 @@
     "id": "price_0010",
     "market_town_id": "town_brikama",
     "crop": "tomato",
-    "price_per_kg": 24,
+    "price_per_kg": 75,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -83,7 +83,7 @@
     "id": "price_0011",
     "market_town_id": "town_sukuta",
     "crop": "tomato",
-    "price_per_kg": 36,
+    "price_per_kg": 167,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -91,7 +91,7 @@
     "id": "price_0012",
     "market_town_id": "town_sukuta",
     "crop": "tomato",
-    "price_per_kg": 34,
+    "price_per_kg": 157,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -99,7 +99,7 @@
     "id": "price_0013",
     "market_town_id": "town_sukuta",
     "crop": "tomato",
-    "price_per_kg": 32,
+    "price_per_kg": 148,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -107,7 +107,7 @@
     "id": "price_0014",
     "market_town_id": "town_sukuta",
     "crop": "tomato",
-    "price_per_kg": 30,
+    "price_per_kg": 139,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -115,7 +115,7 @@
     "id": "price_0015",
     "market_town_id": "town_sukuta",
     "crop": "tomato",
-    "price_per_kg": 27,
+    "price_per_kg": 125,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -123,7 +123,7 @@
     "id": "price_0016",
     "market_town_id": "town_banjul",
     "crop": "tomato",
-    "price_per_kg": 42,
+    "price_per_kg": 191,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -131,7 +131,7 @@
     "id": "price_0017",
     "market_town_id": "town_banjul",
     "crop": "tomato",
-    "price_per_kg": 40,
+    "price_per_kg": 182,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -139,7 +139,7 @@
     "id": "price_0018",
     "market_town_id": "town_banjul",
     "crop": "tomato",
-    "price_per_kg": 38,
+    "price_per_kg": 173,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -147,7 +147,7 @@
     "id": "price_0019",
     "market_town_id": "town_banjul",
     "crop": "tomato",
-    "price_per_kg": 35,
+    "price_per_kg": 159,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -155,7 +155,7 @@
     "id": "price_0020",
     "market_town_id": "town_banjul",
     "crop": "tomato",
-    "price_per_kg": 33,
+    "price_per_kg": 150,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -163,7 +163,7 @@
     "id": "price_0021",
     "market_town_id": "town_serekunda",
     "crop": "onion",
-    "price_per_kg": 48,
+    "price_per_kg": 98,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -171,7 +171,7 @@
     "id": "price_0022",
     "market_town_id": "town_serekunda",
     "crop": "onion",
-    "price_per_kg": 48,
+    "price_per_kg": 98,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -179,7 +179,7 @@
     "id": "price_0023",
     "market_town_id": "town_serekunda",
     "crop": "onion",
-    "price_per_kg": 47,
+    "price_per_kg": 96,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -187,7 +187,7 @@
     "id": "price_0024",
     "market_town_id": "town_serekunda",
     "crop": "onion",
-    "price_per_kg": 48,
+    "price_per_kg": 98,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -195,7 +195,7 @@
     "id": "price_0025",
     "market_town_id": "town_serekunda",
     "crop": "onion",
-    "price_per_kg": 49,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -203,7 +203,7 @@
     "id": "price_0026",
     "market_town_id": "town_brikama",
     "crop": "onion",
-    "price_per_kg": 44,
+    "price_per_kg": 100,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -211,7 +211,7 @@
     "id": "price_0027",
     "market_town_id": "town_brikama",
     "crop": "onion",
-    "price_per_kg": 44,
+    "price_per_kg": 100,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -219,7 +219,7 @@
     "id": "price_0028",
     "market_town_id": "town_brikama",
     "crop": "onion",
-    "price_per_kg": 43,
+    "price_per_kg": 98,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -227,7 +227,7 @@
     "id": "price_0029",
     "market_town_id": "town_brikama",
     "crop": "onion",
-    "price_per_kg": 44,
+    "price_per_kg": 100,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -235,7 +235,7 @@
     "id": "price_0030",
     "market_town_id": "town_brikama",
     "crop": "onion",
-    "price_per_kg": 44,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -243,7 +243,7 @@
     "id": "price_0031",
     "market_town_id": "town_sukuta",
     "crop": "onion",
-    "price_per_kg": 46,
+    "price_per_kg": 102,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -251,7 +251,7 @@
     "id": "price_0032",
     "market_town_id": "town_sukuta",
     "crop": "onion",
-    "price_per_kg": 45,
+    "price_per_kg": 100,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -259,7 +259,7 @@
     "id": "price_0033",
     "market_town_id": "town_sukuta",
     "crop": "onion",
-    "price_per_kg": 46,
+    "price_per_kg": 102,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -267,7 +267,7 @@
     "id": "price_0034",
     "market_town_id": "town_sukuta",
     "crop": "onion",
-    "price_per_kg": 46,
+    "price_per_kg": 102,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -275,7 +275,7 @@
     "id": "price_0035",
     "market_town_id": "town_sukuta",
     "crop": "onion",
-    "price_per_kg": 45,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -283,7 +283,7 @@
     "id": "price_0036",
     "market_town_id": "town_banjul",
     "crop": "onion",
-    "price_per_kg": 52,
+    "price_per_kg": 98,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -291,7 +291,7 @@
     "id": "price_0037",
     "market_town_id": "town_banjul",
     "crop": "onion",
-    "price_per_kg": 51,
+    "price_per_kg": 96,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -299,7 +299,7 @@
     "id": "price_0038",
     "market_town_id": "town_banjul",
     "crop": "onion",
-    "price_per_kg": 52,
+    "price_per_kg": 98,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -307,7 +307,7 @@
     "id": "price_0039",
     "market_town_id": "town_banjul",
     "crop": "onion",
-    "price_per_kg": 52,
+    "price_per_kg": 98,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -315,7 +315,7 @@
     "id": "price_0040",
     "market_town_id": "town_banjul",
     "crop": "onion",
-    "price_per_kg": 53,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -323,7 +323,7 @@
     "id": "price_0041",
     "market_town_id": "town_serekunda",
     "crop": "pepper",
-    "price_per_kg": 60,
+    "price_per_kg": 333,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -331,7 +331,7 @@
     "id": "price_0042",
     "market_town_id": "town_serekunda",
     "crop": "pepper",
-    "price_per_kg": 61,
+    "price_per_kg": 339,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -339,7 +339,7 @@
     "id": "price_0043",
     "market_town_id": "town_serekunda",
     "crop": "pepper",
-    "price_per_kg": 62,
+    "price_per_kg": 344,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -347,7 +347,7 @@
     "id": "price_0044",
     "market_town_id": "town_serekunda",
     "crop": "pepper",
-    "price_per_kg": 63,
+    "price_per_kg": 350,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -355,7 +355,7 @@
     "id": "price_0045",
     "market_town_id": "town_serekunda",
     "crop": "pepper",
-    "price_per_kg": 72,
+    "price_per_kg": 400,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -363,7 +363,7 @@
     "id": "price_0046",
     "market_town_id": "town_brikama",
     "crop": "pepper",
-    "price_per_kg": 56,
+    "price_per_kg": 350,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -371,7 +371,7 @@
     "id": "price_0047",
     "market_town_id": "town_brikama",
     "crop": "pepper",
-    "price_per_kg": 56,
+    "price_per_kg": 350,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -379,7 +379,7 @@
     "id": "price_0048",
     "market_town_id": "town_brikama",
     "crop": "pepper",
-    "price_per_kg": 55,
+    "price_per_kg": 344,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -387,7 +387,7 @@
     "id": "price_0049",
     "market_town_id": "town_brikama",
     "crop": "pepper",
-    "price_per_kg": 56,
+    "price_per_kg": 350,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -395,7 +395,7 @@
     "id": "price_0050",
     "market_town_id": "town_brikama",
     "crop": "pepper",
-    "price_per_kg": 56,
+    "price_per_kg": 350,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -403,7 +403,7 @@
     "id": "price_0051",
     "market_town_id": "town_sukuta",
     "crop": "pepper",
-    "price_per_kg": 64,
+    "price_per_kg": 544,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -411,7 +411,7 @@
     "id": "price_0052",
     "market_town_id": "town_sukuta",
     "crop": "pepper",
-    "price_per_kg": 62,
+    "price_per_kg": 527,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -419,7 +419,7 @@
     "id": "price_0053",
     "market_town_id": "town_sukuta",
     "crop": "pepper",
-    "price_per_kg": 60,
+    "price_per_kg": 510,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -427,7 +427,7 @@
     "id": "price_0054",
     "market_town_id": "town_sukuta",
     "crop": "pepper",
-    "price_per_kg": 58,
+    "price_per_kg": 493,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -435,7 +435,7 @@
     "id": "price_0055",
     "market_town_id": "town_sukuta",
     "crop": "pepper",
-    "price_per_kg": 50,
+    "price_per_kg": 425,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -443,7 +443,7 @@
     "id": "price_0056",
     "market_town_id": "town_banjul",
     "crop": "pepper",
-    "price_per_kg": 66,
+    "price_per_kg": 443,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -451,7 +451,7 @@
     "id": "price_0057",
     "market_town_id": "town_banjul",
     "crop": "pepper",
-    "price_per_kg": 66,
+    "price_per_kg": 443,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -459,7 +459,7 @@
     "id": "price_0058",
     "market_town_id": "town_banjul",
     "crop": "pepper",
-    "price_per_kg": 67,
+    "price_per_kg": 450,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -467,7 +467,7 @@
     "id": "price_0059",
     "market_town_id": "town_banjul",
     "crop": "pepper",
-    "price_per_kg": 66,
+    "price_per_kg": 443,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -475,7 +475,7 @@
     "id": "price_0060",
     "market_town_id": "town_banjul",
     "crop": "pepper",
-    "price_per_kg": 67,
+    "price_per_kg": 450,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -483,7 +483,7 @@
     "id": "price_0061",
     "market_town_id": "town_serekunda",
     "crop": "okra",
-    "price_per_kg": 52,
+    "price_per_kg": 95,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -491,7 +491,7 @@
     "id": "price_0062",
     "market_town_id": "town_serekunda",
     "crop": "okra",
-    "price_per_kg": 53,
+    "price_per_kg": 96,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -499,7 +499,7 @@
     "id": "price_0063",
     "market_town_id": "town_serekunda",
     "crop": "okra",
-    "price_per_kg": 52,
+    "price_per_kg": 95,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -507,7 +507,7 @@
     "id": "price_0064",
     "market_town_id": "town_serekunda",
     "crop": "okra",
-    "price_per_kg": 54,
+    "price_per_kg": 98,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -515,7 +515,7 @@
     "id": "price_0065",
     "market_town_id": "town_serekunda",
     "crop": "okra",
-    "price_per_kg": 55,
+    "price_per_kg": 100,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -523,7 +523,7 @@
     "id": "price_0066",
     "market_town_id": "town_brikama",
     "crop": "okra",
-    "price_per_kg": 46,
+    "price_per_kg": 72,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -531,7 +531,7 @@
     "id": "price_0067",
     "market_town_id": "town_brikama",
     "crop": "okra",
-    "price_per_kg": 47,
+    "price_per_kg": 73,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -539,7 +539,7 @@
     "id": "price_0068",
     "market_town_id": "town_brikama",
     "crop": "okra",
-    "price_per_kg": 46,
+    "price_per_kg": 72,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -547,7 +547,7 @@
     "id": "price_0069",
     "market_town_id": "town_brikama",
     "crop": "okra",
-    "price_per_kg": 47,
+    "price_per_kg": 73,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -555,7 +555,7 @@
     "id": "price_0070",
     "market_town_id": "town_brikama",
     "crop": "okra",
-    "price_per_kg": 48,
+    "price_per_kg": 75,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -563,7 +563,7 @@
     "id": "price_0071",
     "market_town_id": "town_sukuta",
     "crop": "okra",
-    "price_per_kg": 50,
+    "price_per_kg": 123,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -571,7 +571,7 @@
     "id": "price_0072",
     "market_town_id": "town_sukuta",
     "crop": "okra",
-    "price_per_kg": 50,
+    "price_per_kg": 123,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   },
@@ -579,7 +579,7 @@
     "id": "price_0073",
     "market_town_id": "town_sukuta",
     "crop": "okra",
-    "price_per_kg": 51,
+    "price_per_kg": 125,
     "date": "2026-10-05",
     "entered_by": "user_admin"
   },
@@ -587,7 +587,7 @@
     "id": "price_0074",
     "market_town_id": "town_sukuta",
     "crop": "okra",
-    "price_per_kg": 50,
+    "price_per_kg": 123,
     "date": "2026-10-12",
     "entered_by": "user_admin"
   },
@@ -595,7 +595,7 @@
     "id": "price_0075",
     "market_town_id": "town_sukuta",
     "crop": "okra",
-    "price_per_kg": 51,
+    "price_per_kg": 125,
     "date": "2026-10-19",
     "entered_by": "user_admin"
   },
@@ -603,7 +603,7 @@
     "id": "price_0076",
     "market_town_id": "town_banjul",
     "crop": "okra",
-    "price_per_kg": 58,
+    "price_per_kg": 153,
     "date": "2026-09-21",
     "entered_by": "user_admin"
   },
@@ -611,7 +611,7 @@
     "id": "price_0077",
     "market_town_id": "town_banjul",
     "crop": "okra",
-    "price_per_kg": 57,
+    "price_per_kg": 150,
     "date": "2026-09-28",
     "entered_by": "user_admin"
   }

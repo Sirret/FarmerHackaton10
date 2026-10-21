@@ -56,10 +56,10 @@ describe('starting state (Brikama, 20 Oct)', () => {
     expect(render(r.signal, 'voice', 'en', { kind: 'plant', crop: 'okra', reason: r.reason })).toEqual(['crop_okra', 'verdict_good_plant', 'why_buyer']);
   });
 
-  it('pepper sells best in Serekunda, OK in Brikama, avoid Sukuta', () => {
+  it('pepper sells best in Banjul, OK in Sukuta and Serekunda, avoid Brikama', () => {
     const byTown = Object.fromEntries(sell('pepper').options.map((o) => [o.market_town_id, o.signal]));
-    expect(byTown).toMatchObject({ town_serekunda: 'green', town_brikama: 'yellow', town_sukuta: 'red' });
-    expect(sell('pepper').options[0].market_town_id).toBe('town_serekunda');
+    expect(byTown).toMatchObject({ town_banjul: 'green', town_sukuta: 'yellow', town_serekunda: 'yellow', town_brikama: 'red' });
+    expect(sell('pepper').options[0].market_town_id).toBe('town_banjul');
   });
 
   it('Banjul okra shows no recent price', () => {

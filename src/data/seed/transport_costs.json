@@ -12,51 +12,51 @@
   {
     "from_town_id": "town_brikama",
     "to_market_id": "town_sukuta",
-    "cost_per_bag": 40
+    "cost_per_bag": 25
   },
   {
     "from_town_id": "town_brikama",
     "to_market_id": "town_banjul",
-    "cost_per_bag": 80
+    "cost_per_bag": 50
   },
   {
     "from_town_id": "town_gunjur",
     "to_market_id": "town_brikama",
-    "cost_per_bag": 40
-  },
-  {
-    "from_town_id": "town_gunjur",
-    "to_market_id": "town_serekunda",
-    "cost_per_bag": 70
-  },
-  {
-    "from_town_id": "town_gunjur",
-    "to_market_id": "town_sukuta",
-    "cost_per_bag": 60
-  },
-  {
-    "from_town_id": "town_gunjur",
-    "to_market_id": "town_banjul",
-    "cost_per_bag": 100
-  },
-  {
-    "from_town_id": "town_sukuta",
-    "to_market_id": "town_brikama",
-    "cost_per_bag": 40
-  },
-  {
-    "from_town_id": "town_sukuta",
-    "to_market_id": "town_serekunda",
-    "cost_per_bag": 25
-  },
-  {
-    "from_town_id": "town_sukuta",
-    "to_market_id": "town_sukuta",
     "cost_per_bag": 10
   },
   {
+    "from_town_id": "town_gunjur",
+    "to_market_id": "town_serekunda",
+    "cost_per_bag": 75
+  },
+  {
+    "from_town_id": "town_gunjur",
+    "to_market_id": "town_sukuta",
+    "cost_per_bag": 50
+  },
+  {
+    "from_town_id": "town_gunjur",
+    "to_market_id": "town_banjul",
+    "cost_per_bag": 30
+  },
+  {
+    "from_town_id": "town_sukuta",
+    "to_market_id": "town_brikama",
+    "cost_per_bag": 15
+  },
+  {
+    "from_town_id": "town_sukuta",
+    "to_market_id": "town_serekunda",
+    "cost_per_bag": 60
+  },
+  {
+    "from_town_id": "town_sukuta",
+    "to_market_id": "town_sukuta",
+    "cost_per_bag": 15
+  },
+  {
     "from_town_id": "town_sukuta",
     "to_market_id": "town_banjul",
-    "cost_per_bag": 50
+    "cost_per_bag": 25
   }
 ]
