@@ -3,7 +3,7 @@
 import { db } from './db.js';
 import { loadSignalData } from './signals.js';
 import { plantSignal, sellSignal, riskSignal, fairPriceSignal } from './rules.js';
-import { buyerReliability } from './orders.js';
+import { buyerReliability, orderTimeline, nextStep, lossSummary, plantBy, expectedCash } from './orders.js';
 
 const OPEN = ['open', 'partly_filled'];
 const LIVE = ['open', 'partly_filled', 'filled', 'growing', 'ready', 'collected'];
@@ -14,12 +14,15 @@ export async function loadKafoView(kafoId) {
   if (!kafo || !data.config) return null;
   const today = data.config.demo_date;
 
-  const [users, farmers, requests, offers, interests, collections, deliveries, payments, buyers] = await Promise.all([
+  const [users, farmers, requests, offers, interests, collections, deliveries, payments, buyers, shipments] = await Promise.all([
     db.users.toArray(), db.farmers.where('kafo_id').equals(kafoId).toArray(),
     db.produce_requests.where('kafo_id').equals(kafoId).toArray(), db.produce_offers.where('kafo_id').equals(kafoId).toArray(),
     db.interests.where('kafo_id').equals(kafoId).toArray(), db.collections.where('kafo_id').equals(kafoId).toArray(),
-    db.deliveries.toArray(), db.payments.toArray(), db.buyers.toArray(),
+    db.deliveries.toArray(), db.payments.toArray(), db.buyers.toArray(), db.shipments.where('kafo_id').equals(kafoId).toArray(),
   ]);
+  const calOf = (crop) => data.crop_calendar.find((c) => c.crop === crop);
+  // Everything the order timeline needs, limited to this kafo's own rows.
+  const ctx = { acceptances: data.order_acceptances, plantings: data.plantings, collections, shipments, payments };
   const userById = new Map(users.map((u) => [u.id, u]));
   const buyerById = new Map(buyers.map((b) => [b.id, b]));
   const name = (id) => userById.get(id)?.name ?? id;
@@ -59,6 +62,8 @@ export async function loadKafoView(kafoId) {
         ours: acc.filter((a) => a.kafo_id === kafoId).reduce((s, a) => s + a.kg_committed, 0),
         fair: fairPriceSignal({ crop: o.crop, price: o.price_per_kg, today, data }),
         buyer_reliability: buyerReliability(o.buyer_id, { orders: data.orders, payments }),
+        plant_by: plantBy(o, calOf(o.crop)),
+        kg_per_bed: calOf(o.crop)?.kg_per_bed,
       };
     })
     .filter((o) => o.remaining > 0)
@@ -70,12 +75,28 @@ export async function loadKafoView(kafoId) {
     .filter((o) => o && LIVE.concat('paid').includes(o.status))
     .map((o) => {
       const cols = collections.filter((c) => c.order_id === o.id);
+      const linked = plantings.filter((p) => p.order_id === o.id);
+      const ours = committed(o.id).filter((a) => a.kafo_id === kafoId);
+      const timeline = orderTimeline(o, ctx, kafoId);
+      const kgCommitted = ours.reduce((s, a) => s + a.kg_committed, 0);
       return {
         ...withBuyer(o),
-        kg_committed: committed(o.id).filter((a) => a.kafo_id === kafoId).reduce((s, a) => s + a.kg_committed, 0),
-        planted_kg: plantings.filter((p) => p.order_id === o.id).reduce((s, p) => s + p.expected_kg - (p.lost_kg || 0), 0),
-        planted_members: [...new Set(plantings.filter((p) => p.order_id === o.id).flatMap((p) => p.member_ids))],
-        collections: cols.map((c) => ({ ...c, deliveries: deliveries.filter((d) => d.collection_id === c.id).map((d) => ({ ...d, name: name(d.member_id) })) })),
+        kg_committed: kgCommitted,
+        accepted_at: ours[0]?.accepted_at, accepted_by: ours[0] ? name(ours[0].accepted_by) : null,
+        expected_cash: expectedCash(o, kgCommitted),
+        plant_by: plantBy(o, calOf(o.crop)),
+        kg_per_bed: calOf(o.crop)?.kg_per_bed,
+        plantings: linked.map((p) => ({ ...p, members: p.member_ids.map(name) })),
+        planted_kg: linked.reduce((s, p) => s + p.expected_kg - (p.lost_kg || 0), 0),
+        planted_members: [...new Set(linked.flatMap((p) => p.member_ids))],
+        loss: lossSummary(linked, cols),
+        timeline, next: nextStep(timeline),
+        collections: cols.map((c) => ({
+          ...c,
+          deliveries: deliveries.filter((d) => d.collection_id === c.id).map((d) => ({ ...d, name: name(d.member_id) })),
+          shipment: shipments.find((s) => s.collection_id === c.id) ?? null,
+          paid: payments.some((p) => p.collection_id === c.id),
+        })),
       };
     })
     .sort((a, b) => a.window_start.localeCompare(b.window_start));
@@ -109,5 +130,7 @@ export async function loadKafoView(kafoId) {
     towns: Object.fromEntries(data.market_towns.map((t) => [t.id, t.name])),
     leader: userById.get(kafo.leader_id),
     members, plantings, crops, openOrders, ourOrders, offers: offers.slice().reverse(), reports, inbox, alerts,
+    loss: lossSummary(plantings, collections),
+    earned: payments.filter((p) => p.status === 'paid' && collections.some((c) => c.id === p.collection_id)).reduce((s, p) => s + p.amount, 0),
   };
 }

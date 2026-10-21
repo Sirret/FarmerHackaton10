@@ -369,6 +369,7 @@ export async function logPlanting(f, leaderId) {
     expected_harvest: f.expected_harvest || addDays(f.planted_on, cal.days_to_harvest),
     expected_kg: f.expected_kg === '' || f.expected_kg == null ? beds * cal.kg_per_bed : Number(f.expected_kg),
     stage: 'planted', lost_kg: 0, lost_reason: null, order_id: f.order_id || null,
+    stage_dates: { planted: ts }, harvested_kg: null,
     logged_by: leaderId, logged_at: ts, updated_at: ts,
   };
   await db.plantings.add(planting);
@@ -391,12 +392,28 @@ export async function logPlanting(f, leaderId) {
 
 export const STAGES = ['planted', 'growing', 'ready', 'harvested'];
 
-export async function setPlantingStage(plantingId, stage, leaderId) {
+/**
+ * Move a planting to a stage and record when (stage_dates feeds the order timeline).
+ * Ready asks for the kg expected now; Harvested for the kg actually picked, so buyers'
+ * projections stay current. Going back a stage clears the later dates.
+ */
+export async function setPlantingStage(plantingId, stage, leaderId, { kg } = {}) {
   if (!STAGES.includes(stage)) throw new Error('Unknown stage');
   const p = await db.plantings.get(plantingId);
   await assertLeader(leaderId, p.kafo_id);
-  await db.plantings.update(plantingId, { stage, updated_at: await now() });
-  await audit(leaderId, `planting.stage.${stage}`, plantingId);
+  const ts = await now();
+  const idx = STAGES.indexOf(stage);
+  const stage_dates = {};
+  for (const s of STAGES.slice(0, idx + 1)) stage_dates[s] = p.stage_dates?.[s] ?? ts;
+  if (STAGES.indexOf(p.stage) !== idx) stage_dates[stage] = ts;
+  const patch = { stage, stage_dates, updated_at: ts };
+  const amount = kg === undefined || kg === '' ? null : Math.round(Number(kg));
+  if (amount != null && !(amount >= 0)) throw new Error('Kg must be 0 or more');
+  if (stage === 'ready' && amount != null) patch.expected_kg = amount + (p.lost_kg || 0);
+  patch.harvested_kg = stage === 'harvested' ? (amount ?? Math.max(0, p.expected_kg - (p.lost_kg || 0))) : null;
+  await db.plantings.update(plantingId, patch);
+  await audit(leaderId, `planting.stage.${stage}`, plantingId, ts);
+  return { ...p, ...patch };
 }
 
 /** "Lost some / all": lost_kg is the total lost so far (capped at the expected kg). */
@@ -542,9 +559,16 @@ export async function recordDelivery(orderId, kafoId, perMember, leaderId) {
     id: newId('col'), order_id: orderId, kafo_id: kafoId, kg_weighed: weighed,
     kg_accepted: null, kg_rejected: null, reject_reason: null, collected_at: ts,
   };
-  await db.transaction('rw', db.collections, db.deliveries, async () => {
+  await db.transaction('rw', db.collections, db.deliveries, db.plantings, async () => {
     await db.collections.add(collection);
     await db.deliveries.bulkAdd(rows.map((m) => ({ id: newId('del'), collection_id: collection.id, order_id: orderId, member_id: m.member_id, kg: m.kg })));
+    // Weighed means picked: close the linked plantings that nobody marked Harvested.
+    for (const p of linked.filter((x) => x.stage !== 'harvested')) {
+      await db.plantings.update(p.id, {
+        stage: 'harvested', stage_dates: { ...p.stage_dates, harvested: ts }, updated_at: ts,
+        harvested_kg: Math.max(0, p.expected_kg - (p.lost_kg || 0)),
+      });
+    }
   });
   await audit(leaderId, 'delivery.record', collection.id);
   const expectedKg = linked.length
@@ -552,6 +576,45 @@ export async function recordDelivery(orderId, kafoId, perMember, leaderId) {
     : acc.reduce((s, a) => s + a.kg_committed, 0);
   const flags = await raiseFlags('collection', collection.id, deliveryFlags({ expectedKg, weighedKg: weighed }));
   return { collection, flags };
+}
+
+/**
+ * Leader sends a weighed collection on its way. A proof photo (weighed bags or weigh slip)
+ * is required, plus who carries it. The buyer gets a 4-digit handover code and gives it to
+ * the driver only when the produce arrives: entering it is the proof of delivery.
+ */
+export async function dispatchCollection(collectionId, f, leaderId) {
+  const col = await db.collections.get(collectionId);
+  if (!col) throw new Error('Unknown collection');
+  await assertLeader(leaderId, col.kafo_id);
+  if (await db.shipments.where('collection_id').equals(collectionId).count()) throw new Error('Already sent');
+  required(f, ['transporter_name']);
+  if (!PHONE_RE.test(f.transporter_phone ?? '')) throw new Error('Driver phone must be 7 digits');
+  if (!f.proof_photo?.startsWith('data:image/')) throw new Error('Add a photo of the weighed produce as proof');
+  const [order, ts] = await Promise.all([db.orders.get(col.order_id), now()]);
+  const row = {
+    id: newId('ship'), order_id: col.order_id, collection_id: collectionId, kafo_id: col.kafo_id,
+    method: order.fulfilment === 'delivery' ? 'kafo_delivery' : 'buyer_pickup',
+    transporter_name: f.transporter_name.trim(), transporter_phone: f.transporter_phone,
+    proof_photo: f.proof_photo, proof_note: f.proof_note?.trim() || null,
+    handover_code: String(Math.floor(1000 + Math.random() * 9000)), status: 'in_transit',
+    dispatched_by: leaderId, dispatched_at: ts, delivered_at: null, delivered_by: null,
+  };
+  await db.shipments.add(row);
+  await audit(leaderId, 'shipment.dispatch', row.id, ts);
+  return row;
+}
+
+/** Driver/leader enters the buyer's handover code at the gate: proof the produce arrived. */
+export async function confirmHandover(shipmentId, code, leaderId) {
+  const ship = await db.shipments.get(shipmentId);
+  if (!ship) throw new Error('Unknown shipment');
+  await assertLeader(leaderId, ship.kafo_id);
+  if (ship.status === 'delivered') throw new Error('Already delivered');
+  if (String(code ?? '').trim() !== ship.handover_code) throw new Error('Wrong code: ask the buyer for the 4-digit handover code');
+  const ts = await now();
+  await db.shipments.update(shipmentId, { status: 'delivered', delivered_at: ts, delivered_by: leaderId });
+  await audit(leaderId, 'shipment.delivered', shipmentId, ts);
 }
 
 /** Leader messages every member who has a phone (spec §6.11). SMS from 1234, plain Latin, ≤160 chars. */
@@ -666,11 +729,16 @@ export async function confirmCollection(collectionId, { kg_accepted, reject_reas
   const order = await db.orders.get(col.order_id);
   await assertBuyer(userId, order.buyer_id);
   if (col.kg_accepted != null) throw new Error('Already confirmed');
+  const ship = await db.shipments.where('collection_id').equals(collectionId).first();
+  if (!ship) throw new Error('The kafo has not sent this produce yet (no proof photo)');
   const accepted = Math.round(Number(kg_accepted));
   if (!(accepted >= 0 && accepted <= col.kg_weighed)) throw new Error(`Accepted kg must be between 0 and ${col.kg_weighed}`);
   const rejected = col.kg_weighed - accepted;
   if (rejected > 0 && !reject_reason) throw new Error('Say why kg were rejected');
+  const ts = await now();
   await db.collections.update(collectionId, { kg_accepted: accepted, kg_rejected: rejected, reject_reason: rejected > 0 ? reject_reason : null });
+  // The buyer confirming what arrived is also proof of delivery.
+  if (ship.status !== 'delivered') await db.shipments.update(ship.id, { status: 'delivered', delivered_at: ts, delivered_by: userId });
   if (order.status !== 'paid') await db.orders.update(order.id, { status: 'collected' });
   await audit(userId, 'collection.confirm', collectionId);
 }
@@ -690,10 +758,15 @@ export async function payCollection(collectionId, method, userId) {
   if (await db.disputes.where('order_id').equals(order.id).filter((d) => d.status === 'open').count()) {
     throw new Error('Payment is on hold: an issue on this order is open with the admin');
   }
-  const [deliveries, config, ts] = await Promise.all([db.deliveries.where('collection_id').equals(collectionId).toArray(), db.config.get('main'), now()]);
+  const [deliveries, config, ts, share] = await Promise.all([
+    db.deliveries.where('collection_id').equals(collectionId).toArray(), db.config.get('main'), now(),
+    db.order_acceptances.where('order_id').equals(order.id).filter((a) => a.kafo_id === col.kafo_id).toArray(),
+  ]);
+  // Several kafos on one delivery order split the fee by the kg each committed.
+  const committedKg = share.reduce((s, a) => s + a.kg_committed, 0);
   const payouts = memberPayouts({
     deliveries, kgWeighed: col.kg_weighed, kgAccepted: col.kg_accepted, pricePerKg: order.price_per_kg, feePercent: config.fee_percent,
-    deliveryFee: order.fulfilment === 'delivery' ? order.delivery_fee : 0,
+    deliveryFee: order.fulfilment === 'delivery' ? Math.round((order.delivery_fee * Math.min(committedKg, order.kg)) / order.kg) : 0,
   });
   const dueBy = new Date(Date.parse(col.collected_at) + config.payment_due_hours * 3_600_000).toISOString();
   const rows = payouts.map((p) => ({

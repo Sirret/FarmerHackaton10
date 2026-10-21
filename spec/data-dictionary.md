@@ -123,6 +123,8 @@ One planting batch logged by a kafo leader.
 | lost_kg | number | Reported losses | `0` |
 | lost_reason | enum? | `pests \| disease \| flood \| drought \| animals \| other` | |
 | order_id | string? | Forward order this batch serves | `order_0001` |
+| stage_dates | object | When each stage was reached: `{ planted, growing?, ready?, harvested? }` → timestamp (the order timeline reads it) | `{ "planted": "2026-10-20T09:00:00Z" }` |
+| harvested_kg | number? | Kg actually harvested, entered when the leader marks Harvested (`null` before) | `150` |
 | logged_by | string | Leader user ID (required) | `user_fatou` |
 | logged_at, updated_at | timestamp | | |
 Writer: **leader only** (admin may correct)
@@ -280,6 +282,27 @@ Per-member share of a collection (basis for payment).
 | kg | number | Weighed for this member | `38` |
 Writer: **leader only**
 
+### `shipments`
+Getting one weighed collection from the kafo to the buyer, with proof at both ends.
+| Field | Type | Description | Example |
+|---|---|---|---|
+| id ★ | string | | `ship_4c1d` |
+| order_id ★ | string | | `order_0001` |
+| collection_id ★ | string | → `collections.id` (one shipment per collection) | `col_11ab` |
+| kafo_id ★ | string | | `kafo_brikama` |
+| method | enum | `kafo_delivery \| buyer_pickup` (from the order's `fulfilment`) | `buyer_pickup` |
+| transporter_name | string | Driver or person carrying the produce | `Lamin Touray` |
+| transporter_phone | string | 7 digits | `7300101` |
+| proof_photo | string | **Required.** Photo of the weighed bags or weigh slip, stored as an image data URL (downscaled) | `data:image/jpeg;base64,…` |
+| proof_note | string? | Weigh-slip number or note | `Slip 0412, 6 bags` |
+| handover_code | string | 4 digits shown to the buyer only; the driver enters it at handover as proof of receipt | `4821` |
+| status ★ | enum | `in_transit \| delivered` | `in_transit` |
+| dispatched_by | string | Leader user ID | `user_fatou` |
+| dispatched_at | timestamp | | |
+| delivered_at | timestamp? | | |
+| delivered_by | string? | Who confirmed receipt: leader (entered the buyer's code) or buyer (confirmed on the website) | `user_coastal_hotel` |
+Writer: leader (dispatch, handover code) · buyer (confirm receipt)
+
 ### `payments`
 | Field | Type | Description | Example |
 |---|---|---|---|
@@ -436,5 +459,9 @@ db.version(1).stores({
 // v2
 db.version(2).stores({
   interests: 'id, farmer_id, kafo_id, status'
+});
+// v3
+db.version(3).stores({
+  shipments: 'id, order_id, collection_id, kafo_id, status'
 });
 ```

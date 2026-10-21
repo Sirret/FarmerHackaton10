@@ -1,0 +1,66 @@
+[
+  {
+    "id": "acc_seed01",
+    "order_id": "order_h01",
+    "kafo_id": "kafo_brikama",
+    "kg_committed": 120,
+    "accepted_by": "user_fatou",
+    "accepted_at": "2026-06-11T10:00:00Z"
+  },
+  {
+    "id": "acc_seed16",
+    "order_id": "order_h02",
+    "kafo_id": "kafo_brikama",
+    "kg_committed": 200,
+    "accepted_by": "user_fatou",
+    "accepted_at": "2026-06-02T09:30:00Z"
+  },
+  {
+    "id": "acc_seed31",
+    "order_id": "order_h02",
+    "kafo_id": "kafo_busumbala",
+    "kg_committed": 100,
+    "accepted_by": "user_ndey",
+    "accepted_at": "2026-06-03T11:00:00Z"
+  },
+  {
+    "id": "acc_seed46",
+    "order_id": "order_h03",
+    "kafo_id": "kafo_busumbala",
+    "kg_committed": 60,
+    "accepted_by": "user_ndey",
+    "accepted_at": "2026-07-06T08:45:00Z"
+  },
+  {
+    "id": "acc_seed53",
+    "order_id": "order_h04",
+    "kafo_id": "kafo_gunjur",
+    "kg_committed": 250,
+    "accepted_by": "user_kaddy",
+    "accepted_at": "2026-06-16T12:00:00Z"
+  },
+  {
+    "id": "acc_seed68",
+    "order_id": "order_p01",
+    "kafo_id": "kafo_busumbala",
+    "kg_committed": 200,
+    "accepted_by": "user_ndey",
+    "accepted_at": "2026-07-26T09:00:00Z"
+  },
+  {
+    "id": "acc_seed77",
+    "order_id": "order_p02",
+    "kafo_id": "kafo_gunjur",
+    "kg_committed": 40,
+    "accepted_by": "user_kaddy",
+    "accepted_at": "2026-07-21T10:30:00Z"
+  },
+  {
+    "id": "acc_seed84",
+    "order_id": "order_p03",
+    "kafo_id": "kafo_busumbala",
+    "kg_committed": 80,
+    "accepted_by": "user_ndey",
+    "accepted_at": "2026-09-21T09:00:00Z"
+  }
+]

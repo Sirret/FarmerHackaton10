@@ -1,0 +1,72 @@
+[
+  {
+    "id": "col_seed05",
+    "order_id": "order_h01",
+    "kafo_id": "kafo_brikama",
+    "kg_weighed": 118,
+    "kg_accepted": 115,
+    "kg_rejected": 3,
+    "reject_reason": "ripeness",
+    "collected_at": "2026-08-25T08:00:00Z"
+  },
+  {
+    "id": "col_seed20",
+    "order_id": "order_h02",
+    "kafo_id": "kafo_brikama",
+    "kg_weighed": 205,
+    "kg_accepted": 200,
+    "kg_rejected": 5,
+    "reject_reason": "damage",
+    "collected_at": "2026-09-08T08:00:00Z"
+  },
+  {
+    "id": "col_seed35",
+    "order_id": "order_h02",
+    "kafo_id": "kafo_busumbala",
+    "kg_weighed": 92,
+    "kg_accepted": 92,
+    "kg_rejected": 0,
+    "reject_reason": null,
+    "collected_at": "2026-09-09T08:00:00Z"
+  },
+  {
+    "id": "col_seed48",
+    "order_id": "order_h03",
+    "kafo_id": "kafo_busumbala",
+    "kg_weighed": 62,
+    "kg_accepted": 60,
+    "kg_rejected": 2,
+    "reject_reason": "size",
+    "collected_at": "2026-09-29T08:00:00Z"
+  },
+  {
+    "id": "col_seed57",
+    "order_id": "order_h04",
+    "kafo_id": "kafo_gunjur",
+    "kg_weighed": 252,
+    "kg_accepted": 250,
+    "kg_rejected": 2,
+    "reject_reason": "size",
+    "collected_at": "2026-10-06T08:00:00Z"
+  },
+  {
+    "id": "col_seed72",
+    "order_id": "order_p01",
+    "kafo_id": "kafo_busumbala",
+    "kg_weighed": 190,
+    "kg_accepted": null,
+    "kg_rejected": null,
+    "reject_reason": null,
+    "collected_at": "2026-10-19T08:00:00Z"
+  },
+  {
+    "id": "col_seed80",
+    "order_id": "order_p02",
+    "kafo_id": "kafo_gunjur",
+    "kg_weighed": 42,
+    "kg_accepted": null,
+    "kg_rejected": null,
+    "reject_reason": null,
+    "collected_at": "2026-10-19T08:00:00Z"
+  }
+]

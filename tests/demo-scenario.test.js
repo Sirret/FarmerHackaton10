@@ -8,6 +8,7 @@ import { addDays } from '../src/lib/dates.js';
 import kafos from '../src/data/seed/kafos.json';
 import plantings from '../src/data/seed/plantings.json';
 import orders from '../src/data/seed/orders.json';
+import order_acceptances from '../src/data/seed/order_acceptances.json';
 import crop_calendar from '../src/data/seed/crop_calendar.json';
 import prices from '../src/data/seed/prices.json';
 import transport_costs from '../src/data/seed/transport_costs.json';
@@ -20,7 +21,7 @@ let data;
 let today;
 
 beforeEach(() => {
-  data = structuredClone({ kafos, plantings, orders, order_acceptances: [], crop_calendar, prices, transport_costs, market_towns, alerts, reports: [], config });
+  data = structuredClone({ kafos, plantings, orders, order_acceptances, crop_calendar, prices, transport_costs, market_towns, alerts, reports: [], config });
   today = config.demo_date;
 });
 

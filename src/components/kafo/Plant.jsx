@@ -10,17 +10,24 @@ import CropIcon from '../shared/CropIcon.jsx';
 const LOST_REASONS = ['pests', 'disease', 'flood', 'drought', 'animals', 'other'];
 
 function LogForm({ view, leaderId, preset }) {
-  const blank = (crop) => ({
-    crop, beds: '', planted_on: view.today, harvest: '', kg: '', order_id: '',
-    member_ids: crop ? view.members.filter((m) => m.crops.includes(crop) || m.id === preset?.member).map((m) => m.id) : [],
-  });
-  const [f, setF] = useState(() => blank(preset?.crop ?? ''));
+  // Opened from an order ("Assign members & plant"): crop, order and beds come pre-filled.
+  const presetOrder = preset?.order ? view.ourOrders.find((o) => o.id === preset.order) : null;
+  const blank = (crop) => {
+    const forOrder = presetOrder && presetOrder.crop === crop;
+    const missing = forOrder ? Math.max(0, presetOrder.kg_committed - presetOrder.planted_kg) : 0;
+    return {
+      crop, beds: forOrder && missing ? String(Math.ceil(missing / presetOrder.kg_per_bed)) : '', planted_on: view.today, harvest: '', kg: '',
+      order_id: forOrder ? presetOrder.id : '',
+      member_ids: crop ? view.members.filter((m) => m.crops.includes(crop) || m.id === preset?.member).map((m) => m.id) : [],
+    };
+  };
+  const [f, setF] = useState(() => blank(presetOrder?.crop ?? preset?.crop ?? ''));
   const [run, notice, busy] = useAction();
   const cal = view.calendar.find((c) => c.crop === f.crop);
   const beds = Number(f.beds) || 0;
   const autoHarvest = cal ? addDays(f.planted_on || view.today, cal.days_to_harvest) : '';
   const autoKg = cal ? beds * cal.kg_per_bed : 0;
-  const orders = view.ourOrders.filter((o) => o.crop === f.crop && o.planted_kg < o.kg_committed);
+  const orders = view.ourOrders.filter((o) => o.crop === f.crop && !o.collections.length && (o.planted_kg < o.kg_committed || o.id === f.order_id));
   const set = (k) => (e) => { const v = e.currentTarget.value; setF((x) => ({ ...x, [k]: v })); };
 
   async function save() {
@@ -35,6 +42,11 @@ function LogForm({ view, leaderId, preset }) {
   return (
     <section class="rounded-xl border border-line bg-surface p-3 shadow-sm">
       <h2 class="mb-2 font-semibold">Log planting</h2>
+      {presetOrder && f.order_id === presetOrder.id && (
+        <p class="mb-2 rounded-lg bg-go-soft px-2 py-1 text-xs">
+          For <span class="font-semibold">{presetOrder.buyer?.business_name}</span>: {presetOrder.kg_committed} kg {cropName(presetOrder.crop).toLowerCase()}, deliver {formatDate(presetOrder.window_start)}. Plant by {formatDate(presetOrder.plant_by)}.
+        </p>
+      )}
       <p class="mb-1 text-xs text-muted">1. Which crop?</p>
       <div class="mb-3 grid grid-cols-4 gap-2">
         {view.calendar.map(({ crop }) => (
@@ -79,6 +91,49 @@ function LogForm({ view, leaderId, preset }) {
   );
 }
 
+/**
+ * Move a planting to its next stage. Ready asks how many kg are expected now and Harvested
+ * how many were picked, so the buyer's projection stays true. Used here and on Sell.
+ */
+export function StageControl({ p, leaderId }) {
+  const [asking, setAsking] = useState(null);
+  const [kg, setKg] = useState('');
+  const [run, notice, busy] = useAction();
+  const net = p.expected_kg - (p.lost_kg || 0);
+  const pick = (s) => {
+    if (s === p.stage) return;
+    if (s === 'ready' || s === 'harvested') { setAsking(s); setKg(String(p.harvested_kg ?? net)); return; }
+    run(() => setPlantingStage(p.id, s, leaderId), `Marked ${t(`stage.${s}`).toLowerCase()}`);
+  };
+  async function confirm() {
+    const r = await run(() => setPlantingStage(p.id, asking, leaderId, { kg }), (res) => asking === 'ready'
+      ? `Ready: about ${res.expected_kg - (res.lost_kg || 0)} kg expected now`
+      : `Harvested ${res.harvested_kg} kg` + (res.harvested_kg < net ? ` (${net - res.harvested_kg} kg less than expected)` : ''));
+    if (r) setAsking(null);
+  }
+  return (
+    <div>
+      <div class="mt-2 grid grid-cols-4 gap-1">
+        {STAGES.map((s) => (
+          <button type="button" aria-pressed={p.stage === s} disabled={busy} onClick={() => pick(s)}
+            class={`min-h-11 rounded-lg border text-[11px] ${p.stage === s ? 'border-brand bg-brand font-semibold text-brand-ink' : 'border-line hover:bg-soft'}`}>
+            {p.stage_dates?.[s] && p.stage !== s ? '✓ ' : ''}{t(`stage.${s}`)}
+          </button>
+        ))}
+      </div>
+      {asking && (
+        <div class="mt-1 flex flex-wrap items-center gap-2 rounded-lg bg-soft p-2 text-xs">
+          <span class="flex-1">{asking === 'ready' ? 'Check: how many kg do you expect now?' : 'Check: how many kg were harvested?'}</span>
+          <input type="number" min="0" inputMode="numeric" aria-label="Kg" class={`${inputClass} w-20`} value={kg} onInput={(e) => setKg(e.currentTarget.value)} />
+          <Button variant="ghost" onClick={() => setAsking(null)}>Cancel</Button>
+          <Button variant="go" disabled={busy || kg === ''} onClick={confirm}>Confirm</Button>
+        </div>
+      )}
+      <Notice notice={notice} />
+    </div>
+  );
+}
+
 function PlantingCard({ p, view, leaderId }) {
   const [lossOpen, setLossOpen] = useState(false);
   const [loss, setLoss] = useState({ kg: '', reason: 'pests' });
@@ -97,18 +152,16 @@ function PlantingCard({ p, view, leaderId }) {
             Planted {formatDate(p.planted_on)} · harvest {formatDate(p.expected_harvest)}
             {members.length > 0 && ` · ${members.join(', ')}`}
           </p>
-          {order && <p class="text-xs text-muted">For {order.buyer?.business_name}</p>}
+          {order && (
+            <p class="mt-1 rounded bg-go-soft px-2 py-0.5 text-xs">
+              For <span class="font-semibold">{order.buyer?.business_name}</span>: {order.kg_committed} kg, {order.fulfilment === 'delivery' ? 'deliver' : 'pick-up'} {formatDate(order.window_start)}
+            </p>
+          )}
           {p.lost_kg > 0 && <p class="text-xs font-medium">Lost {p.lost_kg} kg ({t(`lost.${p.lost_reason}`).toLowerCase()})</p>}
+          {p.harvested_kg != null && <p class="text-xs">Harvested {p.harvested_kg} kg{p.stage_dates?.harvested ? ` on ${formatDate(p.stage_dates.harvested)}` : ''}</p>}
         </div>
       </div>
-      <div class="mt-2 grid grid-cols-4 gap-1">
-        {STAGES.map((s) => (
-          <button type="button" aria-pressed={p.stage === s} onClick={() => p.stage !== s && run(() => setPlantingStage(p.id, s, leaderId))}
-            class={`min-h-11 rounded-lg border text-[11px] ${p.stage === s ? 'border-brand bg-brand font-semibold text-brand-ink' : 'border-line hover:bg-soft'}`}>
-            {t(`stage.${s}`)}
-          </button>
-        ))}
-      </div>
+      <StageControl p={p} leaderId={leaderId} />
       {p.stage !== 'harvested' && (
         <button type="button" onClick={() => setLossOpen(!lossOpen)} class="mt-2 min-h-11 text-xs font-medium text-muted underline">Lost some / all</button>
       )}
@@ -132,9 +185,19 @@ function PlantingCard({ p, view, leaderId }) {
 export default function Plant({ view, leaderId, preset }) {
   const active = view.plantings.filter((p) => p.stage !== 'harvested');
   const done = view.plantings.filter((p) => p.stage === 'harvested');
+  const l = view.loss;
   return (
     <div class="space-y-4">
-      <LogForm key={preset?.crop ?? 'none'} view={view} leaderId={leaderId} preset={preset} />
+      <LogForm key={preset?.order ?? preset?.crop ?? 'none'} view={view} leaderId={leaderId} preset={preset} />
+      {l.total > 0 && (
+        <section class="rounded-xl border border-line bg-surface p-3 text-sm shadow-sm">
+          <h2 class="font-semibold">Lost so far: {l.total} kg ({l.percent}% of {l.expected} kg planted)</h2>
+          <p class="mt-1 text-xs text-muted">
+            {[...Object.entries(l.byReason).map(([r, kg]) => `${t(`lost.${r}`)} ${kg} kg`),
+              l.shortHarvest ? `smaller harvest ${l.shortHarvest} kg` : null, l.rejected ? `rejected by buyers ${l.rejected} kg` : null].filter(Boolean).join(' · ')}
+          </p>
+        </section>
+      )}
       <section>
         <h2 class="mb-2 text-sm font-semibold">Our plantings ({active.length})</h2>
         <ul class="space-y-2">{active.map((p) => <PlantingCard key={p.id} p={p} view={view} leaderId={leaderId} />)}</ul>

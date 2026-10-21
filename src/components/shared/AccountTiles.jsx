@@ -5,6 +5,13 @@ import { getSession, loginAs, UNREGISTERED } from '../../lib/session.js';
 import { useLive } from '../../lib/useLive.js';
 
 const DEMO_FARMERS = ['user_awa', 'user_binta'];
+// The two accounts shown first per role: different places, and the two kafo market towns
+// with the biggest price gap (Brikama low, Sukuta high). The rest sit behind "Show more".
+const FEATURED = {
+  farmer: ['user_awa', 'user_sukai'],
+  leader: ['user_fatou', 'user_ndey'],
+  buyer: ['user_coastal_hotel', 'user_westfield_wholesale'],
+};
 const initials = (name) => name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
 // Click-to-login squares for one role, read live from the database, so accounts the
@@ -21,11 +28,20 @@ export default function AccountTiles({ role, limit = 0 }) {
 
   if (!data) return <p class="text-sm text-muted">Loading accounts…</p>;
 
+  const featured = FEATURED[role] ?? [];
+  const rank = (id) => (featured.includes(id) ? featured.indexOf(id) : featured.length);
   let tiles = data.users.map((u) => tileFor(role, u, data));
   if (role === 'farmer') {
     tiles = tiles.filter((x) => x.usable)
-      .sort((a, b) => Number(DEMO_FARMERS.includes(b.id)) - Number(DEMO_FARMERS.includes(a.id)) || a.title.localeCompare(b.title));
+      .sort((a, b) => rank(a.id) - rank(b.id) || Number(DEMO_FARMERS.includes(b.id)) - Number(DEMO_FARMERS.includes(a.id)) || a.title.localeCompare(b.title));
     tiles.push({ id: UNREGISTERED, title: 'Unregistered number', line: 'Not in any kafo', tag: 'Demo', initials: '?' });
+  } else {
+    tiles.sort((a, b) => rank(a.id) - rank(b.id));
+  }
+  // Keep the logged-in account visible even when it isn't one of the featured two.
+  if (limit && !showAll && current && tiles.findIndex((x) => x.id === current) >= limit) {
+    const i = tiles.findIndex((x) => x.id === current);
+    tiles.splice(limit - 1, 0, tiles.splice(i, 1)[0]);
   }
   const hidden = limit && !showAll ? Math.max(0, tiles.length - limit) : 0;
   const shown = hidden ? tiles.slice(0, limit) : tiles;
@@ -71,14 +87,15 @@ function tileFor(role, u, { kafos, buyers, farmers }) {
   }
   if (role === 'leader') {
     const k = kafos.get(u.kafo_id);
-    return { id: u.id, title: u.name, line: k ? `${k.name} · ${k.district}` : 'No kafo', initials: initials(u.name), tag: 'Leader' };
+    const market = k?.market_town_id.replace('town_', '').replace(/^./, (c) => c.toUpperCase());
+    return { id: u.id, title: u.name, line: k ? `${k.name} · sells in ${market}` : 'No kafo', initials: initials(u.name), tag: 'Leader' };
   }
   if (role === 'farmer') {
     const k = kafos.get(u.kafo_id);
     const f = farmers.get(u.id);
     return {
       id: u.id, title: u.name, line: `${k?.village ?? ''} · ${t(`lang.${u.language}`)}`, initials: initials(u.name),
-      tag: DEMO_FARMERS.includes(u.id) ? 'Demo' : null, usable: Boolean(f?.has_phone && u.phone),
+      tag: DEMO_FARMERS.includes(u.id) || FEATURED.farmer.includes(u.id) ? 'Demo' : null, usable: Boolean(f?.has_phone && u.phone),
     };
   }
   return { id: u.id, title: u.name, line: 'Platform operator', initials: initials(u.name) };

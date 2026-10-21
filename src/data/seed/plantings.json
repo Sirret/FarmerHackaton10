@@ -18,7 +18,14 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-06-20T10:00:00Z",
-    "updated_at": "2026-06-20T10:00:00Z"
+    "updated_at": "2026-06-20T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-06-20T10:00:00Z",
+      "growing": "2026-07-04T10:00:00Z",
+      "ready": "2026-08-31T10:00:00Z",
+      "harvested": "2026-09-03T16:00:00Z"
+    },
+    "harvested_kg": 480
   },
   {
     "id": "plant_brk_tom1",
@@ -39,7 +46,12 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-08-25T10:00:00Z",
-    "updated_at": "2026-08-25T10:00:00Z"
+    "updated_at": "2026-08-25T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-08-25T10:00:00Z",
+      "growing": "2026-09-08T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_brk_tom2",
@@ -60,7 +72,12 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-09-20T10:00:00Z",
-    "updated_at": "2026-09-20T10:00:00Z"
+    "updated_at": "2026-09-20T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-20T10:00:00Z",
+      "growing": "2026-10-04T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_brk_oni1",
@@ -81,7 +98,12 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-08-01T10:00:00Z",
-    "updated_at": "2026-08-01T10:00:00Z"
+    "updated_at": "2026-08-01T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-08-01T10:00:00Z",
+      "growing": "2026-08-15T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_brk_pep1",
@@ -102,7 +124,12 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-09-10T10:00:00Z",
-    "updated_at": "2026-09-10T10:00:00Z"
+    "updated_at": "2026-09-10T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-10T10:00:00Z",
+      "growing": "2026-09-24T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_brk_okr1",
@@ -123,7 +150,12 @@
     "order_id": null,
     "logged_by": "user_fatou",
     "logged_at": "2026-09-25T10:00:00Z",
-    "updated_at": "2026-09-25T10:00:00Z"
+    "updated_at": "2026-09-25T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-25T10:00:00Z",
+      "growing": "2026-10-09T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kem_tom1",
@@ -144,7 +176,12 @@
     "order_id": null,
     "logged_by": "user_isatou",
     "logged_at": "2026-09-05T10:00:00Z",
-    "updated_at": "2026-09-05T10:00:00Z"
+    "updated_at": "2026-09-05T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-05T10:00:00Z",
+      "growing": "2026-09-19T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kem_oni1",
@@ -164,7 +201,12 @@
     "order_id": null,
     "logged_by": "user_isatou",
     "logged_at": "2026-09-01T10:00:00Z",
-    "updated_at": "2026-09-01T10:00:00Z"
+    "updated_at": "2026-09-01T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-01T10:00:00Z",
+      "growing": "2026-09-15T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kem_pep1",
@@ -183,7 +225,11 @@
     "order_id": null,
     "logged_by": "user_isatou",
     "logged_at": "2026-10-12T10:00:00Z",
-    "updated_at": "2026-10-12T10:00:00Z"
+    "updated_at": "2026-10-12T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-10-12T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kem_okr1",
@@ -203,7 +249,11 @@
     "order_id": null,
     "logged_by": "user_isatou",
     "logged_at": "2026-10-14T10:00:00Z",
-    "updated_at": "2026-10-14T10:00:00Z"
+    "updated_at": "2026-10-14T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-10-14T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_sif_tom1",
@@ -224,7 +274,12 @@
     "order_id": null,
     "logged_by": "user_mariama",
     "logged_at": "2026-09-01T10:00:00Z",
-    "updated_at": "2026-09-01T10:00:00Z"
+    "updated_at": "2026-09-01T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-01T10:00:00Z",
+      "growing": "2026-09-15T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_sif_okr1",
@@ -244,7 +299,12 @@
     "order_id": null,
     "logged_by": "user_mariama",
     "logged_at": "2026-09-28T10:00:00Z",
-    "updated_at": "2026-09-28T10:00:00Z"
+    "updated_at": "2026-09-28T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-28T10:00:00Z",
+      "growing": "2026-10-12T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_gun_oni1",
@@ -265,7 +325,12 @@
     "order_id": null,
     "logged_by": "user_kaddy",
     "logged_at": "2026-08-20T10:00:00Z",
-    "updated_at": "2026-08-20T10:00:00Z"
+    "updated_at": "2026-08-20T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-08-20T10:00:00Z",
+      "growing": "2026-09-03T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_gun_pep1",
@@ -285,7 +350,12 @@
     "order_id": null,
     "logged_by": "user_kaddy",
     "logged_at": "2026-09-15T10:00:00Z",
-    "updated_at": "2026-09-15T10:00:00Z"
+    "updated_at": "2026-09-15T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-15T10:00:00Z",
+      "growing": "2026-09-29T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_bus_tom1",
@@ -306,7 +376,12 @@
     "order_id": null,
     "logged_by": "user_ndey",
     "logged_at": "2026-09-08T10:00:00Z",
-    "updated_at": "2026-09-08T10:00:00Z"
+    "updated_at": "2026-09-08T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-08T10:00:00Z",
+      "growing": "2026-09-22T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_bus_okr1",
@@ -323,10 +398,15 @@
     "stage": "growing",
     "lost_kg": 0,
     "lost_reason": null,
-    "order_id": null,
+    "order_id": "order_p03",
     "logged_by": "user_ndey",
     "logged_at": "2026-10-01T10:00:00Z",
-    "updated_at": "2026-10-01T10:00:00Z"
+    "updated_at": "2026-10-01T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-10-01T10:00:00Z",
+      "growing": "2026-10-15T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kaf_pep1",
@@ -346,7 +426,12 @@
     "order_id": null,
     "logged_by": "user_haddy",
     "logged_at": "2026-09-18T10:00:00Z",
-    "updated_at": "2026-09-18T10:00:00Z"
+    "updated_at": "2026-09-18T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-09-18T10:00:00Z",
+      "growing": "2026-10-02T10:00:00Z"
+    },
+    "harvested_kg": null
   },
   {
     "id": "plant_kaf_oni1",
@@ -366,6 +451,204 @@
     "order_id": null,
     "logged_by": "user_haddy",
     "logged_at": "2026-08-28T10:00:00Z",
-    "updated_at": "2026-08-28T10:00:00Z"
+    "updated_at": "2026-08-28T10:00:00Z",
+    "stage_dates": {
+      "planted": "2026-08-28T10:00:00Z",
+      "growing": "2026-09-11T10:00:00Z"
+    },
+    "harvested_kg": null
+  },
+  {
+    "id": "plant_brk_okr_h01",
+    "kafo_id": "kafo_brikama",
+    "crop": "okra",
+    "beds": 33,
+    "member_ids": [
+      "user_awa",
+      "user_binta",
+      "user_yassin"
+    ],
+    "planted_on": "2026-06-24",
+    "expected_harvest": "2026-08-21",
+    "expected_kg": 132,
+    "stage": "harvested",
+    "lost_kg": 10,
+    "lost_reason": "pests",
+    "order_id": "order_h01",
+    "stage_dates": {
+      "planted": "2026-06-24T10:00:00Z",
+      "growing": "2026-07-08T10:00:00Z",
+      "ready": "2026-08-19T10:00:00Z",
+      "harvested": "2026-08-25T07:00:00Z"
+    },
+    "harvested_kg": 120,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-06-24T10:00:00Z",
+    "updated_at": "2026-08-25T07:00:00Z"
+  },
+  {
+    "id": "plant_brk_tom_h02",
+    "kafo_id": "kafo_brikama",
+    "crop": "tomato",
+    "beds": 18,
+    "member_ids": [
+      "user_jainaba",
+      "user_sainabou",
+      "user_nyima"
+    ],
+    "planted_on": "2026-06-22",
+    "expected_harvest": "2026-09-05",
+    "expected_kg": 216,
+    "stage": "harvested",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": "order_h02",
+    "stage_dates": {
+      "planted": "2026-06-22T10:00:00Z",
+      "growing": "2026-07-06T10:00:00Z",
+      "ready": "2026-09-03T10:00:00Z",
+      "harvested": "2026-09-08T07:00:00Z"
+    },
+    "harvested_kg": 210,
+    "logged_by": "user_fatou",
+    "logged_at": "2026-06-22T10:00:00Z",
+    "updated_at": "2026-09-08T07:00:00Z"
+  },
+  {
+    "id": "plant_bus_tom_h02",
+    "kafo_id": "kafo_busumbala",
+    "crop": "tomato",
+    "beds": 10,
+    "member_ids": [
+      "user_neneh",
+      "user_fanta",
+      "user_amie"
+    ],
+    "planted_on": "2026-06-23",
+    "expected_harvest": "2026-09-06",
+    "expected_kg": 120,
+    "stage": "harvested",
+    "lost_kg": 18,
+    "lost_reason": "flood",
+    "order_id": "order_h02",
+    "stage_dates": {
+      "planted": "2026-06-23T10:00:00Z",
+      "growing": "2026-07-07T10:00:00Z",
+      "ready": "2026-09-04T10:00:00Z",
+      "harvested": "2026-09-09T07:00:00Z"
+    },
+    "harvested_kg": 92,
+    "logged_by": "user_ndey",
+    "logged_at": "2026-06-23T10:00:00Z",
+    "updated_at": "2026-09-09T07:00:00Z"
+  },
+  {
+    "id": "plant_bus_pep_h03",
+    "kafo_id": "kafo_busumbala",
+    "crop": "pepper",
+    "beds": 11,
+    "member_ids": [
+      "user_sukai"
+    ],
+    "planted_on": "2026-07-08",
+    "expected_harvest": "2026-09-26",
+    "expected_kg": 66,
+    "stage": "harvested",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": "order_h03",
+    "stage_dates": {
+      "planted": "2026-07-08T10:00:00Z",
+      "growing": "2026-07-22T10:00:00Z",
+      "ready": "2026-09-24T10:00:00Z",
+      "harvested": "2026-09-29T07:00:00Z"
+    },
+    "harvested_kg": 62,
+    "logged_by": "user_ndey",
+    "logged_at": "2026-07-08T10:00:00Z",
+    "updated_at": "2026-09-29T07:00:00Z"
+  },
+  {
+    "id": "plant_gun_oni_h04",
+    "kafo_id": "kafo_gunjur",
+    "crop": "onion",
+    "beds": 27,
+    "member_ids": [
+      "user_mbassey",
+      "user_kumba",
+      "user_metta"
+    ],
+    "planted_on": "2026-06-25",
+    "expected_harvest": "2026-10-03",
+    "expected_kg": 270,
+    "stage": "harvested",
+    "lost_kg": 12,
+    "lost_reason": "animals",
+    "order_id": "order_h04",
+    "stage_dates": {
+      "planted": "2026-06-25T10:00:00Z",
+      "growing": "2026-07-09T10:00:00Z",
+      "ready": "2026-10-01T10:00:00Z",
+      "harvested": "2026-10-06T07:00:00Z"
+    },
+    "harvested_kg": 258,
+    "logged_by": "user_kaddy",
+    "logged_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-10-06T07:00:00Z"
+  },
+  {
+    "id": "plant_bus_tom_p01",
+    "kafo_id": "kafo_busumbala",
+    "crop": "tomato",
+    "beds": 18,
+    "member_ids": [
+      "user_neneh",
+      "user_fanta",
+      "user_amie"
+    ],
+    "planted_on": "2026-08-04",
+    "expected_harvest": "2026-10-18",
+    "expected_kg": 216,
+    "stage": "harvested",
+    "lost_kg": 8,
+    "lost_reason": "pests",
+    "order_id": "order_p01",
+    "stage_dates": {
+      "planted": "2026-08-04T10:00:00Z",
+      "growing": "2026-08-18T10:00:00Z",
+      "ready": "2026-10-16T10:00:00Z",
+      "harvested": "2026-10-19T07:00:00Z"
+    },
+    "harvested_kg": 196,
+    "logged_by": "user_ndey",
+    "logged_at": "2026-08-04T10:00:00Z",
+    "updated_at": "2026-10-19T07:00:00Z"
+  },
+  {
+    "id": "plant_gun_pep_p02",
+    "kafo_id": "kafo_gunjur",
+    "crop": "pepper",
+    "beds": 7,
+    "member_ids": [
+      "user_mbassey",
+      "user_oumie"
+    ],
+    "planted_on": "2026-07-24",
+    "expected_harvest": "2026-10-12",
+    "expected_kg": 42,
+    "stage": "harvested",
+    "lost_kg": 0,
+    "lost_reason": null,
+    "order_id": "order_p02",
+    "stage_dates": {
+      "planted": "2026-07-24T10:00:00Z",
+      "growing": "2026-08-07T10:00:00Z",
+      "ready": "2026-10-10T10:00:00Z",
+      "harvested": "2026-10-19T07:00:00Z"
+    },
+    "harvested_kg": 42,
+    "logged_by": "user_kaddy",
+    "logged_at": "2026-07-24T10:00:00Z",
+    "updated_at": "2026-10-19T07:00:00Z"
   }
 ]

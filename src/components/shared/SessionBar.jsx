@@ -23,7 +23,7 @@ export default function SessionBar({ role }) {
           <p class="text-sm font-medium">Choose a {NOUN[role]} account</p>
           {valid && <button type="button" onClick={() => setOpen(false)} class="ml-auto min-h-11 text-sm text-muted underline">Cancel</button>}
         </div>
-        <AccountTiles role={role} limit={role === 'farmer' ? 6 : 0} />
+        <AccountTiles role={role} limit={2} />
       </div>
     );
   }

@@ -1,0 +1,332 @@
+[
+  {
+    "id": "sms_seed02",
+    "to_user_id": "user_awa",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-06-24T10:00:00Z",
+    "body": "GOOD: Buyer confirmed okra for your kafo. Bring to Brikama Women's Kafo, 08-24 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed03",
+    "to_user_id": "user_binta",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-06-24T10:00:00Z",
+    "body": "GOOD: Buyer confirmed okra for your kafo. Bring to Brikama Women's Kafo, 08-24 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed04",
+    "to_user_id": "user_yassin",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-06-24T10:00:00Z",
+    "body": "GOOD: Buyer confirmed okra for your kafo. Bring to Brikama Women's Kafo, 08-24 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed11",
+    "to_user_id": "user_awa",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-08-26T08:00:00Z",
+    "body": "PAID: 44kg okra delivered. D4074 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed13",
+    "to_user_id": "user_binta",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-08-26T08:00:00Z",
+    "body": "PAID: 40kg okra delivered. D3703 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed15",
+    "to_user_id": "user_yassin",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-08-26T08:00:00Z",
+    "body": "PAID: 34kg okra delivered. D3148 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed17",
+    "to_user_id": "user_jainaba",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-06-22T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Brikama Women's Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed18",
+    "to_user_id": "user_sainabou",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-06-22T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Brikama Women's Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed19",
+    "to_user_id": "user_nyima",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-06-22T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Brikama Women's Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed26",
+    "to_user_id": "user_jainaba",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-09-09T10:00:00Z",
+    "body": "PAID: 72kg tomato delivered. D6111 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed28",
+    "to_user_id": "user_sainabou",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-09-09T10:00:00Z",
+    "body": "PAID: 70kg tomato delivered. D5942 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed30",
+    "to_user_id": "user_nyima",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-09-09T10:00:00Z",
+    "body": "PAID: 63kg tomato delivered. D5347 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed32",
+    "to_user_id": "user_neneh",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-06-23T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed33",
+    "to_user_id": "user_fanta",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-06-23T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed34",
+    "to_user_id": "user_amie",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-06-23T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 09-07 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed41",
+    "to_user_id": "user_neneh",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-09-14T15:00:00Z",
+    "body": "PAID: 34kg tomato delivered. D2964 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed43",
+    "to_user_id": "user_fanta",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-09-14T15:00:00Z",
+    "body": "PAID: 30kg tomato delivered. D2615 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed45",
+    "to_user_id": "user_amie",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-09-14T15:00:00Z",
+    "body": "PAID: 28kg tomato delivered. D2441 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed47",
+    "to_user_id": "user_sukai",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-07-08T10:00:00Z",
+    "body": "GOOD: Buyer confirmed pepper for your kafo. Bring to Busumbala Women Kafo, 09-28 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed52",
+    "to_user_id": "user_sukai",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-09-30T09:00:00Z",
+    "body": "PAID: 62kg pepper delivered. D22800 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed54",
+    "to_user_id": "user_mbassey",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "dyo",
+    "read": true,
+    "sent_at": "2026-06-25T10:00:00Z",
+    "body": "GOOD: Buyer confirmed onion for your kafo. Bring to Gunjur Kafo Garden, 10-05 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed55",
+    "to_user_id": "user_kumba",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-06-25T10:00:00Z",
+    "body": "GOOD: Buyer confirmed onion for your kafo. Bring to Gunjur Kafo Garden, 10-05 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed56",
+    "to_user_id": "user_metta",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-06-25T10:00:00Z",
+    "body": "GOOD: Buyer confirmed onion for your kafo. Bring to Gunjur Kafo Garden, 10-05 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed63",
+    "to_user_id": "user_mbassey",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "dyo",
+    "read": true,
+    "sent_at": "2026-10-07T09:30:00Z",
+    "body": "PAID: 90kg onion delivered. D8482 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed65",
+    "to_user_id": "user_kumba",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-10-07T09:30:00Z",
+    "body": "PAID: 86kg onion delivered. D8105 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed67",
+    "to_user_id": "user_metta",
+    "from": "1234",
+    "template_key": "sms.paid",
+    "lang": "mnk",
+    "read": true,
+    "sent_at": "2026-10-07T09:30:00Z",
+    "body": "PAID: 76kg onion delivered. D7163 sent to your Wave. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed69",
+    "to_user_id": "user_neneh",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-08-04T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 10-19 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed70",
+    "to_user_id": "user_fanta",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-08-04T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 10-19 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed71",
+    "to_user_id": "user_amie",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-08-04T10:00:00Z",
+    "body": "GOOD: Buyer confirmed tomato for your kafo. Bring to Busumbala Women Kafo, 10-19 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed78",
+    "to_user_id": "user_mbassey",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "dyo",
+    "read": true,
+    "sent_at": "2026-07-24T10:00:00Z",
+    "body": "GOOD: Buyer confirmed pepper for your kafo. Bring to Gunjur Kafo Garden, 10-16 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed79",
+    "to_user_id": "user_oumie",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-07-24T10:00:00Z",
+    "body": "GOOD: Buyer confirmed pepper for your kafo. Bring to Gunjur Kafo Garden, 10-16 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed85",
+    "to_user_id": "user_neneh",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "ff",
+    "read": true,
+    "sent_at": "2026-10-01T10:00:00Z",
+    "body": "GOOD: Buyer confirmed okra for your kafo. Bring to Busumbala Women Kafo, 11-30 9:00. -Kafo Signal"
+  },
+  {
+    "id": "sms_seed86",
+    "to_user_id": "user_sukai",
+    "from": "1234",
+    "template_key": "sms.order_taken",
+    "lang": "wo",
+    "read": true,
+    "sent_at": "2026-10-01T10:00:00Z",
+    "body": "GOOD: Buyer confirmed okra for your kafo. Bring to Busumbala Women Kafo, 11-30 9:00. -Kafo Signal"
+  }
+]

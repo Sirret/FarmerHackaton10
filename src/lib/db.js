@@ -13,6 +13,12 @@ import alerts from '../data/seed/alerts.json';
 import prices from '../data/seed/prices.json';
 import transport_costs from '../data/seed/transport_costs.json';
 import orders from '../data/seed/orders.json';
+import order_acceptances from '../data/seed/order_acceptances.json';
+import collections from '../data/seed/collections.json';
+import deliveries from '../data/seed/deliveries.json';
+import shipments from '../data/seed/shipments.json';
+import payments from '../data/seed/payments.json';
+import sms from '../data/seed/sms.json';
 import config from '../data/seed/config.json';
 
 /** @typedef {'en'|'mnk'|'wo'|'ff'|'dyo'} Lang */
@@ -25,7 +31,7 @@ import config from '../data/seed/config.json';
 /** @typedef {{ id: string, business_name: string, type: 'hotel'|'wholesaler'|'supermarket'|'school_supplier'|'processor', reg_number: string, contact_name: string, contact_phone: string, location: string, verified: boolean, suspended: boolean }} Buyer */
 /** @typedef {{ id: string, name: string, region: 'WCR'|'KMC'|'BJL'|'LRR'|'NBR'|'CRR'|'URR', is_market: boolean, name_clip?: string|null }} MarketTown */
 /** @typedef {{ crop: Crop, sort_order: number, days_to_harvest: number, harvest_days: number, kg_per_bed: number, pest_risk_months: number[], pest_note_key: string, baseline_demand_kg: number }} CropCalendar */
-/** @typedef {{ id: string, kafo_id: string, crop: Crop, beds: number, member_ids: string[], planted_on: string, expected_harvest: string, expected_kg: number, stage: 'planted'|'growing'|'ready'|'harvested', lost_kg: number, lost_reason?: 'pests'|'disease'|'flood'|'drought'|'animals'|'other'|null, order_id?: string|null, logged_by: string, logged_at: string, updated_at: string }} Planting */
+/** @typedef {{ id: string, kafo_id: string, crop: Crop, beds: number, member_ids: string[], planted_on: string, expected_harvest: string, expected_kg: number, stage: 'planted'|'growing'|'ready'|'harvested', lost_kg: number, lost_reason?: 'pests'|'disease'|'flood'|'drought'|'animals'|'other'|null, order_id?: string|null, stage_dates: Partial<Record<'planted'|'growing'|'ready'|'harvested', string>>, harvested_kg?: number|null, logged_by: string, logged_at: string, updated_at: string }} Planting */
 /** @typedef {{ id: string, reporter_id: string, kafo_id: string, district: string, crop: Crop, problem: 'insects'|'leaf_spots'|'wilting'|'animals'|'flooding'|'other', voice_note?: Blob|null, verified: boolean, status: 'open'|'dismissed'|'escalated', created_at: string }} Report */
 /** @typedef {{ id: string, template_type: 'heavy_rain'|'dry_spell'|'pest_outbreak'|'disease', level: 'yellow'|'red', crops: Crop[], districts: string[], starts_on: string, ends_on: string, note?: string|null, created_by: string }} Alert */
 /** @typedef {{ id: string, market_town_id: string, crop: Crop, price_per_kg: number, date: string, entered_by: string }} Price */
@@ -36,6 +42,7 @@ import config from '../data/seed/config.json';
 /** @typedef {{ id: string, kafo_id: string, crop: Crop, kg: number, request_ids: string[], ready_when: 'today'|'this_week', status: 'available'|'sold'|'withdrawn', confirmed_by: string }} ProduceOffer */
 /** @typedef {{ id: string, order_id: string, kafo_id: string, kg_weighed: number, kg_accepted: number, kg_rejected: number, reject_reason?: 'size'|'ripeness'|'damage'|'other'|null, collected_at: string }} Collection */
 /** @typedef {{ id: string, collection_id: string, order_id: string, member_id: string, kg: number }} Delivery */
+/** @typedef {{ id: string, order_id: string, collection_id: string, kafo_id: string, method: 'kafo_delivery'|'buyer_pickup', transporter_name: string, transporter_phone: string, proof_photo: string, proof_note?: string|null, handover_code: string, status: 'in_transit'|'delivered', dispatched_by: string, dispatched_at: string, delivered_at?: string|null, delivered_by?: string|null }} Shipment */
 /** @typedef {{ id: string, order_id: string, collection_id: string, member_id: string, amount: number, method: 'wave'|'qmoney'|'afrimoney', status: 'pending'|'paid'|'on_hold', due_by: string, paid_at?: string|null, platform_fee: number }} Payment */
 /** @typedef {{ id: string, to_user_id: string, from: string, template_key: string, body: string, lang: Lang, read: boolean, sent_at: string }} Sms */
 /** @typedef {{ id: string, user_id: string, direction: 'callback'|'outbound_alert'|'welcome', status: 'ringing'|'answered'|'missed'|'ended', alert_id?: string|null, started_at: string, ended_at?: string|null }} Call */
@@ -60,7 +67,8 @@ import config from '../data/seed/config.json';
  *   sms: import('dexie').Table<Sms, string>, calls: import('dexie').Table<Call, string>,
  *   leads: import('dexie').Table<Lead, string>, flags: import('dexie').Table<Flag, string>,
  *   disputes: import('dexie').Table<Dispute, string>, audit: import('dexie').Table<Audit, string>,
- *   config: import('dexie').Table<Config, string>, interests: import('dexie').Table<Interest, string>
+ *   config: import('dexie').Table<Config, string>, interests: import('dexie').Table<Interest, string>,
+ *   shipments: import('dexie').Table<Shipment, string>
  * }} KafoDB
  */
 
@@ -100,10 +108,17 @@ db.version(2).stores({
   interests: 'id, farmer_id, kafo_id, status'
 });
 
+// v3: getting weighed produce to the buyer, with proof photo + handover code.
+db.version(3).stores({
+  shipments: 'id, order_id, collection_id, kafo_id, status'
+});
+
 /** Seed rows per table. Tables not listed start empty. */
 const SEED = {
   users, farmers, kafos, buyers, market_towns, crop_calendar, plantings,
   alerts, prices, transport_costs, orders, config: [config],
+  // Platform history: finished and in-progress orders, so every step has an example.
+  order_acceptances, collections, deliveries, shipments, payments, sms,
 };
 
 /** Generated ID: prefix_ + 6 random chars. */

@@ -13,13 +13,14 @@ import alerts from '../src/data/seed/alerts.json';
 import prices from '../src/data/seed/prices.json';
 import transport_costs from '../src/data/seed/transport_costs.json';
 import orders from '../src/data/seed/orders.json';
+import order_acceptances from '../src/data/seed/order_acceptances.json';
 import config from '../src/data/seed/config.json';
 
 let snap;
 beforeEach(() => {
   snap = structuredClone({
     users, farmers, kafos, buyers, market_towns, crop_calendar, plantings, alerts, prices, transport_costs, orders, config,
-    order_acceptances: [], reports: [], deliveries: [], payments: [],
+    order_acceptances, reports: [], deliveries: [], payments: [],
   });
   // IndexedDB hands rows back sorted by key (okra, onion, pepper, tomato), not seed order.
   snap.crop_calendar.sort((a, b) => a.crop.localeCompare(b.crop));
