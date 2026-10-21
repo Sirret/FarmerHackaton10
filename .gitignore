@@ -24,4 +24,6 @@ pnpm-debug.log*
 .idea/
 
 # local reference docs (PDFs)
-docs/
+docs/*
+!docs/clips.csv
+audio-originals/.tmp/

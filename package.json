@@ -11,7 +11,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "weather": "node scripts/fetch-weather.mjs"
+    "weather": "node scripts/fetch-weather.mjs",
+    "clips:build": "node scripts/build-clips.mjs",
+    "audio": "node scripts/convert-audio.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.0",
@@ -22,6 +24,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "ffmpeg-static": "^5.3.0",
     "vitest": "^3.2.7"
   }
 }
