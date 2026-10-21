@@ -30,3 +30,5 @@ audio-originals/.tmp/
 
 # pitch deck build tools
 pitch/node_modules/
+# Office lock files (a deck open in PowerPoint)
+~$*
