@@ -136,8 +136,8 @@ describe('call behaviour', () => {
     const sell = pressKey(answer(ctx).state, '2', ctx).state;
     expect(ids(sell, ctx)).toEqual(['ask_crop', 'crop_tomato', 'press_1', 'crop_onion', 'press_2', 'crop_pepper', 'press_3', 'crop_okra', 'press_4']);
     expect(ids(pressKey(sell, '3', ctx).state, ctx)).toEqual(['crop_pepper', 'best_market_is', 'market_banjul', 'about', 'num_448', 'dalasi_per_kilo', 'after_transport', ...TAIL]);
-    // 53 has no clip of its own: one item made of num_50 + num_3
-    expect(nodeClips(pressKey(sell, '4', ctx).state, ctx)).toContainEqual({ id: 'num_53', files: ['num_50', 'num_3'], textEn: '53' });
+    // 124 has no clip of its own: one item made of num_100 + num_20 + num_4
+    expect(nodeClips(pressKey(sell, '4', ctx).state, ctx)).toContainEqual({ id: 'num_124', files: ['num_100', 'num_20', 'num_4'], textEn: '124' });
   });
 
   it('sell: no recent price, and a confirmed order', () => {
