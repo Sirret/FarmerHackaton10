@@ -29,7 +29,7 @@ const THEME = {
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 in
 pres.title = "Kafo Signal";
-pres.author = "[TEAM NAME]";
+pres.author = "Linear Growth";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const S = pres.SchemeColor;
 const C = {
@@ -155,7 +155,7 @@ async function build() {
   let s = pres.addSlide({ masterName: "Title dark", sectionTitle: "Opening" });
   s.addText("Kafo Signal", { placeholder: "title" });
   text(s, "From farm information to a decision — and a buyer who pays", { x: M, y: 3.3, w: 6.0, h: 1.0, fontSize: 22, color: C.surface });
-  text(s, "UTG ITCA Hackathon 2026 · Challenge 02  ·  [TEAM NAME]", { x: M, y: 6.3, w: 7.4, h: 0.4, fontSize: 12, color: C.surface });
+  text(s, "UTG ITCA Hackathon 2026 · Challenge 02  ·  Linear Growth", { x: M, y: 6.3, w: 7.4, h: 0.4, fontSize: 12, color: C.surface });
   // large traffic light with matching pills
   const hx = 10.1, hy = 0.9, hw = 1.9, hh = 5.7, d = 1.4;
   s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: hx, y: hy, w: hw, h: hh, rectRadius: 0.4, fill: { color: C.text }, line: { type: "none" }, objectName: "traffic light housing" });
