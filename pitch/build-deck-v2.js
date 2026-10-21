@@ -8,7 +8,7 @@ const sharp = require("sharp");
 const fa = require("react-icons/fa");
 const { applyTheme } = require("./apply_theme.js");
 
-const OUT = path.join(__dirname, "kafo-signal-deck-v2.pptx");
+const OUT = path.join(__dirname, process.env.DECK_OUT || "kafo-signal-deck-v2.pptx"); // DECK_OUT lets us write a new file while v2 is open in PowerPoint
 const SHOTS = path.join(__dirname, "screenshots");
 
 const HEX = {
@@ -198,7 +198,7 @@ async function build() {
     text(s, facts[i][1], { x: 6.4, y: y - 0.05, w: W - M - 6.4, h: 0.8, fontSize: 19, valign: "middle" });
   }
   card(s, M, 5.85, CW, 0.9, { fill: C.dark, name: "stat strip" });
-  const strip = [["6,600 women", "in 33 NEMA community gardens"], ["Literacy", "women 47% vs men 67%"], ["Phone ownership", "women 76% vs men 86%"]];
+  const strip = [["6,600 women", "farm in 33 NEMA community gardens"], ["47% of women", "can read (men: 67%)"], ["76% of women", "own a phone (men: 86%)"]];
   const sx = [M + 0.3, M + 4.75, M + 8.2], swd = [4.3, 3.3, 3.8];
   strip.forEach(([a, b], i) => text(s, [{ text: a + "  ", options: { bold: true, color: C.white } }, { text: b, options: { color: C.surface } }],
     { x: sx[i], y: 5.85, w: swd[i], h: 0.9, fontSize: 14, valign: "middle" }));
@@ -209,15 +209,15 @@ async function build() {
   s = pres.addSlide({ masterName: "Content", sectionTitle: "Problem" });
   s.addText("Farmers get numbers, not decisions", { placeholder: "title" });
   const stats = [
-    ["1 : 3,000", "extension workers to farmers", "Dept. of Agriculture, 2025"],
-    ["22%", "farm households with any market information", "Agricultural Census 2011/12"],
-    ["Up to 50%", "of vegetables lost after harvest", "Gambia + Sub-Saharan Africa · AfDB 2026"],
+    ["1 adviser", "for every 3,000 farmers", "Govt. extension workers · Dept. of Agriculture, 2025"],
+    ["About 1 in 5", "of farm households get any market information at all", "Agricultural Census 2011/12 (22%)"],
+    ["Up to half", "of vegetables can be lost after harvest, before they are sold", "Gambia + Sub-Saharan Africa · AfDB 2026"],
   ];
   const sw = (CW - 0.8) / 3;
   stats.forEach(([big, label, src], i) => {
     const x = M + i * (sw + 0.4);
     card(s, x, 1.55, sw, 2.85, { name: "stat card " + (i + 1) });
-    text(s, big, { x: x + 0.35, y: 1.75, w: sw - 0.5, h: 1.0, fontFace: HEAD, fontSize: 46, bold: true, color: i === 2 ? C.red : C.dark, valign: "middle" });
+    text(s, big, { x: x + 0.35, y: 1.75, w: sw - 0.45, h: 1.0, fontFace: HEAD, fontSize: 40, bold: true, color: i === 2 ? C.red : C.dark, valign: "middle" });
     text(s, label, { x: x + 0.35, y: 2.85, w: sw - 0.7, h: 0.85, fontSize: 18 });
     text(s, src, { x: x + 0.35, y: 3.85, w: sw - 0.7, h: 0.35, fontSize: 11, color: C.muted });
   });
@@ -269,9 +269,9 @@ async function build() {
   ], { x: 8.75, y: 2.3, w: W - M - 9.05, h: 2.0, fontSize: 17, paraSpaceAfter: 8 });
   text(s, "WHAT THE EVIDENCE SAYS → WHAT WE DID", { x: M, y: 4.7, w: 8, h: 0.3, fontSize: 12, bold: true, color: C.green, charSpacing: 1 });
   const ev = [
-    [[{ text: "Price info alone: only " }, { text: "+7–10%", options: { bold: true } }, { text: " for farmers; gains can go to traders" }], "We add a committed buyer"],
+    [[{ text: "Price info alone: farmers got " }, { text: "only 7–10% better prices", options: { bold: true } }, { text: ", and traders can take the gains" }], "We add a committed buyer"],
     [[{ text: "Services grew only through " }, { text: "USSD / operator channels", options: { bold: true } }, { text: " (MLouma, Viamo)" }], "We use USSD + voice, not a farmer app"],
-    [[{ text: "Women joined when reached " }, { text: "through their groups", options: { bold: true } }, { text: " (DigiFarm: 10% → 48%)" }], "We work through the kafo leader"],
+    [[{ text: "Reached " }, { text: "through their groups", options: { bold: true } }, { text: ", women's uptake rose from 10% to 48% (DigiFarm)" }], "We work through the kafo leader"],
   ];
   const ew = (CW - 0.6) / 3;
   ev.forEach(([what, did], i) => {
@@ -508,7 +508,7 @@ async function build() {
   card(s, M, 4.45, tlW, 2.35, { fill: C.white, line: { color: C.green, width: 1.5 }, name: "pilot measures box" });
   text(s, [{ text: "Pilot success measures  ", options: { bold: true, fontSize: 16, color: C.dark } }, { text: "3 kafos in Brikama · ~600 women · one dry season", options: { fontSize: 12, color: C.muted } }],
     { x: M + 0.25, y: 4.55, w: tlW - 0.5, h: 0.45, valign: "middle" });
-  const measures = ["≥ 60% of members use *1234# or *4321# at least monthly", "≥ 50% of harvest sold through pre-agreed orders", "Farmers paid within 48 h on ≥ 90% of orders", "Farm-gate vs middleman price, measured before and after"];
+  const measures = ["At least 6 in 10 members use *1234# or *4321# every month", "At least half the harvest sold through orders agreed in advance", "On 9 in 10 orders, farmers are paid within 2 days (48 h)", "Farm-gate vs middleman price, measured before and after"];
   const mw = (tlW - 0.75) / 2;
   measures.forEach((t, i) => text(s, "✓  " + t, { x: M + 0.25 + (i % 2) * (mw + 0.25), y: 5.1 + Math.floor(i / 2) * 0.82, w: mw, h: 0.75, fontSize: 14 }));
   const bx = 8.95, bw = W - M - bx;
@@ -527,7 +527,7 @@ async function build() {
   card(s, bx, 5.45, bw, 1.15, { name: "running cost box" });
   text(s, [
     { text: "Running cost: SMS", options: { bold: true, fontSize: 15, color: C.dark, breakLine: true } },
-    { text: "≈ €0.04–0.10 each → ~600 farmers × ~10 SMS a season ≈ ", options: {} },
+    { text: "4–10 euro cents per SMS · ~600 farmers × ~10 SMS a season ≈ ", options: {} },
     { text: "€240–600 a season", options: { bold: true } },
   ], { x: bx + 0.3, y: 5.55, w: bw - 0.6, h: 1.15, fontSize: 13 });
   num(s, 12);
@@ -545,15 +545,15 @@ async function build() {
   await iconCircle(s, fa.FaCoins, M + 0.3, cy0 + 0.25, 0.55, C.green, HEX.white, "business model");
   text(s, "Business model", { x: M + 1.05, y: cy0 + 0.25, w: colW2 - 1.4, h: 0.55, fontSize: 19, bold: true, color: C.white, valign: "middle" });
   text(s, [
-    { text: "Buyers pay ~2–3% on each completed order.", options: { bold: true, breakLine: true, paraSpaceAfter: 6 } },
+    { text: "Buyers pay a small fee, about D2–3 per D100, on each completed order.", options: { bold: true, breakLine: true, paraSpaceAfter: 6 } },
     { text: "Esoko stopped selling farmer-paid price services in 2016 after heavy losses.", options: { color: C.surface } },
   ], { x: M + 0.3, y: cy0 + 0.95, w: colW2 - 0.6, h: 1.15, fontSize: 15, color: C.white });
-  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: M + 0.3, y: cy0 + 2.05, w: colW2 - 0.6, h: 1.05, rectRadius: 0.08, fill: { color: C.white }, line: { type: "none" }, objectName: "unit example" });
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: M + 0.3, y: cy0 + 2.2, w: colW2 - 0.6, h: 0.95, rectRadius: 0.08, fill: { color: C.white }, line: { type: "none" }, objectName: "unit example" });
   text(s, [
     { text: "One 150 kg okra order = D8,250 to 3 farmers", options: { bold: true, breakLine: true } },
-    { text: "→ 2.5% fee ≈ D206, paid by the buyer", options: { bold: true, breakLine: true } },
+    { text: "→ the buyer pays a D206 fee (2.5%)", options: { bold: true, breakLine: true } },
     { text: "demo prices · the prototype's fee setting", options: { fontSize: 11, color: C.muted } },
-  ], { x: M + 0.45, y: cy0 + 2.05, w: colW2 - 0.9, h: 1.05, fontSize: 14, color: C.dark, valign: "middle" });
+  ], { x: M + 0.45, y: cy0 + 2.2, w: colW2 - 0.9, h: 0.95, fontSize: 14, color: C.dark, valign: "middle" });
   const tX = M + colW2 + 0.3;
   await iconCircle(s, fa.FaShieldAlt, tX + 0.3, cy0 + 0.25, 0.55, C.green, HEX.white, "trust");
   text(s, "Trust built in", { x: tX + 1.05, y: cy0 + 0.25, w: colW2 - 1.4, h: 0.55, fontSize: 19, bold: true, color: C.white, valign: "middle" });
