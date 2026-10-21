@@ -5,6 +5,7 @@ import { t } from '../../lib/i18n.js';
 import { formatDate } from '../../lib/dates.js';
 import { makeContext, startSession, renderScreen, reply, IDLE_TIMEOUT_MS } from '../../lib/ussd.js';
 import { useVoiceCall } from './useVoiceCall.js';
+import { unlock } from '../../lib/audio.js';
 
 const COLS = 22; // characters per screen row
 const ROWS = 6; // content rows under the status bar
@@ -71,7 +72,7 @@ function Rows({ rows }) {
 /**
  * The farmer's basic phone. snap = live data (loadPhoneSnapshot), userId = who holds the
  * phone, lang = language override or null. dialRequest = { code, n } from a quick-dial button.
- * onSubtitle({ clips, index } | null) reports the voice note playing, for the subtitles panel.
+ * onSubtitle({ pieces, index } | null) reports the voice chain playing (audio.js), for the subtitles panel.
  */
 export default function BasicPhone({ snap, userId, lang, dialRequest, onSubtitle }) {
   const [app, setApp] = useState('home');
@@ -193,8 +194,10 @@ export default function BasicPhone({ snap, userId, lang, dialRequest, onSubtitle
   }
 
   function press(k) {
-    if (voice.incoming) { if (k === 'call' || k === 'ok') voice.answer(); else if (k === 'end') voice.decline(); return; }
-    if (voice.call) { if (k === 'end') voice.hangUp(); else if (/^[0-9*#]$/.test(k)) voice.dtmf(k); return; }
+    // press() runs inside the click / keydown handler, so unlock() here counts as a user
+    // gesture: browsers only let the call play audio after it (must come before answer()).
+    if (voice.incoming) { if (k === 'call' || k === 'ok') { unlock(); voice.answer(); } else if (k === 'end') voice.decline(); return; }
+    if (voice.call) { unlock(); if (k === 'end') voice.hangUp(); else if (/^[0-9*#]$/.test(k)) voice.dtmf(k); return; }
     if (popup) { if (k === 'end') { clearTimeout(popupTimer.current); setPopup(null); setApp('home'); } return; }
     if (banner && k === 'ok' && app !== 'ussd') { openThread(); return; }
     if (k === 'end') { setBanner(0); if (app === 'ussd') endSession(); else { setApp('home'); setNumber(''); } return; }

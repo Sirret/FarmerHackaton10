@@ -7,6 +7,7 @@ import Card from '../ui/Card.jsx';
 import Button from '../ui/Button.jsx';
 import { Field, Select } from '../ui/Field.jsx';
 import BasicPhone from './BasicPhone.jsx';
+import { getSpeechEnabled, setSpeechEnabled, getSpeechRate, setSpeechRate } from '../../lib/audio.js';
 
 const DEMO = ['user_awa', 'user_binta'];
 
@@ -17,7 +18,9 @@ export default function FarmerSim() {
   const [lang, setLang] = useState('');
   const [subtitles, setSubtitles] = useState(true);
   const [dialRequest, setDialRequest] = useState(null);
-  const [voiceNote, setVoiceNote] = useState(null); // { clips, index } while a voice note plays
+  const [voiceNote, setVoiceNote] = useState(null); // { pieces, index } while a voice chain plays (audio.js)
+  const [speech, setSpeech] = useState(getSpeechEnabled);
+  const [rate, setRate] = useState(getSpeechRate);
 
   if (!snap) return <p class="text-sm text-muted">Loading…</p>;
 
@@ -34,7 +37,7 @@ export default function FarmerSim() {
       <div>
         <BasicPhone snap={snap} userId={userId} lang={lang || null} dialRequest={dialRequest} onSubtitle={setVoiceNote} />
         <p class="mt-3 text-center text-xs text-muted">Keyboard works too: digits, * #, Enter = OK/Call, Esc = End.</p>
-        {subtitles && voiceNote && <Subtitles note={voiceNote} lang={lang || holder?.language || 'en'} />}
+        {subtitles && voiceNote?.pieces?.length > 0 && <Subtitles note={voiceNote} lang={lang || holder?.language || 'en'} />}
       </div>
 
       <Card title="Demo controls" class="w-full lg:max-w-xs">
@@ -67,21 +70,35 @@ export default function FarmerSim() {
             Subtitles for voice calls
           </label>
           <p class="-mt-3 text-xs text-muted">Shows the words of each voice note under the phone during *4321# calls.</p>
+
+          <label class="flex min-h-11 items-center gap-2">
+            <input type="checkbox" class="h-5 w-5" checked={speech} onChange={(e) => { const on = e.currentTarget.checked; setSpeechEnabled(on); setSpeech(on); }} />
+            Speak English for unrecorded parts
+          </label>
+          <p class="-mt-3 text-xs text-muted">Clips not recorded yet are read out in English by the browser. Off: they only show as subtitles.</p>
+
+          <label class="block">
+            <span class="flex items-center justify-between font-medium">Speech speed <span class="text-xs text-muted">{rate.toFixed(2)}×</span></span>
+            <input type="range" min="0.8" max="2" step="0.05" value={rate} class="mt-1 w-full accent-brand" aria-label="Speech speed"
+              onInput={(e) => setRate(setSpeechRate(e.currentTarget.value))} />
+          </label>
         </div>
       </Card>
     </div>
   );
 }
 
-/** Words of the voice note playing (spec §9.1 subtitles), current clip highlighted. */
+/** Words of the voice chain playing (spec §9.1 subtitles), current piece highlighted. */
 function Subtitles({ note, lang }) {
-  const { clips, index } = note;
-  const translated = clips.some((c) => c.text !== c.textEn);
+  const { pieces, index } = note;
+  // Clips: local-language script when the team added one, else English. Names: the name.
+  const shown = (p) => p.text || p.textEn || '';
+  const translated = pieces.some((p) => p.kind !== 'name' && p.text);
   return (
     <div class="mx-auto mt-3 w-75 rounded-xl border border-line bg-surface p-3 text-sm shadow-sm" aria-live="polite" data-subtitles>
       <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">🔊 4321 Kafo Signal · {t(`lang.${lang}`)}</p>
-      <p>{clips.map((c, i) => <span class={i === index ? 'rounded bg-soft font-semibold' : i < index ? 'text-ink' : 'text-muted'}>{c.text} </span>)}</p>
-      {translated && <p class="mt-1 text-xs text-muted">EN: {clips.map((c) => c.textEn).join(' ')}</p>}
+      <p>{pieces.map((p, i) => <span class={i === index ? 'rounded bg-soft font-semibold' : i < index ? 'text-ink' : 'text-muted'}>{shown(p)} </span>)}</p>
+      {translated && <p class="mt-1 text-xs text-muted">EN: {pieces.map((p) => p.textEn || p.text || '').join(' ')}</p>}
       {!translated && lang !== 'en' && <p class="mt-1 text-xs text-muted">{t(`lang.${lang}`)} text not added yet, so subtitles show English. Clips recorded in public/audio/{lang}/ play in {t(`lang.${lang}`)}; the rest play in English.</p>}
     </div>
   );

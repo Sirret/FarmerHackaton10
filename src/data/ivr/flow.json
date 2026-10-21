@@ -1,36 +1,36 @@
 {
-  "_doc": "Voice line *4321# (spec 9.5). clips = clip IDs from ivr/clips.json; '$farmer_name' / '$kafo_name' = name recordings. build = named builder in src/lib/ivr.js (dynamic crop/verdict/number clips), played before clips_after. pick = numbered list (1..n) that sets a param. keys: to (next node), set (params), action (effect run through actions.js). next = go on by itself after playing; hangup = end the call; record = record a voice note after playing, then run action and go to 'to'. Everywhere: 9 = repeat, 0 = back, * = main menu (unless the node uses that key). Silence: menu replays once after 8 s, then goodbye.",
+  "_doc": "Voice line *4321# (spec 9.5). clips = clip ids from ivr/clips.json (generated from docs/clips.csv); '$farmer_name' / '$kafo_name' = name recordings (audio/names/). build = named builder in src/lib/ivr.js (dynamic crop/verdict/number clips), played after clips and before clips_after. pick = numbered list (1..n) that sets a param. keys: to (next node), set (params), action (effect run through actions.js). next = go on by itself after playing; hangup = end the call; record = beep + record a voice note after playing, then run action and go to 'to'. Everywhere: 9 = repeat, 0 = back, * = main menu (unless the node uses that key). A wrong key replays the node. Silence: menu replays once after 8 s, then goodbye.",
 
   "greet": { "clips": ["greet_hello", "$farmer_name", "greet_from_kafo", "$kafo_name"], "next": "main" },
-  "welcome": { "clips": ["welcome_intro", "$farmer_name", "greet_from_kafo", "$kafo_name"], "next": "main" },
-  "alert_call": { "clips": ["greet_hello", "$farmer_name"], "build": "alerts", "next": "main" },
+  "welcome": { "clips": ["welcome_call"], "next": "goodbye" },
+  "alert_call": { "clips": ["alert_call_intro"], "build": "alerts", "next": "main" },
 
-  "main": { "clips": ["menu_main"], "keys": { "1": { "to": "plant" }, "2": { "to": "sell" }, "3": { "to": "alerts" }, "4": { "to": "produce" }, "5": { "to": "report" } } },
+  "main": { "clips": ["menu_1_plant", "menu_2_sell", "menu_3_alerts", "menu_4_produce", "menu_5_report", "menu_9_repeat"], "keys": { "1": { "to": "plant" }, "2": { "to": "sell" }, "3": { "to": "alerts" }, "4": { "to": "produce" }, "5": { "to": "report" } } },
 
-  "plant": { "build": "plant_list", "clips_after": ["menu_crop_detail"], "pick": { "list": "crops", "param": "crop", "to": "plant_detail" } },
-  "plant_detail": { "build": "plant_detail", "clips_after": ["menu_tell_leader"], "keys": { "1": { "action": "interest", "to": "told_leader" } } },
+  "plant": { "build": "plant_list", "clips_after": ["menu_back"], "pick": { "list": "crops", "param": "crop", "to": "plant_detail" } },
+  "plant_detail": { "build": "plant_detail", "clips_after": ["menu_tell_leader", "menu_back"], "keys": { "1": { "action": "interest", "to": "told_leader" } } },
   "told_leader": { "clips": ["leader_told"], "next": "main" },
 
-  "sell": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "sell_result" } },
-  "sell_result": { "build": "sell_result", "clips_after": ["menu_repeat_back"], "keys": {} },
+  "sell": { "clips": ["ask_crop"], "build": "crop_choices", "pick": { "list": "crops", "param": "crop", "to": "sell_result" } },
+  "sell_result": { "build": "sell_result", "clips_after": ["menu_9_repeat", "menu_back", "menu_main_star"], "keys": {} },
 
-  "alerts": { "build": "alerts", "clips_after": ["menu_repeat_back"], "keys": {} },
+  "alerts": { "build": "alerts", "clips_after": ["menu_9_repeat", "menu_back", "menu_main_star"], "keys": {} },
 
-  "produce": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "produce_amount" } },
-  "produce_amount": { "clips": ["ask_amount"], "keys": {
+  "produce": { "clips": ["ask_crop"], "build": "crop_choices", "pick": { "list": "crops", "param": "crop", "to": "produce_amount" } },
+  "produce_amount": { "clips": ["ask_amount", "amount_bucket", "press_1", "amount_bag", "press_2", "amount_bags_2_4", "press_3", "amount_bags_5_plus", "press_4"], "keys": {
     "1": { "set": { "amount": "bucket" }, "to": "produce_ready" },
     "2": { "set": { "amount": "bag" }, "to": "produce_ready" },
     "3": { "set": { "amount": "bags_2_4" }, "to": "produce_ready" },
     "4": { "set": { "amount": "bags_5_plus" }, "to": "produce_ready" }
   } },
-  "produce_ready": { "clips": ["ask_ready"], "keys": {
+  "produce_ready": { "clips": ["ask_ready", "today", "press_1", "this_week", "press_2"], "keys": {
     "1": { "set": { "ready": "today" }, "action": "produce", "to": "produce_done" },
     "2": { "set": { "ready": "this_week" }, "action": "produce", "to": "produce_done" }
   } },
   "produce_done": { "clips": ["produce_sent_to_leader"], "next": "main" },
 
-  "report": { "clips": ["ask_crop"], "pick": { "list": "crops", "param": "crop", "to": "report_problem" } },
-  "report_problem": { "clips": ["ask_problem"], "keys": {
+  "report": { "clips": ["ask_crop"], "build": "crop_choices", "pick": { "list": "crops", "param": "crop", "to": "report_problem" } },
+  "report_problem": { "clips": ["ask_problem", "problem_insects", "press_1", "problem_leaf_spots", "press_2", "problem_wilting", "press_3", "problem_animals", "press_4", "problem_flooding", "press_5", "record_after_beep"], "keys": {
     "1": { "set": { "problem": "insects" }, "action": "report", "to": "report_done" },
     "2": { "set": { "problem": "leaf_spots" }, "action": "report", "to": "report_done" },
     "3": { "set": { "problem": "wilting" }, "action": "report", "to": "report_done" },
@@ -38,11 +38,11 @@
     "5": { "set": { "problem": "flooding" }, "action": "report", "to": "report_done" },
     "9": { "set": { "problem": "other" }, "to": "report_record" }
   } },
-  "report_record": { "clips": ["record_after_beep"], "record": true, "action": "report", "to": "report_done" },
+  "report_record": { "clips": [], "record": true, "action": "report", "to": "report_done" },
   "report_done": { "clips": ["report_thanks"], "next": "main" },
 
-  "unregistered": { "clips": ["not_registered", "ask_leader", "press1_record_name_village"], "keys": { "1": { "to": "lead_record" } } },
-  "lead_record": { "clips": ["record_after_beep"], "record": true, "action": "lead", "to": "lead_done" },
+  "unregistered": { "clips": ["not_registered", "press1_record_name_village"], "keys": { "1": { "to": "lead_record" } } },
+  "lead_record": { "clips": ["record_name_village"], "record": true, "action": "lead", "to": "lead_done" },
   "lead_done": { "clips": ["thanks_admin_will_call"], "next": "goodbye" },
 
   "goodbye": { "clips": ["goodbye"], "hangup": true }

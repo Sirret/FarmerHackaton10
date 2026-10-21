@@ -1,23 +1,24 @@
 // Voice calls on the basic phone (spec §9.4): ringing, answer/decline, the IVR from ivr.js
-// played through voicePlayer.js, DTMF keys, silence handling, recording and subtitles.
+// played through the audio engine (audio.js playChain), DTMF keys, silence handling,
+// recording and subtitles. The phone must call unlock() inside the Answer click/key handler.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { setCallStatus } from '../../lib/actions.js';
 import { startCall, nodeClips, afterPlay, onSilence, pressKey, SILENCE_MS } from '../../lib/ivr.js';
 import { makeContext } from '../../lib/ussd.js';
-import { createPlayer, startRecording, beep } from '../../lib/voicePlayer.js';
+import { playChain, stop as stopAudio } from '../../lib/audio.js';
+import { startRecording, beep } from '../../lib/voicePlayer.js';
 
 const RING_DELAY = { callback: 5500, outbound_alert: 800, welcome: 800 }; // callback: after the 2.5 s pop-up + ~3 s
 const MISSED_AFTER_MS = 30_000;
 
 /**
- * @param {{ snap, userId, lang, runEffect: (effect, ctx) => Promise, onSubtitle?: (s) => void, onEnded?: (length: string) => void }} p
+ * @param {{ snap, userId, lang, runEffect: (effect, ctx) => Promise, onSubtitle?: (s: { pieces, index } | null) => void, onEnded?: (length: string) => void }} p
  * @returns {{ incoming, call, answer, decline, hangUp, dtmf, ringBack }}
  */
 export function useVoiceCall({ snap, userId, lang, runEffect, onSubtitle, onEnded }) {
   const [incoming, setIncoming] = useState(null); // call row (or { local: true } for unknown numbers)
   const [call, setCallState] = useState(null); // { id, userId, startedAt, lastKey, recording }
   const setCall = (next) => setCallState((cur) => { const v = typeof next === 'function' ? next(cur) : next; callRef.current = v; return v; });
-  const player = useMemo(() => createPlayer(), []);
   const gen = useRef(0); // bumps on every interruption so stale async steps stop
   const timers = useRef({});
   const seen = useRef(null);
@@ -75,7 +76,7 @@ export function useVoiceCall({ snap, userId, lang, runEffect, onSubtitle, onEnde
 
   function stopAll() {
     gen.current++;
-    player.stop();
+    stopAudio();
     recorder.current?.stop();
     Object.keys(timers.current).forEach(clear);
     ivr.current = null;
@@ -87,9 +88,11 @@ export function useVoiceCall({ snap, userId, lang, runEffect, onSubtitle, onEnde
     clear('silence');
     ivr.current = state;
     const ctx = ctxRef.current;
-    const clips = nodeClips(state, ctx);
-    subtitle({ clips, index: 0 });
-    const res = await player.play(clips, ctx.lang, (index) => subtitle({ clips, index }));
+    const items = nodeClips(state, ctx);
+    const res = await playChain(items, {
+      lang: ctx.lang,
+      onSubtitle: (s) => { if (my === gen.current && s) subtitle(s); },
+    });
     if (my !== gen.current || res === 'stopped') return;
 
     const next = afterPlay(state);
@@ -148,7 +151,7 @@ export function useVoiceCall({ snap, userId, lang, runEffect, onSubtitle, onEnde
     setCall((c) => c && { ...c, lastKey: k });
     if (recorder.current) { if (k === '#') recorder.current.stop(); return; }
     gen.current++;
-    player.stop();
+    stopAudio();
     clear('silence');
     const ctx = ctxRef.current;
     const r = pressKey(ivr.current, k, ctx);
